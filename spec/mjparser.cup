@@ -6,7 +6,6 @@ import org.apache.log4j.*;
 // import java.io.*;
 import rs.ac.bg.etf.pp1.ast.*;
 
-
 parser code {:
 	
 	boolean errorDetected = false;
@@ -53,11 +52,16 @@ scan with {:
 	return s;
 :}
 
-
-terminal PROG, LBRACE, RBRACE, SEMI, LPAREN, RPAREN, COMMA, PRINT, RETURN, PLUS, EQUAL, VOID;
+terminal PROG, BREAK, CLASS, CONST, IF, WHILE, NEW, ELSE, PRINT, READ, RETURN, VOID, EXTENDS, CONTINUE;
+terminal EQUALSTO, DIFFERENT, GREATER, EGREATER, LESS, ELESS;
+terminal PLUS, MINUS, MUL, DIV, MOD;
+terminal AND, OR;
+terminal EQUAL, PLUSPLUS, MINUSMINUS;
+terminal SEMI, COMMA, DOT, LPAREN, RPAREN, LBRACE, RBRACE, LSQBRACE, RSQBRACE, QUESTION, DOUBLEDOT;
+terminal String BOOL;
 terminal Integer NUMBER ;
 terminal String IDENT ;
-terminal IF, ELSE;
+terminal String CHAR;
 
 nonterminal MethodDeclList, VarDecl;
 nonterminal FormalParamList, FormalParamDecl, FormPars, ActualPars, ActualParamList; 
@@ -67,96 +71,78 @@ nonterminal Unmatched, Matched;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj Program, ProgName, Designator, MethodDecl, MethodTypeName; 
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Expr, Factor, VarDeclList; 
 
-Program ::= (Program) PROG ProgName:p VarDeclList LBRACE MethodDeclList RBRACE 
-;
+Program         ::= (Program) PROG ProgName:p VarDeclList LBRACE MethodDeclList RBRACE;
 
-ProgName ::= (ProgName) IDENT:pName 
-;
+ProgName        ::= (ProgName) IDENT:pName;
 
-VarDeclList ::= (VarDeclarations) VarDeclList VarDecl  
-				|
-				(NoVarDecl)/* epsilon */ 
-				;
-				
-VarDecl ::= (VarDecl) Type:varType IDENT:varName SEMI 
-;
+VarDeclList     ::= (VarDeclarations) VarDeclList VarDecl
+				    |
+				    (NoVarDecl); /* epsilon */
 
-Type ::= (Type) IDENT:typeName 
-;
+VarDecl         ::= (VarDecl) Type:varType IDENT:varName SEMI;
 
-MethodDeclList ::= (MethodDeclarations) MethodDeclList MethodDecl
+Type            ::= (Type) IDENT:typeName;
+
+MethodDeclList  ::= (MethodDeclarations) MethodDeclList MethodDecl
 					|
-					(NoMethodDecl)/* epsilon */
-					;
+					(NoMethodDecl); /* epsilon */
 
-MethodDecl ::= (MethodDecl) MethodTypeName
-			   LPAREN FormPars RPAREN VarDeclList LBRACE StatementList RBRACE 
-			   ;
+MethodDecl      ::= (MethodDecl) MethodTypeName
+			        LPAREN FormPars RPAREN VarDeclList LBRACE StatementList RBRACE;
 
-MethodTypeName ::= (MethodTypeName) Type:retType IDENT:methName
-;
+MethodTypeName  ::= (MethodTypeName) Type:retType IDENT:methName;
 
-FormPars ::= (FormParams) FormalParamList | (NoFormParam) /* epsilon */ ;
+FormPars        ::= (FormParams) FormalParamList | (NoFormParam); /* epsilon */
 
 FormalParamList ::= (FormalParamDecls) FormalParamList COMMA FormalParamDecl
 					|
-					(SingleFormalParamDecl) FormalParamDecl
-					;
+					(SingleFormalParamDecl) FormalParamDecl;
 					
-FormalParamDecl ::= (FormalParamDecl) Type IDENT ;
+FormalParamDecl ::= (FormalParamDecl) Type IDENT;
 
-StatementList ::= (Statements) StatementList Statement 
+StatementList   ::= (Statements) StatementList Statement
 					|
-				  (NoStmt) /* epsilon */
-				  ;
+				    (NoStmt); /* epsilon */
 
-Statement ::= (MatchedStmt) Matched | (UnmachedStmt) Unmatched ;
+Statement       ::= (MatchedStmt) Matched | (UnmachedStmt) Unmatched;
 
-Unmatched ::= (UnmatchedIf) IF Expr Statement | (UnmatchedIfElse) IF Expr Matched ELSE Unmatched;
-	
-				  
-Matched ::= (Assignment) Designator:dest EQUAL Expr:e SEMI 
-			  |
-			  (ErrAssignment) Designator EQUAL error SEMI
-			  {: parser.log.debug("Uspesan oporavak od greske pri dodeli vrednosti."); :}
-			  |
-			  (PrintStmt) PRINT LPAREN Expr RPAREN SEMI 
-			  |
-			  (ReturnExpr) RETURN Expr:t SEMI
-			  |
-			  (ReturnNoExpr) RETURN SEMI
-			  | 
-			  (MatchedIf) IF Expr Matched ELSE Matched
-			  |
-			  (ProcCall) Designator:func LPAREN ActualPars RPAREN SEMI
-			  ;
+Unmatched       ::= (UnmatchedIf) IF Expr Statement | (UnmatchedIfElse) IF Expr Matched ELSE Unmatched;
+
+Matched         ::= (Assignment) Designator:dest EQUAL Expr:e SEMI
+			    |
+			    (ErrAssignment) Designator EQUAL error SEMI
+			    {: parser.log.debug("Uspesan oporavak od greske pri dodeli vrednosti."); :}
+			    |
+			    (PrintStmt) PRINT LPAREN Expr RPAREN SEMI
+			    |
+			    (ReturnExpr) RETURN Expr:t SEMI
+			    |
+			    (ReturnNoExpr) RETURN SEMI
+			    |
+			    (MatchedIf) IF Expr Matched ELSE Matched
+			    |
+			    (ProcCall) Designator:func LPAREN ActualPars RPAREN SEMI;
 			  
-Expr ::= (AddExpr) Expr:te Addop Term:t
-		 |
-		 (TermExpr) Term:t
-		 ;
+Expr            ::= (AddExpr) Expr:te Addop Term:t
+                |
+		        (TermExpr) Term:t;
 
-Term ::= (Term) Factor:t 
-;
+Term            ::= (Term) Factor:t;
 
-Factor ::= (Const) NUMBER
-			|
-		   (Var) Designator:d
-		    |
-		   (FuncCall) Designator:func LPAREN ActualPars RPAREN
-		   ;
+Factor          ::= (Const) NUMBER
+			    |
+		        (Var) Designator:d
+		        |
+		        (FuncCall) Designator:func LPAREN ActualPars RPAREN;
 
-ActualPars ::= (Actuals) ActualParamList 
+ActualPars      ::= (Actuals) ActualParamList
 				| 
-			   (NoActuals) /* epsilon */ 
-			   ;
-			   
+			    (NoActuals); /* epsilon */
+
 ActualParamList ::= (ActualParams) ActualParamList COMMA Expr
 					|
-					(ActualParam) Expr
-					;
+					(ActualParam) Expr;
 
-Designator ::= (Designator) IDENT:name
-;
+Designator      ::= (Designator) IDENT:name;
 
-Addop ::= (Addop) PLUS ;
+Addop           ::= (Addop) PLUS;
