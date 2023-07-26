@@ -63,17 +63,27 @@ terminal Integer NUMBER ;
 terminal String IDENT ;
 terminal String CHAR;
 
-nonterminal MethodDeclList, VarDecl;
+nonterminal VarDecl;
 nonterminal FormalParamList, FormalParamDecl, FormPars, ActualPars, ActualParamList; 
 nonterminal StatementList, Statement, Addop;
 nonterminal Unmatched, Matched;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Obj Program, ProgName, Designator, MethodDecl, MethodTypeName; 
-nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Expr, Factor, VarDeclList; 
+nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Expr, Factor, VarDeclList;
 
-Program         ::= (Program) PROG ProgName:p VarDeclList LBRACE MethodDeclList RBRACE;
+// new nonterminal
+nonterminal StaticDeclList, GlobalStart, MethodDeclList;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj StaticDecl;
 
-ProgName        ::= (ProgName) IDENT:pName;
+Program 		::= (Program) PROG ProgName StaticDeclList GlobalStart MethodDeclList RBRACE;
+
+GlobalStart 	::= (GlobalStart) LBRACE;
+
+ProgName 		::= (ProgName) IDENT:progName;
+
+StaticDeclList 	::= (StatictDeclList) StaticDeclList StaticDecl
+					|
+					(NoStaticDecl);
 
 VarDeclList     ::= (VarDeclarations) VarDeclList VarDecl
 				    |
