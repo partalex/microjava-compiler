@@ -65,19 +65,20 @@ terminal String CHAR;
 
 nonterminal VarDecl;
 nonterminal FormalParamList, FormalParamDecl, FormPars, ActualPars, ActualParamList;
-nonterminal StatementList, Statement, Addop;
+nonterminal StatementList, Statement, AddOp;
 nonterminal Unmatched, Matched;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Obj Program, ProgName, Designator, MethodDecl, MethodTypeName;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Expr, Factor, VarDeclList;
 
 // new nonterminal
+nonterminal rs.etf.pp1.symboltable.concepts.Obj StaticDecl, ClassName, ConstDeclaration, VarDeclaration, Method, DesigParts, DesigAdditional, DesigName;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct ConstVal, VarType, MethodType, CondTernary, Ternary, Condition, ExprNonTer, AddTerm, CondFact, CondTerm;
 nonterminal StaticDeclList, GlobalStart, MethodDeclList;
-nonterminal rs.etf.pp1.symboltable.concepts.Obj StaticDecl, ClassName, ConstDeclaration, VarDeclaration, Method;
-nonterminal rs.etf.pp1.symboltable.concepts.Struct ConstVal, VarType, MethodType, CondTernary;
 nonterminal ConstType, ConstList, VarList, VarListComma, OptionalArray;
 nonterminal OptionalExtends, FieldList, Methods, Field, FormParamList, Statements, FormalParam, FormParams, FormParamsComma;
-nonterminal If, Else, MulOp, RelOp, AssignOp, OptMinus, OptNumPrint, Question, Doubledot;
+nonterminal If, Else, MulOp, RelOp, AssignOp, OptMinus, OptNumPrint, Question, Doubledot, OptActPartsOpt, OptExpr, ActParts, ActPartsOpt;
+nonterminal DesignatorStatement;
 
 Program 		    ::= (Program) PROG ProgName StaticDeclList GlobalStart MethodDeclList RBRACE;
 
@@ -168,6 +169,8 @@ MethodType			::= (TVoid) VOID
 					    |
 					    (MType) Type;
 
+Type                ::= (Type) IDENT:typeName;
+
 ConstVal 		    ::= (NumConst) NUMBER
 				        |
 				        (CharConst) CHAR
@@ -192,8 +195,6 @@ VarDeclList         ::= (VarDeclarations) VarDeclList VarDecl
 				        (NoVarDecl); /* epsilon */
 
 VarDecl             ::= (VarDecl) Type:varType IDENT:varName SEMI;
-
-Type                ::= (Type) IDENT:typeName;
 
 MethodDecl          ::= (MethodDecl) MethodTypeName LPAREN FormPars RPAREN VarDeclList LBRACE StatementList RBRACE;
 
@@ -225,18 +226,6 @@ Matched             ::= (Assignment) Designator:dest EQUAL Expr:e SEMI
 			            |
 			            (ProcCall) Designator:func LPAREN ActualPars RPAREN SEMI;
 
-Expr                ::= (AddExpr) Expr:te Addop Term:t
-                        |
-		                (TermExpr) Term:t;
-
-Term                ::= (Term) Factor:t;
-
-Factor              ::= (Const) NUMBER
-			            |
-		                (Var) Designator:d
-		                |
-		                (FuncCall) Designator:func LPAREN ActualPars RPAREN;
-
 ActualPars          ::= (Actuals) ActualParamList
 				        |
 			            (NoActuals); /* epsilon */
@@ -244,10 +233,88 @@ ActualPars          ::= (Actuals) ActualParamList
 ActualParamList     ::= (ActualParams) ActualParamList COMMA Expr
 					    |
 					    (ActualParam) Expr;
-
-Designator          ::= (Designator) IDENT:name;
-
 // TODO - dole je gotovo
+
+DesignatorStatement ::= (DesigAssign) Designator AssignOp Expr
+					    |
+					    (DesigMethod) Designator LPAREN ActPartsOpt RPAREN
+                        |
+                        (DesigPlusPlus) Designator PLUSPLUS
+					    |
+					    (DesigMinusMinus) Designator MINUSMINUS;
+
+Designator			::= (Designator) DesigName DesigAdditional;
+
+DesigName			::= (DesigName) IDENT:desigName;
+
+DesigAdditional		::= (DesigAddit) DesigAdditional DesigParts
+					    |
+					    (NoDesigAddit);
+
+DesigParts			::= (DesigId) DOT IDENT:partName
+					    |
+					    (DesigArr) LSQBRACE Expr RSQBRACE;
+
+OptActPartsOpt		::= (OActPO) LPAREN ActPartsOpt RPAREN
+					    |
+					    (NoOptActParts);
+
+ActPartsOpt			::= (ActPartsO) ActParts
+					    |
+					    (NoActParts);
+
+ActParts 			::= (ActPartsC) ActParts COMMA Expr
+					    |
+					    (ActPartsE) Expr;
+
+OptExpr				::= (ExprO) Expr
+					    |
+					    (NoExpr);
+
+AddTerm				::= (AddTermA) AddTerm AddOp Term
+					    |
+					    (NoAddTerm);
+
+Factor				::= (FactorDes) Designator OptActPartsOpt
+					    |
+					    (FactorConst) ConstVal
+					    |
+					    (FactorNewClass) NEW Type
+					    |
+					    (FactorNewArray) NEW Type LSQBRACE Expr RSQBRACE
+					    |
+					    (FactorExpr) LPAREN Expr RPAREN;
+
+Term 				::= (TermM) Term MulOp Factor
+					    |
+					    (TermF) Factor;
+
+CondTernary			::=	(CondCond) LPAREN Condition RPAREN
+					    |
+					    (CondTer) LPAREN Ternary RPAREN
+					    |
+					    error RPAREN:l  {: parser.report_error("Sintaksna greska u uslovu na liniji " + lleft, null); :};
+
+Condition 			::= (ConditionC) Condition OR CondTerm
+					    |
+					    (ConditionT) CondTerm;
+
+CondTerm			::= (CondTermC) CondTerm AND CondFact
+					    |
+					    (CondTermT) CondFact;
+
+CondFact 			::= (CondFactE) ExprNonTer
+					    |
+					    (CondFactR) ExprNonTer RelOp ExprNonTer;
+
+Expr 				::= (ExprT) ExprNonTer
+					    |
+					    (ExprCond) Ternary;
+
+ExprNonTer			::= (ExprNonT) OptMinus Term AddTerm;
+
+Ternary				::= (Ternary) Condition Question Expr Doubledot Expr;
+
 Question			::= (Question) QUESTION;
 
 Doubledot			::= (Doubledot) DOUBLEDOT;
@@ -274,7 +341,7 @@ RelOp				::= (RelOpE) EQUALSTO
 					    |
 						(RelOpEG) EGREATER;
 
-Addop               ::= (Addop) PLUS
+AddOp               ::= (AddOpP) PLUS
 					    |
                         (AddOpM) MINUS;
 
