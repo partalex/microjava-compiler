@@ -53,32 +53,30 @@ scan with {:
 :}
 
 terminal PROG, BREAK, CLASS, CONST, IF, WHILE, NEW, ELSE, PRINT, READ, RETURN, VOID, EXTENDS, CONTINUE;
-terminal EQUALSTO, DIFFERENT, GREATER, EGREATER, LESS, ELESS;
-terminal PLUS, MINUS, MUL, DIV, MOD;
-terminal AND, OR;
-terminal EQUAL, PLUSPLUS, MINUSMINUS;
 terminal SEMI, COMMA, DOT, LPAREN, RPAREN, LBRACE, RBRACE, LSQBRACE, RSQBRACE, QUESTION, DOUBLEDOT;
+terminal EQUALSTO, DIFFERENT, GREATER, EGREATER, LESS, ELESS, AND, OR;
+terminal PLUS, MINUS, MUL, DIV, MOD, EQUAL, PLUSPLUS, MINUSMINUS;
 terminal String BOOL;
-terminal Integer NUMBER ;
-terminal String IDENT ;
+terminal Integer NUMBER;
+terminal String IDENT;
 terminal String CHAR;
 
 nonterminal VarDecl;
 nonterminal FormalParamList, FormalParamDecl, FormPars, ActualPars, ActualParamList;
 nonterminal StatementList, Statement, AddOp;
 nonterminal Unmatched, Matched;
-
-nonterminal rs.etf.pp1.symboltable.concepts.Obj Program, ProgName, Designator, MethodDecl, MethodTypeName;
-nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Expr, Factor, VarDeclList;
-
-// new nonterminal
-nonterminal rs.etf.pp1.symboltable.concepts.Obj StaticDecl, ClassName, ConstDeclaration, VarDeclaration, Method, DesigParts, DesigAdditional, DesigName;
-nonterminal rs.etf.pp1.symboltable.concepts.Struct ConstVal, VarType, MethodType, CondTernary, Ternary, Condition, ExprNonTer, AddTerm, CondFact, CondTerm;
 nonterminal StaticDeclList, GlobalStart, MethodDeclList;
 nonterminal ConstType, ConstList, VarList, VarListComma, OptionalArray;
 nonterminal OptionalExtends, FieldList, Methods, Field, FormParamList, Statements, FormalParam, FormParams, FormParamsComma;
 nonterminal If, Else, MulOp, RelOp, AssignOp, OptMinus, OptNumPrint, Question, Doubledot, OptActPartsOpt, OptExpr, ActParts, ActPartsOpt;
 nonterminal DesignatorStatement, While;
+
+nonterminal rs.etf.pp1.symboltable.concepts.Obj Program, ProgName, Designator, MethodDecl, MethodTypeName, StaticDecl, ClassName;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj ConstDeclaration, VarDeclaration, Method, DesigParts, DesigAdditional, DesigName;
+
+nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Expr, Factor, VarDeclList, ConstVal, VarType, MethodType;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct CondTernary, Ternary, Condition, ExprNonTer, AddTerm, CondFact, CondTerm;
+
 
 Program 		    ::= (Program) PROG ProgName StaticDeclList GlobalStart MethodDeclList RBRACE;
 
@@ -186,54 +184,30 @@ Unmatched           ::= (UnmatchedIf) If CondTernary Statement
                         (UnmatchedIfElse) If CondTernary Matched Else Unmatched;
 
 If					::= (If) IF;
+
 Else 				::= (Else) ELSE;
 
-// TODO ////////////////////////////////////////////////////////////////////////////////////////
+Matched 			::= (StatementD) DesignatorStatement SEMI
+                        |
+                        error SEMI:l {: parser.report_error("Izvrsen oporavak zbog lose dodele do ; u liniji " + lleft, null); :}
+                        |
+                        (StatementIf) If CondTernary Matched Else Matched
+                        |
+                        (StatementBreak) BREAK SEMI
+                        |
+                        (StatementContinue) CONTINUE SEMI
+                        |
+                        (StatementReturn) RETURN OptExpr SEMI
+                        |
+                        (StatementRead) READ LPAREN Designator RPAREN SEMI
+                        |
+                        (StatementPrint) PRINT LPAREN Expr OptNumPrint RPAREN SEMI
+                        |
+                        (StatementStatement) LBRACE Statements RBRACE;
 
-VarDeclList         ::= (VarDeclarations) VarDeclList VarDecl
-				        |
-				        (NoVarDecl); /* epsilon */
-
-VarDecl             ::= (VarDecl) Type:varType IDENT:varName SEMI;
-
-MethodDecl          ::= (MethodDecl) MethodTypeName LPAREN FormPars RPAREN VarDeclList LBRACE StatementList RBRACE;
-
-FormPars            ::= (FormParams) FormalParamList | (NoFormParam); /* epsilon */
-
-FormalParamList     ::= (FormalParamDecls) FormalParamList COMMA FormalParamDecl
+Statements			::= (StatementsNew) Statements Statement
 					    |
-					    (SingleFormalParamDecl) FormalParamDecl;
-
-FormalParamDecl     ::= (FormalParamDecl) Type IDENT;
-
-StatementList       ::= (Statements) StatementList Statement
-					    |
-				        (NoStmt); /* epsilon */
-
-
-Matched             ::= (Assignment) Designator:dest EQUAL Expr:e SEMI
-			            |
-			            (ErrAssignment) Designator EQUAL error SEMI
-			            {: parser.log.debug("Uspesan oporavak od greske pri dodeli vrednosti."); :}
-			            |
-			            (PrintStmt) PRINT LPAREN Expr RPAREN SEMI
-			            |
-			            (ReturnExpr) RETURN Expr:t SEMI
-			            |
-			            (ReturnNoExpr) RETURN SEMI
-			            |
-			            (MatchedIf) If Expr Matched Else Matched
-			            |
-			            (ProcCall) Designator:func LPAREN ActualPars RPAREN SEMI;
-
-ActualPars          ::= (Actuals) ActualParamList
-				        |
-			            (NoActuals); /* epsilon */
-
-ActualParamList     ::= (ActualParams) ActualParamList COMMA Expr
-					    |
-					    (ActualParam) Expr;
-// TODO - dole je gotovo
+					    (NoStatements);
 
 While				::= (While) WHILE;
 
