@@ -73,86 +73,107 @@ nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Expr, Factor, Var
 
 // new nonterminal
 nonterminal StaticDeclList, GlobalStart, MethodDeclList;
-nonterminal rs.etf.pp1.symboltable.concepts.Obj StaticDecl;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj StaticDecl, ClassName, ConstDeclaration;
+nonterminal ConstType, ConstList, VarList;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct ConstVal, VarType;
 
-Program 		::= (Program) PROG ProgName StaticDeclList GlobalStart MethodDeclList RBRACE;
+Program 		    ::= (Program) PROG ProgName StaticDeclList GlobalStart MethodDeclList RBRACE;
 
-GlobalStart 	::= (GlobalStart) LBRACE;
+GlobalStart 	    ::= (GlobalStart) LBRACE;
 
-ProgName 		::= (ProgName) IDENT:progName;
+ProgName 		    ::= (ProgName) IDENT:progName;
 
-StaticDeclList 	::= (StatictDeclList) StaticDeclList StaticDecl
-					|
-					(NoStaticDecl);
+StaticDeclList 	    ::= (StatictDeclList) StaticDeclList StaticDecl
+					    |
+					    (NoStaticDecl);
 
-VarDeclList     ::= (VarDeclarations) VarDeclList VarDecl
-				    |
-				    (NoVarDecl); /* epsilon */
+StaticDecl 			::= (ConstDecls) CONST ConstType ConstList SEMI
+					|	(VarDecls) VarType VarList SEMI
+                    ;
+//					|	error SEMI:l {: parser.report_error("Sintaksa greska deklaracije globalne promenljive na liniji " + lleft, null); :}
+//					|	(ClassDecls) CLASS ClassName OptionalExtends FieldList Methods RBRACE;
 
-VarDecl         ::= (VarDecl) Type:varType IDENT:varName SEMI;
+ConstList 		    ::= (ConstListDecl) ConstList COMMA ConstDeclaration
+				    |	(ConstD) ConstDeclaration;
 
-Type            ::= (Type) IDENT:typeName;
+ConstDeclaration    ::= (ConstDeclaration) IDENT:constName EQUAL ConstVal:constVal;
 
-MethodDeclList  ::= (MethodDeclarations) MethodDeclList MethodDecl
-					|
-					(NoMethodDecl); /* epsilon */
+ConstVal 		    ::= (NumConst) NUMBER
+				    |	(CharConst) CHAR
+				    |	(BoolConst) BOOL;
 
-MethodDecl      ::= (MethodDecl) MethodTypeName
-			        LPAREN FormPars RPAREN VarDeclList LBRACE StatementList RBRACE;
+ConstType		    ::= (ConstType) Type;
 
-MethodTypeName  ::= (MethodTypeName) Type:retType IDENT:methName;
+ClassName		    ::= (ClassName) IDENT:className;
 
-FormPars        ::= (FormParams) FormalParamList | (NoFormParam); /* epsilon */
+VarDeclList         ::= (VarDeclarations) VarDeclList VarDecl
+				        |
+				        (NoVarDecl); /* epsilon */
 
-FormalParamList ::= (FormalParamDecls) FormalParamList COMMA FormalParamDecl
-					|
-					(SingleFormalParamDecl) FormalParamDecl;
+VarDecl             ::= (VarDecl) Type:varType IDENT:varName SEMI;
+
+Type                ::= (Type) IDENT:typeName;
+
+MethodDeclList      ::= (MethodDeclarations) MethodDeclList MethodDecl
+					    |
+					    (NoMethodDecl); /* epsilon */
+
+MethodDecl          ::= (MethodDecl) MethodTypeName
+			            LPAREN FormPars RPAREN VarDeclList LBRACE StatementList RBRACE;
+
+MethodTypeName      ::= (MethodTypeName) Type:retType IDENT:methName;
+
+FormPars            ::= (FormParams) FormalParamList | (NoFormParam); /* epsilon */
+
+FormalParamList     ::= (FormalParamDecls) FormalParamList COMMA FormalParamDecl
+					    |
+					    (SingleFormalParamDecl) FormalParamDecl;
 					
-FormalParamDecl ::= (FormalParamDecl) Type IDENT;
+FormalParamDecl     ::= (FormalParamDecl) Type IDENT;
 
-StatementList   ::= (Statements) StatementList Statement
-					|
-				    (NoStmt); /* epsilon */
+StatementList       ::= (Statements) StatementList Statement
+					    |
+				        (NoStmt); /* epsilon */
 
-Statement       ::= (MatchedStmt) Matched | (UnmachedStmt) Unmatched;
+Statement           ::= (MatchedStmt) Matched | (UnmachedStmt) Unmatched;
 
-Unmatched       ::= (UnmatchedIf) IF Expr Statement | (UnmatchedIfElse) IF Expr Matched ELSE Unmatched;
+Unmatched           ::= (UnmatchedIf) IF Expr Statement | (UnmatchedIfElse) IF Expr Matched ELSE Unmatched;
 
-Matched         ::= (Assignment) Designator:dest EQUAL Expr:e SEMI
-			        |
-			        (ErrAssignment) Designator EQUAL error SEMI
-			        {: parser.log.debug("Uspesan oporavak od greske pri dodeli vrednosti."); :}
-			        |
-			        (PrintStmt) PRINT LPAREN Expr RPAREN SEMI
-			        |
-			        (ReturnExpr) RETURN Expr:t SEMI
-			        |
-			        (ReturnNoExpr) RETURN SEMI
-			        |
-			        (MatchedIf) IF Expr Matched ELSE Matched
-			        |
-			        (ProcCall) Designator:func LPAREN ActualPars RPAREN SEMI;
+Matched             ::= (Assignment) Designator:dest EQUAL Expr:e SEMI
+			            |
+			            (ErrAssignment) Designator EQUAL error SEMI
+			            {: parser.log.debug("Uspesan oporavak od greske pri dodeli vrednosti."); :}
+			            |
+			            (PrintStmt) PRINT LPAREN Expr RPAREN SEMI
+			            |
+			            (ReturnExpr) RETURN Expr:t SEMI
+			            |
+			            (ReturnNoExpr) RETURN SEMI
+			            |
+			            (MatchedIf) IF Expr Matched ELSE Matched
+			            |
+			            (ProcCall) Designator:func LPAREN ActualPars RPAREN SEMI;
 			  
-Expr            ::= (AddExpr) Expr:te Addop Term:t
-                    |
-		            (TermExpr) Term:t;
+Expr                ::= (AddExpr) Expr:te Addop Term:t
+                        |
+		                (TermExpr) Term:t;
 
-Term            ::= (Term) Factor:t;
+Term                ::= (Term) Factor:t;
 
-Factor          ::= (Const) NUMBER
-			        |
-		            (Var) Designator:d
-		            |
-		            (FuncCall) Designator:func LPAREN ActualPars RPAREN;
+Factor              ::= (Const) NUMBER
+			            |
+		                (Var) Designator:d
+		                |
+		                (FuncCall) Designator:func LPAREN ActualPars RPAREN;
 
-ActualPars      ::= (Actuals) ActualParamList
-				    |
-			        (NoActuals); /* epsilon */
+ActualPars          ::= (Actuals) ActualParamList
+				        |
+			            (NoActuals); /* epsilon */
 
-ActualParamList ::= (ActualParams) ActualParamList COMMA Expr
-					|
-					(ActualParam) Expr;
+ActualParamList     ::= (ActualParams) ActualParamList COMMA Expr
+					    |
+					    (ActualParam) Expr;
 
-Designator      ::= (Designator) IDENT:name;
+Designator          ::= (Designator) IDENT:name;
 
-Addop           ::= (Addop) PLUS;
+Addop               ::= (Addop) PLUS;
