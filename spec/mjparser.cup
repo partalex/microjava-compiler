@@ -73,9 +73,9 @@ nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Expr, Factor, Var
 
 // new nonterminal
 nonterminal StaticDeclList, GlobalStart, MethodDeclList;
-nonterminal rs.etf.pp1.symboltable.concepts.Obj StaticDecl, ClassName, ConstDeclaration;
-nonterminal ConstType, ConstList, VarList;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj StaticDecl, ClassName, ConstDeclaration, VarDeclaration;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct ConstVal, VarType;
+nonterminal ConstType, ConstList, VarList, VarListComma, OptionalArray;
 
 Program 		    ::= (Program) PROG ProgName StaticDeclList GlobalStart MethodDeclList RBRACE;
 
@@ -98,9 +98,21 @@ ConstList 		    ::= (ConstListDecl) ConstList COMMA ConstDeclaration
 
 ConstDeclaration    ::= (ConstDeclaration) IDENT:constName EQUAL ConstVal:constVal;
 
+VarList 			::= (VarListDecl) VarListComma VarDeclaration;
+
+VarListComma		::= (VarListCom) VarList COMMA
+                        | 	error COMMA:l {: parser.report_error("Sintaksa greska deklaracije promenljive na liniji " + lleft, null); :};
+
+VarType 			::= (VarType) Type;
+
+VarDeclaration 		::= (VarDeclaration) IDENT:varName OptionalArray;
+
+OptionalArray		::= (Array) LSQBRACE RSQBRACE
+					    |	(NoArray);
+
 ConstVal 		    ::= (NumConst) NUMBER
-				    |	(CharConst) CHAR
-				    |	(BoolConst) BOOL;
+				        |	(CharConst) CHAR
+				        |	(BoolConst) BOOL;
 
 ConstType		    ::= (ConstType) Type;
 
