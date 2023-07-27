@@ -175,7 +175,7 @@ Statement           ::= (MatchedStmt) Matched
 
 Unmatched           ::= (UnmatchedIf) If CondTernary Statement
                         |
-                        (UnmatchedIfElse) If CondTernary Matched Else Unmatched;
+                        (UnmatchedElse) If CondTernary Matched Else Unmatched;
 
 If					::= (If) IF;
 
