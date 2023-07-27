@@ -78,7 +78,7 @@ nonterminal StaticDeclList, GlobalStart, MethodDeclList;
 nonterminal ConstType, ConstList, VarList, VarListComma, OptionalArray;
 nonterminal OptionalExtends, FieldList, Methods, Field, FormParamList, Statements, FormalParam, FormParams, FormParamsComma;
 nonterminal If, Else, MulOp, RelOp, AssignOp, OptMinus, OptNumPrint, Question, Doubledot, OptActPartsOpt, OptExpr, ActParts, ActPartsOpt;
-nonterminal DesignatorStatement;
+nonterminal DesignatorStatement, While;
 
 Program 		    ::= (Program) PROG ProgName StaticDeclList GlobalStart MethodDeclList RBRACE;
 
@@ -234,6 +234,8 @@ ActualParamList     ::= (ActualParams) ActualParamList COMMA Expr
 					    |
 					    (ActualParam) Expr;
 // TODO - dole je gotovo
+
+While				::= (While) WHILE;
 
 DesignatorStatement ::= (DesigAssign) Designator AssignOp Expr
 					    |
