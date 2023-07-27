@@ -95,7 +95,7 @@ StaticDecl 			::= (ConstDecls) CONST ConstType ConstList SEMI
 					    error SEMI:l {: parser.report_error("Sintaksa greska deklaracije globalne promenljive na liniji " + lleft, null); :}
 					    |
 					    (ClassDecls) CLASS ClassName OptionalExtends FieldList Methods RBRACE;
-// TODO - klasa mora da sadrzi ctor
+// TODO - dodati ctor
 
 ConstType		    ::= (ConstType) Type;
 
@@ -204,6 +204,7 @@ Matched 			::= (StatementD) DesignatorStatement SEMI
                         (StatementPrint) PRINT LPAREN Expr OptNumPrint RPAREN SEMI
                         |
                         (StatementStatement) LBRACE Statements RBRACE;
+// TODO - Dodati foraech
 
 Statements			::= (StatementsNew) Statements Statement
 					    |
