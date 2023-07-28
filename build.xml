@@ -50,7 +50,8 @@
         <replace dir="src" value="rs.ac.bg.etf.pp1.ast" token="src.rs.ac.bg.etf.pp1.ast" summary="true"/>
     </target>
 
-    <target name="compile" depends="repackage">
+<!--    <target name="compile" depends="repackage">-->
+    <target name="compile">
         <javac srcdir="src/rs/ac/bg/etf/pp1" includeantruntime="false">
             <classpath>
                 <pathelement path="lib/JFlex.jar"/>

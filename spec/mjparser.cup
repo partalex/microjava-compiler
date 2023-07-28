@@ -63,13 +63,13 @@ terminal String CHAR;
 
 nonterminal RelOp, AssignOp, OptMinus, OptNumPrint, Question, Doubledot, OptActPartsOpt, OptExpr, ActParts, ActPartsOpt, DesignatorStatement;
 nonterminal OptionalExtends, FieldList, Methods, Field, FormParamList, Statements, FormalParam, FormParams, FormParamsComma, MulOp, While;
-nonterminal VarDecl, FormalParamList, FormalParamDecl, FormPars, ActualPars, ActualParamList, StatementList, Statement, AddOp, Unmatched;
+nonterminal Statement, AddOp, Unmatched;
 nonterminal Matched, StaticDeclList, GlobalStart, MethodDeclList, ConstType, ConstList, VarList, VarListComma, OptionalArray, If, Else;
 
-nonterminal rs.etf.pp1.symboltable.concepts.Obj Program, ProgName, Designator, MethodDecl, MethodTypeName, StaticDecl, ClassName;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj Program, ProgName, Designator, MethodTypeName, StaticDecl, ClassName;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj ConstDeclaration, VarDeclaration, Method, DesigParts, DesigAdditional, DesigName;
 
-nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Expr, Factor, VarDeclList, ConstVal, VarType, MethodType;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct Type, Term, Expr, Factor, ConstVal, VarType, MethodType;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct CondTernary, Ternary, Condition, ExprNonTer, AddTerm, CondFact, CondTerm;
 
 Program 		    ::= (Program) PROG ProgName StaticDeclList GlobalStart MethodDeclList RBRACE;
