@@ -12,7 +12,7 @@
                 <exclude name="CounterVisitor.java"/>
                 <exclude name="MyDumpSymbolTableVisitor.java"/>
                 <exclude name="Compiler.java"/>
-                <exclude name="Primer3.java"/>
+                <exclude name="TestSyntax.java"/>
             </fileset>
         </delete>
         <delete>
