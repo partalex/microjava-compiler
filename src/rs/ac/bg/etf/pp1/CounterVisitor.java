@@ -1,8 +1,8 @@
 package rs.ac.bg.etf.pp1;
 
-import rs.ac.bg.etf.pp1.ast.FormalParamDecl;
-import rs.ac.bg.etf.pp1.ast.VarDecl;
-import rs.ac.bg.etf.pp1.ast.VisitorAdaptor;
+import java.util.ArrayList;
+import java.util.List;
+import rs.ac.bg.etf.pp1.ast.*;
 
 public class CounterVisitor extends VisitorAdaptor {
 	
