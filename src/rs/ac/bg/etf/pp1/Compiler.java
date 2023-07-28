@@ -46,8 +46,8 @@ public class Compiler {
 
 
                 // ispis prepoznatih programskih konstrukcija
-                SemanticPass v = new SemanticPass();
-                prog.traverseBottomUp(v);
+                SemanticPass semanticPass = new SemanticPass();
+                prog.traverseBottomUp(semanticPass);
 
                 //log.info(" Print count calls = " + v.printCallCount);
 
@@ -56,13 +56,13 @@ public class Compiler {
                 log.info("===================================");
                 // Tab.dump();
 
-                if (!p.errorDetected && v.passed()) {
+                if (!p.errorDetected && semanticPass.passed()) {
                     //File objFile = new File("test/program.obj");
                     File objFile = new File(args[1]);
                     if (objFile.exists()) objFile.delete();
 
                     CodeGenerator codeGenerator = new CodeGenerator();
-                    Code.dataSize = v.nVars;
+                    Code.dataSize = semanticPass.nVars;
                     prog.traverseBottomUp(codeGenerator);
 
                     Code.mainPc = codeGenerator.getMainPc();
