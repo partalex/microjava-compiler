@@ -12,6 +12,7 @@
                 <exclude name="CounterVisitor.java"/>
                 <exclude name="MyDumpSymbolTableVisitor.java"/>
                 <exclude name="Compiler.java"/>
+                <exclude name="Primer3.java"/>
             </fileset>
         </delete>
         <delete>
