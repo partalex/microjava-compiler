@@ -19,7 +19,7 @@ public class Compiler {
     public static void main(String[] args) throws Exception {
 
         Logger log = Logger.getLogger(Compiler.class);
-        Reader br = null;
+        Reader bufferedReader = null;
 
         try {
 
@@ -28,16 +28,16 @@ public class Compiler {
 
             log.info("Compiling source file: " + sourceCode.getAbsolutePath());
 
-            br = new BufferedReader(new FileReader(sourceCode));
-            Yylex lexer = new Yylex(br);
+            bufferedReader = new BufferedReader(new FileReader(sourceCode));
+            Yylex lexer = new Yylex(bufferedReader);
 
-            MJParser p = new MJParser(lexer);
-            Symbol s = p.parse();  //pocetak parsiranja
+            MJParser mjParser = new MJParser(lexer);
+            Symbol symbol = mjParser.parse();  //pocetak parsiranja
 
-            if (p.errorDetected)
+            if (mjParser.errorDetected)
                 log.info("Postoji sintaksna greska");
             else {
-                Program prog = (Program) (s.value);
+                Program prog = (Program) (symbol.value);
                 //Tab.init();
                 MyTab.myInit();
                 // ispis sintaksnog stabla
@@ -56,7 +56,7 @@ public class Compiler {
                 log.info("===================================");
                 // Tab.dump();
 
-                if (!p.errorDetected && semanticPass.passed()) {
+                if (!mjParser.errorDetected && semanticPass.passed()) {
                     //File objFile = new File("test/program.obj");
                     File objFile = new File(args[1]);
                     if (objFile.exists()) objFile.delete();
@@ -75,8 +75,8 @@ public class Compiler {
                 MyTab.dump();
             }
         } finally {
-            if (br != null) try {
-                br.close();
+            if (bufferedReader != null) try {
+                bufferedReader.close();
             } catch (IOException error) {
                 log.error(error.getMessage(), error);
             }
