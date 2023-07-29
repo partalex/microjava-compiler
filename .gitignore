@@ -6,3 +6,4 @@
 /spec/mjparser_astbuild.cup
 /bin/
 test/program.obj
+spec/my-mjparser_astbuild.cup

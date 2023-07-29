@@ -63,8 +63,8 @@ terminal String CHAR;
 
 nonterminal RelOp, AssignOp, OptMinus, OptNumPrint, Question, Doubledot, OptActPartsOpt, OptExpr, ActParts, ActPartsOpt, DesignatorStatement;
 nonterminal OptionalExtends, FieldList, Methods, Field, FormParamList, Statements, FormalParam, FormParams, FormParamsComma, MulOp, While;
-nonterminal Statement, AddOp, Unmatched, Foreach;
 nonterminal Matched, StaticDeclList, GlobalStart, MethodDecl, ConstType, ConstList, VarList, VarListComma, OptionalArray, If, Else;
+nonterminal Statement, AddOp, Unmatched, Foreach, ConstructorDecl, ConstructorDeclList;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Obj Program, ProgName, Designator, MethodTypeName, StaticDecl, ClassName;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj ConstDeclaration, VarDeclaration, Method, DesigParts, DesigAdditional, DesigName;
@@ -85,6 +85,14 @@ StaticDecl 			::= (ConstDecls) CONST ConstType ConstList SEMI
                     |   (VarDecls) VarType VarList SEMI
                     |   error SEMI:l {: parser.report_error("Sintaksa greska deklaracije globalne promenljive na liniji " + lleft, null); :}
                     |   (ClassDecls) CLASS ClassName OptionalExtends FieldList Methods RBRACE;
+
+ConstructorDeclList ::= (ConstructorDeclListClass) ConstructorDeclList ConstructorDecl
+//                    |   (ConstructorDeclListClass) ConstructorDecl
+//                    |   (NoConstructorDeclListClass)
+                    |    ConstructorDecl
+                    ;
+
+ConstructorDecl     ::= (ConstructorDeclClass) ClassName FormParamList RPAREN Matched LPAREN;
 
 ConstType		    ::= (ConstType) Type;
 
@@ -116,7 +124,7 @@ FieldList			::= (FieldDecls) Field FieldList
 Field				::= (Fld)  VarType VarList SEMI
                     |   error SEMI:l {: parser.report_error("Sintaksa greska field decl na liniji " + lleft, null); :};
 
-Methods				::= (MethodsClass) LBRACE MethodDecl RBRACE
+Methods				::= (MethodsClass) LBRACE ConstructorDeclList MethodDecl RBRACE
                     |   (NoMethods);
 
 MethodDecl		    ::= (MethodDeclarations) MethodDecl Method

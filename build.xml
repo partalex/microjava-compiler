@@ -19,6 +19,7 @@
             <fileset dir="spec">
                 <exclude name="mjlexer.flex"/>
                 <exclude name="mjparser.cup"/>
+                <exclude name="my-mjparser.cup"/>
             </fileset>
         </delete>
     </target>
@@ -41,7 +42,8 @@
             <arg value="MJParser"/>
             <arg value="-dump_states"/>
             <arg value="-buildtree"/>
-            <arg value="spec/mjparser.cup"/>
+<!--            <arg value="spec/mjparser.cup"/>-->
+            <arg value="spec/my-mjparser.cup"/>
         </java>
     </target>
 
