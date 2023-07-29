@@ -111,7 +111,6 @@ OptionalArray	    ::= (ArrayClass) LSQBRACE RSQBRACE
 
 Type                ::= (TypeClass) IDENT:type;
 
-
 VarDecl             ::= (VarDeclClass) VarDecl COMMA VarDeclOne
                     |   (VarDeclClass) VarDeclOne;
 
@@ -133,7 +132,6 @@ Mulop				::= (MulClass) MUL
 					| 	(DivClass) DIV
 					|	(ModClass) MOD;
 
-
 FormPars            ::= (FormParsClass) FormPars COMMA Type IDENT:name OptionalArray
                     |   (FormParsClass) Type IDENT:name OptionalArray;
 
@@ -141,13 +139,11 @@ FormPars            ::= (FormParsClass) FormPars COMMA Type IDENT:name OptionalA
 ActPars             ::= (ActPars) ActPars COMMA Expr
                     |   (ActPars) Expr;
 
-
 Condition           ::= (ConditionClass) Condition OR CondTerm
                     |   (ConditionClass) CondTerm;
 
 CondFact            ::= (CondFactClass) Expr Relop Expr
                     |   (CondFactClass) Expr;
-
 
 MulopFactor         ::= (MulopFactorClass) MulopFactor Mulop Factor
                     |   (MulopFactorClass) Factor
