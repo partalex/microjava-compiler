@@ -85,7 +85,6 @@ StaticDecl 			::= (ConstDecls) CONST ConstType ConstList SEMI
                     |   (VarDecls) VarType VarList SEMI
                     |   error SEMI:l {: parser.report_error("Sintaksa greska deklaracije globalne promenljive na liniji " + lleft, null); :}
                     |   (ClassDecls) CLASS ClassName OptionalExtends FieldList Methods RBRACE;
-// TODO - dodati ctor
 
 ConstType		    ::= (ConstType) Type;
 
@@ -96,9 +95,8 @@ ConstList 		    ::= (ConstListDecl) ConstList COMMA ConstDeclaration
 
 ConstDeclaration    ::= (ConstDeclaration) IDENT:constName EQUAL ConstVal:constVal;
 
-VarList 			::= (VarListDecl) VarListComma VarDeclaration;
-
-VarListComma		::= (VarListCom) VarList COMMA
+VarList 			::= VarList COMMA VarDeclaration
+                    |   VarDeclaration
                     |   error COMMA:l {: parser.report_error("Sintaksa greska deklaracije promenljive na liniji " + lleft, null); :};
 
 VarType 			::= (VarType) Type;
