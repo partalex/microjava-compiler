@@ -84,11 +84,12 @@ nonterminal CondTerm;
 nonterminal AndCondFact;
 nonterminal Designator;
 nonterminal IdentOrExpr;
+nonterminal Factor;
+nonterminal ConstDecl;
 
 // TODO - new
 nonterminal MethodDecl;
-nonterminal ConstDecl;
-nonterminal Factor;
+nonterminal ConstDeclPart;
 
 
 Program 		    ::= (ProgramClass) PROG IDENT:program StaticDecl LBRACE MethodDecl RBRACE;
@@ -169,8 +170,19 @@ IdentOrExpr         ::= (IdentExprClass) IdentOrExpr DOT IDENT
 
 Designator          ::= (DesignatorClass) IDENT IdentOrExpr;
 
+Factor              ::= (FactorClass) Designator LPAREN ActPars RPAREN
+                    |   (FactorClass) Designator LPAREN RPAREN
+                    |   (FactorClass) Designator
+                    |   (FactorClass) ConstVal
+                    |   (FactorClass) NEW Type LSQBRACE Expr RSQBRACE
+                    |   (FactorClass) NEW Type LPAREN ActPars RPAREN
+                    |   (FactorClass) NEW Type LPAREN RPAREN
+                    |   (FactorClass) LPAREN Expr RPAREN;
+
+ConstDecl           ::= (ConstDeclClass) CONST Type IDENT:name EQUAL ConstVal:value ConstDeclPart SEMI;
+
 // TODO - down
 
-
-ConstDecl           ::= (ConstDeclClass) CONST Type EQUAL ConstVal:value;
-
+ConstDeclPart       ::= (ConstDeclPartClass) COMMA IDENT:name EQUAL ConstVal:value
+//                    |   (ConstDeclPartClass) ConstDeclPart COMMA IDENT:name EQUAL ConstVal:value
+                    |   (ConstDeclPartClass);
