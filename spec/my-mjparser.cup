@@ -60,8 +60,59 @@ terminal Integer NUMBER;
 terminal String IDENT;
 terminal String CHAR;
 
-nonterminal Program, StaticDecl, ConstDecl, VarDecl, ClassDecl;
+// finished
+nonterminal Program;
+nonterminal StaticDecl;
+nonterminal ConstVal;
+nonterminal OptionalArray;
+nonterminal Type;
+nonterminal VarDecl;
+nonterminal VarDeclOne;
+nonterminal Assignop;
+nonterminal Relop;
+nonterminal Addop;
+nonterminal Mulop;
 
-Program 		    ::= (ProgramClass) PROG IDENT:programName StaticDecl LBRACE MethodDecl RBRACE;
+// TODO - new
+nonterminal MethodDecl;
+nonterminal ConstDecl;
+nonterminal ClassDecl;
+
+Program 		    ::= (ProgramClass) PROG IDENT:program StaticDecl LBRACE MethodDecl RBRACE;
+
+ConstVal 			::= (NumConstClass) NUMBER
+					|	(CharConstClass) CHAR
+					|	(BoolConstClass) BOOL;
 
 StaticDecl          ::= (StaticDeclClass) ConstDecl VarDecl ClassDecl;
+
+OptionalArray	    ::= (ArrayClass) LSQBRACE RSQBRACE
+				    |   (NoArrayClass);
+
+Type                ::= (TypeClass) IDENT:type;
+
+ConstDecl           ::= (ConstDeclClass) CONST Type EQUAL ConstVal:value;
+
+VarDecl             ::= (VarDeclClass) VarDecl COMMA VarDeclOne
+                    |   (VarDeclClass) VarDeclOne;
+
+VarDeclOne          ::= (VarDeclOneClass) Type IDENT:name OptionalArray;
+
+Assignop		    ::= (EqualClass) EQUAL;
+
+Relop				::= (EqualstoClass) EQUALSTO
+					|	(DifferentClass) DIFFERENT
+					|	(LessClass) LESS
+					|	(ElessClass) ELESS
+					|	(GreaterClass) GREATER
+					|	(EgreaterClass) EGREATER;
+
+Addop				::= (PlusClass) PLUS
+					|	(MinusClass) MINUS;
+
+Mulop				::= (MulClass) MUL
+					| 	(DivClass) DIV
+					|	(ModClass) MOD;
+
+
+// TODO - down
