@@ -8,7 +8,7 @@ public class TestSyntax {
     public static void main(String[] args) throws IOException {
 
         Reader br = null;
-        File sourceCode = new File("test/moj_program.mj");
+        File sourceCode = new File("test/program.mj");
         br = new BufferedReader(new FileReader(sourceCode));
         Yylex lexer = new Yylex(br);
 
