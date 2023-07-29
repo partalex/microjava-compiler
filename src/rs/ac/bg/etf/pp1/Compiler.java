@@ -23,8 +23,7 @@ public class Compiler {
 
         try {
 
-            File sourceCode = new File("test/program.mj");
-//          File sourceCode = new File(args[0]);
+            File sourceCode = new File(args[0]);
 
             log.info("Compiling source file: " + sourceCode.getAbsolutePath());
 
@@ -57,7 +56,6 @@ public class Compiler {
                 // Tab.dump();
 
                 if (!mjParser.errorDetected && semanticPass.passed()) {
-                    //File objFile = new File("test/program.obj");
                     File objFile = new File(args[1]);
                     if (objFile.exists()) objFile.delete();
 
