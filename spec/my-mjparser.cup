@@ -86,10 +86,16 @@ nonterminal Designator;
 nonterminal IdentOrExpr;
 nonterminal Factor;
 nonterminal ConstDecl;
+nonterminal MethodDecl;
+nonterminal StatementOpt;
+nonterminal DesignatorStFirst;
+nonterminal DesignatorStSec;
+nonterminal DesignatorStatement;
 
 // TODO - new
-nonterminal MethodDecl;
 nonterminal ConstDeclPart;
+nonterminal VarDeclPart;
+nonterminal Statement;
 
 
 Program 		    ::= (ProgramClass) PROG IDENT:program StaticDecl LBRACE MethodDecl RBRACE;
@@ -181,8 +187,45 @@ Factor              ::= (FactorClass) Designator LPAREN ActPars RPAREN
 
 ConstDecl           ::= (ConstDeclClass) CONST Type IDENT:name EQUAL ConstVal:value ConstDeclPart SEMI;
 
+StatementOpt        ::= (StatementOptClass) StatementOpt Statement
+                    |   (StatementOptClass) Statement
+                    |   (StatementOptClass);
+
+MethodDecl          ::= (MethodDeclClass) Type IDENT LPAREN FormPars RPAREN VarDeclPart LBRACE StatementOpt RBRACE
+                    |   (MethodDeclClass) VOID IDENT LPAREN FormPars RPAREN VarDeclPart LBRACE StatementOpt RBRACE
+                    |   (MethodDeclClass) Type IDENT LPAREN RPAREN VarDeclPart LBRACE StatementOpt RBRACE
+                    |   (MethodDeclClass) VOID IDENT LPAREN RPAREN VarDeclPart LBRACE StatementOpt RBRACE;
+
+DesignatorStatement ::= (DesignatorStatementClass) DesignatorStFirst
+                    |   (DesignatorStatementClass) LSQBRACE Designator DesignatorStSec RSQBRACE EQUAL Designator
+                    |   (DesignatorStatementClass) LSQBRACE DesignatorStSec RSQBRACE EQUAL Designator;
+
+
+DesignatorStFirst   ::= (DesignatorStFirstClass) Designator Assignop Expr
+                    |   (DesignatorStFirstClass) Designator LPAREN RPAREN
+                    |   (DesignatorStFirstClass) Designator LPAREN ActPars RPAREN
+                    |   (DesignatorStFirstClass) Designator PLUSPLUS
+                    |   (DesignatorStFirstClass) Designator MINUSMINUS;
+
+DesignatorStSec     ::= (DesignatorStSecClass) COMMA Designator
+                    |   (DesignatorStSecClass) COMMA
+                    |   (DesignatorStSecClass) DesignatorStSec COMMA
+                    |   (DesignatorStSecClass) DesignatorStSec COMMA DesignatorStSec
+                    |   (DesignatorStSecClass);
+
 // TODO - down
 
 ConstDeclPart       ::= (ConstDeclPartClass) COMMA IDENT:name EQUAL ConstVal:value
-//                    |   (ConstDeclPartClass) ConstDeclPart COMMA IDENT:name EQUAL ConstVal:value
                     |   (ConstDeclPartClass);
+//                    |   (ConstDeclPartClass) ConstDeclPart COMMA IDENT:name EQUAL ConstVal:value
+
+VarDeclPart         ::= (VarDeclPartClass) VarDecl
+                    |   (VarDeclPartClass);
+//                    |   (VarDeclPartClass) VarDeclPart VarDecl
+
+
+
+
+
+
+
