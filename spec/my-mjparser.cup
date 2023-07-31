@@ -78,10 +78,8 @@ nonterminal Condition;
 nonterminal CondFact;
 nonterminal Term;
 nonterminal MulopFactor;
-nonterminal AddopTerm;
 nonterminal Expr;
 nonterminal CondTerm;
-nonterminal AndCondFact;
 nonterminal Designator;
 nonterminal IdentOrExpr;
 nonterminal Factor;
@@ -92,11 +90,10 @@ nonterminal DesignatorStSec;
 nonterminal DesignatorStatement;
 nonterminal if;
 nonterminal else;
-
-// TODO - new
 nonterminal ConstDeclPart;
 nonterminal ConstDecl;
-nonterminal VarDeclPart;
+
+// TODO - new
 nonterminal Statement;
 
 
@@ -113,10 +110,8 @@ OptionalArray	    ::= (ArrayClass) LSQBRACE RSQBRACE
 
 Type                ::= (TypeClass) IDENT:type;
 
-VarDecl             ::= (VarDeclClass) VarDecl COMMA VarDeclOne
-                    |   (VarDeclClass) VarDeclOne;
-
-VarDeclOne          ::= (VarDeclOneClass) Type IDENT:name OptionalArray;
+VarDecl             ::= (ManyVarDeclClass) Type IDENT:name OptionalArray VarDecl
+                    |   (OneVarDeclClass) COMMA IDENT:name OptionalArray;
 
 Assignop		    ::= (EqualClass) EQUAL;
 
@@ -134,45 +129,35 @@ Mulop				::= (MulClass) MUL
 					| 	(DivClass) DIV
 					|	(ModClass) MOD;
 
-FormPars            ::= (FormParsClass) FormPars COMMA Type IDENT:name OptionalArray
-                    |   (FormParsClass) Type IDENT:name OptionalArray;
+FormPars            ::= (ManyFormParsClass) FormPars COMMA Type IDENT:name OptionalArray
+                    |   (OneFormParsClass) Type IDENT:name OptionalArray;
 
 
-ActPars             ::= (ActPars) ActPars COMMA Expr
-                    |   (ActPars) Expr;
+ActPars             ::= (ManyActPars) ActPars COMMA Expr
+                    |   (OneActPars) Expr;
 
-Condition           ::= (ConditionClass) Condition OR CondTerm
-                    |   (ConditionClass) CondTerm;
+Condition           ::= (ManyConditionClass) Condition OR CondTerm
+                    |   (OneConditionClass) CondTerm;
 
-CondFact            ::= (CondFactClass) Expr Relop Expr
-                    |   (CondFactClass) Expr;
+CondTerm            ::= (ManyCondTermClass) CondTerm AND CondFact
+                    |   (OneCondTermClass) CondFact;
 
-MulopFactor         ::= (MulopFactorClass) MulopFactor Mulop Factor
-                    |   (MulopFactorClass) Factor
-                    |   (MulopFactorClass);
+CondFact            ::= (TwoCondFactClass) Expr Relop Expr
+                    |   (OneCondFactClass) Expr;
 
-Term                ::= (TermClass) Factor MulopFactor;
+Term                ::= (ManyTermClass) Term Mulop Factor
+                    |   (OneTermClass) Factor Mulop Factor;
 
-AddopTerm           ::= (AddopTermClass) AddopTerm Addop Term
-                    |   (AddopTermClass) Addop Term
-                    |   (AddopTermClass);
+Expr                ::= (ManyMinusExprClass) MINUS Term Expr
+                    |   (ManyExprClass) Expr Term
+                    |   (OneExprClass) Addop Term;
 
-Expr                ::= (ExprClass) MINUS Term AddopTerm
-                    |   (ExprClass) Term AddopTerm;
+Designator          ::= (ManyDesignatorClass) IDENT Designator
+                    |   (DotDesignatorClass) DOT IDENT
+                    |   (BraceDesignatorClass) LSQBRACE Expr RSQBRACE;
 
-AndCondFact         ::= (AndCondFactClass) AndCondFact AND CondFact
-                    |   (AndCondFactClass) AND CondFact
-                    |   (AndCondFactClass);
-
-CondTerm            ::= (CondTermClass) CondFact AndCondFact;
-
-IdentOrExpr         ::= (IdentExprClass) IdentOrExpr DOT IDENT
-                    |   (IdentExprClass) DOT IDENT
-                    |   (IdentExprClass) IdentOrExpr LSQBRACE Expr RSQBRACE
-                    |   (IdentExprClass) LSQBRACE Expr RSQBRACE
-                    |   (IdentExprClass);
-
-Designator          ::= (DesignatorClass) IDENT IdentOrExpr;
+// TODO - Review start ----------------------------------------------------------------------------------------------------
+// TODO - Review end  ----------------------------------------------------------------------------------------------------
 
 Factor              ::= (FactorClass) Designator LPAREN ActPars RPAREN
                     |   (FactorClass) Designator LPAREN RPAREN
@@ -184,14 +169,13 @@ Factor              ::= (FactorClass) Designator LPAREN ActPars RPAREN
                     |   (FactorClass) LPAREN Expr RPAREN;
 
 
-StatementOpt        ::= (StatementOptClass) StatementOpt Statement
-                    |   (StatementOptClass) Statement
-                    |   (StatementOptClass);
+StatementOpt        ::= (ManyStatementOptClass) StatementOpt Statement
+                    |   (OneStatementOptClass) Statement;
 
-MethodDecl          ::= (MethodDeclClass) Type IDENT LPAREN FormPars RPAREN VarDeclPart LBRACE StatementOpt RBRACE
-                    |   (MethodDeclClass) VOID IDENT LPAREN FormPars RPAREN VarDeclPart LBRACE StatementOpt RBRACE
-                    |   (MethodDeclClass) Type IDENT LPAREN RPAREN VarDeclPart LBRACE StatementOpt RBRACE
-                    |   (MethodDeclClass) VOID IDENT LPAREN RPAREN VarDeclPart LBRACE StatementOpt RBRACE;
+MethodDecl          ::= (MethodDeclClass) Type IDENT LPAREN FormPars RPAREN VarDecl LBRACE StatementOpt RBRACE
+                    |   (MethodDeclClass) VOID IDENT LPAREN FormPars RPAREN VarDecl LBRACE StatementOpt RBRACE
+                    |   (MethodDeclClass) Type IDENT LPAREN RPAREN VarDecl LBRACE StatementOpt RBRACE
+                    |   (MethodDeclClass) VOID IDENT LPAREN RPAREN VarDecl LBRACE StatementOpt RBRACE;
 
 DesignatorStatement ::= (DesignatorStatementClass) DesignatorStFirst
                     |   (DesignatorStatementClass) LSQBRACE Designator DesignatorStSec RSQBRACE EQUAL Designator
@@ -214,22 +198,13 @@ if					::= (IfClass) IF;
 
 else 				::= (ElseClass) ELSE;
 
+ConstDecl           ::= (ConstDeclClass) CONST Type ConstDeclPart SEMI;
+
+ConstDeclPart       ::= (ManyConstDeclPartClass) IDENT:name EQUAL ConstVal:value COMMA ConstDeclPart
+                    |   (OneConstDeclPartClass) IDENT:name EQUAL ConstVal:value;
+
 // TODO - Conflict start ----------------------------------------------------------------------------------------------------------
-
-// ConstDecl = "const" Type ident"="(numConst | charConst | boolConst) {, ident "=" (numConst | charConst | boolConst)} ";".
-
-ConstDecl           ::= (ConstDeclClass) CONST Type IDENT:name EQUAL ConstVal:value ConstDeclPart SEMI;
-
-ConstDeclPart       ::= (ConstDeclPartClass) ConstDeclPart COMMA IDENT:name EQUAL ConstVal:value
-                    |   (ConstDeclPartClass) COMMA IDENT:name EQUAL ConstVal:value // ako zakomentarisem ovu liniju nemam conflict
-                    |   (ConstDeclPartClass);
-
 // TODO - Conflict end  ----------------------------------------------------------------------------------------------------------
-
-VarDeclPart         ::= (VarDeclPartClass) VarDecl
-//                    |   (VarDeclPartClass) VarDeclPart VarDecl
-                    |   (VarDeclPartClass);
-
 //Statement           ::= (StatementClass) DesignatorStatement SEMI
 //                    |   (StatementClass) if LPAREN Condition RPAREN Statement
 //                    |   (StatementClass) if LPAREN Condition RPAREN Statement else Statement
