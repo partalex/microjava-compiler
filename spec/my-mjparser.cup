@@ -90,7 +90,7 @@ nonterminal ConstDeclPart;
 nonterminal ConstDecl;
 nonterminal Statement;
 nonterminal VarDeclOpt;
-nonterminal StatementOpt;
+nonterminal StatementOneOrMany;
 nonterminal ConstVarDecl;
 nonterminal MethodDeclList;
 nonterminal AddopTermMany;
@@ -187,16 +187,16 @@ Factor              ::= (FactorParenParsClass) Designator LPAREN ActPars RPAREN
                     |   (FactorNewTypeParenClass) NEW Type LPAREN RPAREN
                     |   (FactorParenExprClass) LPAREN Expr RPAREN;
 
-StatementOpt        ::= (ManyStatementOptClass) StatementOpt Statement
+StatementOneOrMany        ::= (ManyStatementOptClass) StatementOneOrMany Statement
                     |   (OneStatementOptClass) Statement;
 
 VarDeclOpt          ::= (ManyStatementOptClass) VarDeclOpt VarDecl
                     |   (OneVarDeclOptOptClass) VarDecl;
 
-MethodDecl          ::= (MethodDeclClass) Type IDENT LPAREN FormPars RPAREN VarDeclOpt LBRACE StatementOpt RBRACE
-                    |   (MethodDeclClass) VOID IDENT LPAREN FormPars RPAREN VarDeclOpt LBRACE StatementOpt RBRACE
-                    |   (MethodDeclClass) Type IDENT LPAREN RPAREN VarDeclOpt LBRACE StatementOpt RBRACE
-                    |   (MethodDeclClass) VOID IDENT LPAREN RPAREN VarDeclOpt LBRACE StatementOpt RBRACE;
+MethodDecl          ::= (MethodDeclClass) Type IDENT LPAREN FormPars RPAREN VarDeclOpt LBRACE StatementOneOrMany RBRACE
+                    |   (MethodDeclClass) VOID IDENT LPAREN FormPars RPAREN VarDeclOpt LBRACE StatementOneOrMany RBRACE
+                    |   (MethodDeclClass) Type IDENT LPAREN RPAREN VarDeclOpt LBRACE StatementOneOrMany RBRACE
+                    |   (MethodDeclClass) VOID IDENT LPAREN RPAREN VarDeclOpt LBRACE StatementOneOrMany RBRACE;
 
 DesignatorStFirst   ::= (DesignatorStFirstClass) Designator Assignop Expr
                     |   (DesignatorStFirstClass) Designator LPAREN RPAREN
@@ -222,20 +222,26 @@ ConstDecl           ::= (ConstDeclClass) CONST Type ConstDeclPart SEMI;
 ConstDeclPart       ::= (ManyConstDeclPartClass) IDENT:name EQUAL ConstVal:value COMMA ConstDeclPart
                     |   (OneConstDeclPartClass) IDENT:name EQUAL ConstVal:value;
 
+
+//StatementIf			::= (UnmatchedIfClass) If Condition Statement
+//					|	(UnmatchedElseClass) If Condition StatementIfElse Else StatementIf;
+//
+//StatementIfElse     ::=	(StatementIfClass) If Condition StatementIfElse Else StatementIfElse
+
+
 // TODO - Conflict start    --------------------------------------------------------------------------------------------
-Statement           ::= (StatementClass) DesignatorStatement SEMI
-                    |   (StatementClass) if LPAREN Condition RPAREN Statement
-//                    |   (StatementClass) if LPAREN Condition RPAREN Statement else Statement
-                    |   (StatementClass) WHILE LPAREN Condition RPAREN Statement
-                    |   (StatementClass) BREAK SEMI
-                    |   (StatementClass) CONTINUE SEMI
-                    |   (StatementClass) RETURN Expr SEMI
-                    |   (StatementClass) RETURN SEMI
-                    |   (StatementClass) READ LPAREN Designator RPAREN SEMI
-                    |   (StatementClass) PRINT LPAREN Expr COMMA NUMBER RPAREN SEMI
-                    |   (StatementClass) PRINT LPAREN Expr RPAREN SEMI
-                    |   (StatementClass) LBRACE StatementOpt RBRACE
-                    |   (StatementClass) LBRACE RBRACE;
+Statement           ::= (StatementDesignatorClass) DesignatorStatement SEMI
+                    |   (StatementIfClass) if LPAREN Condition RPAREN Statement
+                    |   (StatementWhileClass) WHILE LPAREN Condition RPAREN Statement
+                    |   (StatementBreakClass) BREAK SEMI
+                    |   (StatementContinueClass) CONTINUE SEMI
+                    |   (StatementExprClass) RETURN Expr SEMI
+                    |   (StatementReturnClass) RETURN SEMI
+                    |   (StatementReadClass) READ LPAREN Designator RPAREN SEMI
+                    |   (StatementPrintManyExprClass) PRINT LPAREN Expr COMMA NUMBER RPAREN SEMI
+                    |   (StatementPrintOneExprClass) PRINT LPAREN Expr RPAREN SEMI
+                    |   (StatementStatementManyClass) LBRACE StatementOneOrMany RBRACE
+                    |   (StatementEmptyClass) LBRACE RBRACE;
 
 //                    | Designator "." "foreach" "(" ident "=>" Statement ")" ";" * za B i C nivo
 // TODO - Conflict end  ------------------------------------------------------------------------------------------------
