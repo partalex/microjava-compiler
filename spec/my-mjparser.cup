@@ -62,7 +62,7 @@ terminal String CHAR;
 
 // finished
 nonterminal Program;
-nonterminal StaticDecl;
+nonterminal ConstVarDeclList;
 nonterminal ConstVal;
 nonterminal OptionalArray;
 nonterminal Type;
@@ -94,16 +94,25 @@ nonterminal ConstDecl;
 nonterminal Statement;
 nonterminal VarDeclOpt;
 nonterminal StatementOpt;
+nonterminal ConstVarDecl;
+nonterminal MethodDeclList;
 
 // TODO - new
 
-Program 		    ::= (ProgramClass) PROG IDENT:program StaticDecl LBRACE MethodDecl RBRACE;
+Program 		    ::= (ProgramClass) PROG IDENT:program ConstVarDeclList LBRACE MethodDeclList RBRACE;
+
+MethodDeclList		::= (MethodDeclListClass) MethodDeclList MethodDecl
+					|	(MethodDeclListNoClass);
 
 ConstVal 			::= (NumConstClass) NUMBER
 					|	(CharConstClass) CHAR
 					|	(BoolConstClass) BOOL;
 
-StaticDecl          ::= (StaticDeclClass) ConstDecl VarDecl;
+ConstVarDeclList    ::= (ConstVarDeclClass) ConstVarDeclList ConstVarDecl
+                    |   (ConstVarDeclNoClass);
+
+ConstVarDecl        ::= (ConstVarDeclConstDeclClass) ConstDecl
+                    |   (ConstVarDeclVarDeclClass) VarDecl;
 
 OptionalArray	    ::= (ArrayClass) LSQBRACE RSQBRACE
 				    |   (NoArrayClass);
