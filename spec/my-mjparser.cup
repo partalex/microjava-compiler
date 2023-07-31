@@ -52,7 +52,7 @@ scan with {:
 :}
 
 terminal PROG, BREAK, CLASS, CONST, IF, WHILE, NEW, ELSE, PRINT, READ, RETURN, VOID, EXTENDS, CONTINUE;
-terminal SEMI, COMMA, DOT, LPAREN, RPAREN, LBRACE, RBRACE, LSQBRACE, RSQBRACE, QUESTION, DOUBLEDOT;
+terminal SEMI, COMMA, DOT, LPAREN, RPAREN, LBRACE, RBRACE, LSQBRACE, RSQBRACE, DOUBLEDOT;
 terminal PLUS, MINUS, MUL, DIV, MOD, EQUAL, PLUSPLUS, MINUSMINUS, FOREACH, LAMBDA;
 terminal EQUALSTO, DIFFERENT, GREATER, EGREATER, LESS, ELESS, AND, OR;
 terminal Integer NUMBER;
@@ -224,5 +224,6 @@ ConstDeclPart       ::= (ManyConstDeclPartClass) IDENT:name EQUAL ConstVal:value
 //                    |   (StatementClass) PRINT LPAREN Expr RPAREN SEMI
 //                    |   (StatementClass) LBRACE StatementOpt RBRACE
 //                    |   (StatementClass) LBRACE RBRACE;
+
 //                    | Designator "." "foreach" "(" ident "=>" Statement ")" ";" * za B i C nivo
 // TODO - Conflict end  ------------------------------------------------------------------------------------------------
