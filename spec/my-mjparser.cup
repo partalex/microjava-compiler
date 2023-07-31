@@ -67,7 +67,6 @@ nonterminal ConstVal;
 nonterminal OptionalArray;
 nonterminal Type;
 nonterminal VarDecl;
-nonterminal VarDeclOne;
 nonterminal Assignop;
 nonterminal Relop;
 nonterminal Addop;
@@ -77,11 +76,9 @@ nonterminal ActPars;
 nonterminal Condition;
 nonterminal CondFact;
 nonterminal Term;
-nonterminal MulopFactor;
 nonterminal Expr;
 nonterminal CondTerm;
 nonterminal Designator;
-nonterminal IdentOrExpr;
 nonterminal Factor;
 nonterminal MethodDecl;
 nonterminal DesignatorStFirst;
@@ -96,6 +93,7 @@ nonterminal VarDeclOpt;
 nonterminal StatementOpt;
 nonterminal ConstVarDecl;
 nonterminal MethodDeclList;
+nonterminal AddopTermMany;
 
 // TODO - new
 
@@ -157,9 +155,23 @@ CondFact            ::= (TwoCondFactClass) Expr Relop Expr
 Term                ::= (ManyTermClass) Term Mulop Factor
                     |   (OneTermClass) Factor Mulop Factor;
 
-Expr                ::= (ManyMinusExprClass) MINUS Term Expr
-                    |   (ManyExprClass) Expr Term
-                    |   (OneExprClass) Addop Term;
+// TODO - Review start      --------------------------------------------------------------------------------------------
+//Expr                ::= (ManyMinusExprClass) MINUS Term Expr
+//                    |   (ManyExprClass) Expr Term
+//                    |   (OneExprClass) Addop Term;
+
+AddopTermMany       ::= (AddopTermOptClass) AddopTermMany Addop Term
+                    |   (AddopTermOptClass) Addop Term;
+
+
+Expr                ::= (ManyMinusExprClass) MINUS Term AddopTermMany
+                    |   (ManyExprClass) MINUS Term
+                    |   (ManyExprClass) Term AddopTermMany
+                    |   (ManyExprClass) Term;
+
+
+// TODO - Review end        --------------------------------------------------------------------------------------------
+
 
 Designator          ::= (ManyDesignatorClass) IDENT Designator
                     |   (DotDesignatorClass) DOT IDENT
@@ -193,11 +205,13 @@ DesignatorStFirst   ::= (DesignatorStFirstClass) Designator Assignop Expr
                     |   (DesignatorStFirstClass) Designator MINUSMINUS;
 
 DesignatorStSec     ::= (DesignatorStSecManyClass) DesignatorStSec COMMA Designator
-                    |   (DesignatorStSecOneClass) COMMA DesignatorStSec;
+                    |   (DesignatorStSecOneClass) COMMA Designator;
 
 DesignatorStatement ::= (DesignatorStatementClass) DesignatorStFirst
                     |   (DesignatorStatementClass) LSQBRACE Designator DesignatorStSec RSQBRACE EQUAL Designator
-                    |   (DesignatorStatementClass) LSQBRACE DesignatorStSec RSQBRACE EQUAL Designator;
+                    |   (DesignatorStatementClass) LSQBRACE Designator RSQBRACE EQUAL Designator
+                    |   (DesignatorStatementClass) LSQBRACE DesignatorStSec RSQBRACE EQUAL Designator
+                    |   (DesignatorStatementClass) LSQBRACE RSQBRACE EQUAL Designator;
 
 if					::= (IfClass) IF;
 
@@ -208,22 +222,20 @@ ConstDecl           ::= (ConstDeclClass) CONST Type ConstDeclPart SEMI;
 ConstDeclPart       ::= (ManyConstDeclPartClass) IDENT:name EQUAL ConstVal:value COMMA ConstDeclPart
                     |   (OneConstDeclPartClass) IDENT:name EQUAL ConstVal:value;
 
-// TODO - Review start      --------------------------------------------------------------------------------------------
-// TODO - Review end        --------------------------------------------------------------------------------------------
 // TODO - Conflict start    --------------------------------------------------------------------------------------------
-//Statement           ::= (StatementClass) DesignatorStatement SEMI
-//                    |   (StatementClass) if LPAREN Condition RPAREN Statement
+Statement           ::= (StatementClass) DesignatorStatement SEMI
+                    |   (StatementClass) if LPAREN Condition RPAREN Statement
 //                    |   (StatementClass) if LPAREN Condition RPAREN Statement else Statement
-//                    |   (StatementClass) WHILE LPAREN Condition RPAREN Statement
-//                    |   (StatementClass) BREAK SEMI
-//                    |   (StatementClass) CONTINUE SEMI
-//                    |   (StatementClass) RETURN Expr SEMI
-//                    |   (StatementClass) RETURN SEMI
-//                    |   (StatementClass) READ LPAREN Designator RPAREN SEMI
-//                    |   (StatementClass) PRINT LPAREN Expr COMMA NUMBER RPAREN SEMI
-//                    |   (StatementClass) PRINT LPAREN Expr RPAREN SEMI
-//                    |   (StatementClass) LBRACE StatementOpt RBRACE
-//                    |   (StatementClass) LBRACE RBRACE;
+                    |   (StatementClass) WHILE LPAREN Condition RPAREN Statement
+                    |   (StatementClass) BREAK SEMI
+                    |   (StatementClass) CONTINUE SEMI
+                    |   (StatementClass) RETURN Expr SEMI
+                    |   (StatementClass) RETURN SEMI
+                    |   (StatementClass) READ LPAREN Designator RPAREN SEMI
+                    |   (StatementClass) PRINT LPAREN Expr COMMA NUMBER RPAREN SEMI
+                    |   (StatementClass) PRINT LPAREN Expr RPAREN SEMI
+                    |   (StatementClass) LBRACE StatementOpt RBRACE
+                    |   (StatementClass) LBRACE RBRACE;
 
 //                    | Designator "." "foreach" "(" ident "=>" Statement ")" ";" * za B i C nivo
 // TODO - Conflict end  ------------------------------------------------------------------------------------------------
