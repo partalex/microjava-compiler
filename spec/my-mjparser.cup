@@ -95,30 +95,37 @@ nonterminal ConstVarDecl;
 nonterminal MethodDeclList;
 nonterminal AddopTermMany;
 nonterminal Label;
+nonterminal DesignatorPart;
+nonterminal StatementOptMany;
+nonterminal VarDeclPartMany;
+nonterminal FormParsPart;
+nonterminal FormParsOptOne;
 // TODO - new
 
 Program 		    ::= (ProgramClass) PROG IDENT:program ConstVarDeclList LBRACE MethodDeclList RBRACE;
 
 MethodDeclList		::= (MethodDeclListClass) MethodDeclList MethodDecl
-					|	(MethodDeclListNoClass);
+					|	(MethodDeclListNoClass) /* epsilon */;
 
 ConstVal 			::= (NumConstClass) NUMBER
 					|	(CharConstClass) CHAR
 					|	(BoolConstClass) BOOL;
 
 ConstVarDeclList    ::= (ConstVarDeclClass) ConstVarDeclList ConstVarDecl
-                    |   (ConstVarDeclNoClass);
+                    |   (ConstVarDeclNoClass) /* epsilon */;
 
 ConstVarDecl        ::= (ConstVarDeclConstDeclClass) ConstDecl
                     |   (ConstVarDeclVarDeclClass) VarDecl;
 
 OptionalArray	    ::= (ArrayClass) LSQBRACE RSQBRACE
-				    |   (NoArrayClass);
+				    |   (NoArrayClass) /* epsilon */;
 
 Type                ::= (TypeClass) IDENT:type;
 
-VarDecl             ::= (ManyVarDeclClass) Type IDENT:name OptionalArray VarDecl
-                    |   (OneVarDeclClass) COMMA IDENT:name OptionalArray;
+VarDeclPartMany         ::= (VarDeclPartClass) VarDeclPartMany COMMA IDENT:name OptionalArray
+                    |   (VarDeclPartNoClass) /* epsilon */;
+
+VarDecl             ::= (ManyVarDeclClass) Type IDENT:name OptionalArray VarDeclPartMany;
 
 Assignop		    ::= (EqualClass) EQUAL;
 
@@ -136,41 +143,38 @@ Mulop				::= (MulClass) MUL
 					| 	(DivClass) DIV
 					|	(ModClass) MOD;
 
-FormPars            ::= (ManyFormParsClass) FormPars COMMA Type IDENT:name OptionalArray
-                    |   (OneFormParsClass) Type IDENT:name OptionalArray;
+FormParsPart        ::= (FormParsPartClass) FormParsPart COMMA Type IDENT:name OptionalArray
+					|	(FormParsPartNoClass) /* epsilon */;
+
+FormPars            ::= (ManyFormParsClass) FormPars Type IDENT:name OptionalArray;
 
 ActPars             ::= (ManyActPars) ActPars COMMA Expr
                     |   (OneActPars) Expr;
 
+
 Condition           ::= (ManyConditionClass) Condition OR CondTerm
                     |   (OneConditionClass) CondTerm;
-
-CondTerm            ::= (ManyCondTermClass) CondTerm AND CondFact
-                    |   (OneCondTermClass) CondFact;
 
 CondFact            ::= (TwoCondFactClass) Expr Relop Expr
                     |   (OneCondFactClass) Expr;
 
-Term                ::= (ManyTermClass) Term Mulop Factor
-                    |   (OneTermClass) Factor Mulop Factor;
+CondTerm            ::= (ManyCondTermClass) CondTerm AND CondFact
+                    |   (OneCondTermClass) CondFact;
 
-// TODO - Review start      --------------------------------------------------------------------------------------------
-//Expr                ::= (ManyMinusExprClass) MINUS Term Expr
-//                    |   (ManyExprClass) Expr Term
-//                    |   (OneExprClass) Addop Term;
+Term                ::= (ManyTermClass) Term Mulop Factor
+                    |   (OneTermClass) Factor;
 
 AddopTermMany       ::= (AddopTermOptClass) AddopTermMany Addop Term
-                    |   (AddopTermOptClass) Addop Term;
+                    |   (AddopTermOptNoClass) /* epsilon */;
 
 Expr                ::= (ManyMinusExprClass) MINUS Term AddopTermMany
-                    |   (ManyExprClass) MINUS Term
-                    |   (ManyExprClass) Term AddopTermMany
-                    |   (ManyExprClass) Term;
-// TODO - Review end        --------------------------------------------------------------------------------------------
+                    |   (ManyExprClass) Term AddopTermMany;
 
-Designator          ::= (ManyDesignatorClass) IDENT Designator
-                    |   (DotDesignatorClass) DOT IDENT
-                    |   (BraceDesignatorClass) LSQBRACE Expr RSQBRACE;
+DesignatorPart      ::= (DesignatorPartClass) DesignatorPart DOT IDENT
+                    |   (DesignatorPartClass) DesignatorPart LSQBRACE Expr RSQBRACE
+                    |   (DesignatorPartClass) /* epsilon */;
+
+Designator          ::= (ManyDesignatorClass) IDENT DesignatorPart;
 
 Factor              ::= (FactorParenParsClass) Designator LPAREN ActPars RPAREN
                     |   (FactorParenClass) Designator LPAREN RPAREN
@@ -181,16 +185,19 @@ Factor              ::= (FactorParenParsClass) Designator LPAREN ActPars RPAREN
                     |   (FactorNewTypeParenClass) NEW Type LPAREN RPAREN
                     |   (FactorParenExprClass) LPAREN Expr RPAREN;
 
-StatementOneOrMany  ::= (ManyStatementOptClass) StatementOneOrMany Statement
-                    |   (OneStatementOptClass) Statement;
+// TODO - Review start      --------------------------------------------------------------------------------------------
+// TODO - Review end        --------------------------------------------------------------------------------------------
+StatementOptMany    ::= (StatementOptClass) StatementOptMany Statement
+                    |   (StatementOptNoClass) /* epsilon */;
 
-VarDeclOpt          ::= (ManyStatementOptClass) VarDeclOpt VarDecl
-                    |   (OneVarDeclOptOptClass) VarDecl;
+FormParsOptOne      ::= (FormParsOptOneClass) FormPars
+                    |   (FormParsOptOneNoClass) /* epsilon */;
 
-MethodDecl          ::= (MethodDeclClass) Type IDENT LPAREN FormPars RPAREN VarDeclOpt LBRACE StatementOneOrMany RBRACE
-                    |   (MethodDeclClass) VOID IDENT LPAREN FormPars RPAREN VarDeclOpt LBRACE StatementOneOrMany RBRACE
-                    |   (MethodDeclClass) Type IDENT LPAREN RPAREN VarDeclOpt LBRACE StatementOneOrMany RBRACE
-                    |   (MethodDeclClass) VOID IDENT LPAREN RPAREN VarDeclOpt LBRACE StatementOneOrMany RBRACE;
+VarDeclOpt          ::= (VarDeclOptClass) VarDeclOpt VarDecl
+                    |   (VarDeclOptNoClass) /* epsilon */;
+
+MethodDecl          ::= (MethodDeclTypeClass) Type IDENT LPAREN FormParsOptOne RPAREN VarDeclOpt LBRACE StatementOptMany RBRACE
+                    |   (MethodDeclVoidClass) VOID IDENT LPAREN FormParsOptOne RPAREN VarDeclOpt LBRACE StatementOptMany RBRACE;
 
 DesignatorStatement ::= (DesignatorStFirstClass) Designator Assignop Expr
                     |   (DesignatorStFirstClass) Designator LPAREN RPAREN
@@ -210,20 +217,20 @@ ConstDeclPart       ::= (ManyConstDeclPartClass) IDENT:name EQUAL ConstVal:value
 Label               ::= (LabelClass) IDENT:name;
 
 // TODO - Conflict start    --------------------------------------------------------------------------------------------
-Statement           ::= (StatementDesignatorClass) DesignatorStatement SEMI
-                    |   (StatementIfClass) if LPAREN Condition RPAREN Statement
+//Statement           ::= (StatementDesignatorClass) DesignatorStatement SEMI
+//                    |   (StatementIfClass) if LPAREN Condition RPAREN Statement
 //                    |   (StatementIfElseClass) if LPAREN Condition RPAREN Statement else Statement  // TODO - conflict
 //                    |   (StatementIfElseClass) Statemtn else Statement                              // TODO - Zakomentarisno ne pravi konflikte
-                    |   (StatementWhileClass) WHILE LPAREN Condition RPAREN Statement
-                    |   (StatementBreakClass) BREAK SEMI
-                    |   (StatementContinueClass) CONTINUE SEMI
-                    |   (StatementExprClass) RETURN Expr SEMI
-                    |   (StatementReturnClass) RETURN SEMI
-                    |   (StatementReadClass) READ LPAREN Designator RPAREN SEMI
-                    |   (StatementPrintManyExprClass) PRINT LPAREN Expr COMMA NUMBER RPAREN SEMI
-                    |   (StatementPrintOneExprClass) PRINT LPAREN Expr RPAREN SEMI
-                    |   (StatementStatementManyClass) LBRACE StatementOneOrMany RBRACE
-                    |   (StatementEmptyClass) LBRACE RBRACE;
+//                    |   (StatementWhileClass) WHILE LPAREN Condition RPAREN Statement
+//                    |   (StatementBreakClass) BREAK SEMI
+//                    |   (StatementContinueClass) CONTINUE SEMI
+//                    |   (StatementExprClass) RETURN Expr SEMI
+//                    |   (StatementReturnClass) RETURN SEMI
+//                    |   (StatementReadClass) READ LPAREN Designator RPAREN SEMI
+//                    |   (StatementPrintManyExprClass) PRINT LPAREN Expr COMMA NUMBER RPAREN SEMI
+//                    |   (StatementPrintOneExprClass) PRINT LPAREN Expr RPAREN SEMI
+//                    |   (StatementStatementManyClass) LBRACE StatementOneOrMany RBRACE
+//                    |   (StatementEmptyClass) LBRACE RBRACE;
 
 //                    | Designator "." "foreach" "(" ident "=>" Statement ")" ";" * za B i C nivo
 // TODO - Conflict end  ------------------------------------------------------------------------------------------------
