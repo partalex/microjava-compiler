@@ -192,20 +192,11 @@ MethodDecl          ::= (MethodDeclClass) Type IDENT LPAREN FormPars RPAREN VarD
                     |   (MethodDeclClass) Type IDENT LPAREN RPAREN VarDeclOpt LBRACE StatementOneOrMany RBRACE
                     |   (MethodDeclClass) VOID IDENT LPAREN RPAREN VarDeclOpt LBRACE StatementOneOrMany RBRACE;
 
-DesignatorStFirst   ::= (DesignatorStFirstClass) Designator Assignop Expr
+DesignatorStatement ::= (DesignatorStFirstClass) Designator Assignop Expr
                     |   (DesignatorStFirstClass) Designator LPAREN RPAREN
                     |   (DesignatorStFirstClass) Designator LPAREN ActPars RPAREN
                     |   (DesignatorStFirstClass) Designator PLUSPLUS
                     |   (DesignatorStFirstClass) Designator MINUSMINUS;
-
-DesignatorStSec     ::= (DesignatorStSecManyClass) DesignatorStSec COMMA Designator
-                    |   (DesignatorStSecOneClass) COMMA Designator;
-
-DesignatorStatement ::= (DesignatorStatementClass) DesignatorStFirst
-                    |   (DesignatorStatementClass) LSQBRACE Designator DesignatorStSec RSQBRACE EQUAL Designator
-                    |   (DesignatorStatementClass) LSQBRACE Designator RSQBRACE EQUAL Designator
-                    |   (DesignatorStatementClass) LSQBRACE DesignatorStSec RSQBRACE EQUAL Designator
-                    |   (DesignatorStatementClass) LSQBRACE RSQBRACE EQUAL Designator;
 
 if					::= (IfClass) IF;
 
