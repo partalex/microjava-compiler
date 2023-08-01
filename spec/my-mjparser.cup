@@ -62,7 +62,6 @@ terminal String CHAR;
 
 // finished
 nonterminal Program;
-nonterminal ConstVarDeclList;
 nonterminal ConstVal;
 nonterminal OptionalArray;
 nonterminal Type;
@@ -91,7 +90,6 @@ nonterminal ConstDecl;
 nonterminal Statement;
 nonterminal VarDeclOpt;
 nonterminal StatementOneOrMany;
-nonterminal ConstVarDecl;
 nonterminal MethodDeclList;
 nonterminal AddopTermMany;
 nonterminal Label;
@@ -100,9 +98,17 @@ nonterminal StatementOptMany;
 nonterminal VarDeclPartMany;
 nonterminal FormParsPart;
 nonterminal FormParsOptOne;
+nonterminal ConstDeclOptMany;
+nonterminal VarDeclOptMany;
 // TODO - new
 
-Program 		    ::= (ProgramClass) PROG IDENT:program ConstVarDeclList LBRACE MethodDeclList RBRACE;
+Program 		    ::= (ProgramClass) PROG IDENT:program ConstDeclOptMany VarDeclOptMany LBRACE MethodDeclList RBRACE;
+
+ConstDeclOptMany    ::= (ConstDeclOptManyClass) ConstDeclOptMany ConstDecl
+					|	(ConstDeclOptNoClass) /* epsilon */;
+
+VarDeclOptMany      ::= (VarDeclOptManyClass) VarDeclOptMany VarDecl
+					|	(VarDeclOptManyClass) /* epsilon */;
 
 MethodDeclList		::= (MethodDeclListClass) MethodDeclList MethodDecl
 					|	(MethodDeclListNoClass) /* epsilon */;
@@ -111,18 +117,12 @@ ConstVal 			::= (NumConstClass) NUMBER
 					|	(CharConstClass) CHAR
 					|	(BoolConstClass) BOOL;
 
-ConstVarDeclList    ::= (ConstVarDeclClass) ConstVarDeclList ConstVarDecl
-                    |   (ConstVarDeclNoClass) /* epsilon */;
-
-ConstVarDecl        ::= (ConstVarDeclConstDeclClass) ConstDecl
-                    |   (ConstVarDeclVarDeclClass) VarDecl;
-
 OptionalArray	    ::= (ArrayClass) LSQBRACE RSQBRACE
 				    |   (NoArrayClass) /* epsilon */;
 
 Type                ::= (TypeClass) IDENT:type;
 
-VarDeclPartMany         ::= (VarDeclPartClass) VarDeclPartMany COMMA IDENT:name OptionalArray
+VarDeclPartMany     ::= (VarDeclPartClass) VarDeclPartMany COMMA IDENT:name OptionalArray
                     |   (VarDeclPartNoClass) /* epsilon */;
 
 VarDecl             ::= (ManyVarDeclClass) Type IDENT:name OptionalArray VarDeclPartMany;
