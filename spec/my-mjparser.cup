@@ -51,7 +51,7 @@ scan with {:
 	return s;
 :}
 
-terminal PROG, BREAK, CLASS, CONST, IF, WHILE, NEW, ELSE, PRINT, READ, RETURN, VOID, EXTENDS, CONTINUE;
+terminal PROG, BREAK, CONST, IF, WHILE, NEW, ELSE, PRINT, READ, RETURN, VOID, CONTINUE;
 terminal SEMI, COMMA, DOT, LPAREN, RPAREN, LBRACE, RBRACE, LSQBRACE, RSQBRACE, DOUBLEDOT;
 terminal PLUS, MINUS, MUL, DIV, MOD, EQUAL, PLUSPLUS, MINUSMINUS, FOREACH, LAMBDA;
 terminal EQUALSTO, DIFFERENT, GREATER, EGREATER, LESS, ELESS, AND, OR;
@@ -94,7 +94,7 @@ nonterminal StatementOneOrMany;
 nonterminal ConstVarDecl;
 nonterminal MethodDeclList;
 nonterminal AddopTermMany;
-
+nonterminal Label;
 // TODO - new
 
 Program 		    ::= (ProgramClass) PROG IDENT:program ConstVarDeclList LBRACE MethodDeclList RBRACE;
@@ -139,7 +139,6 @@ Mulop				::= (MulClass) MUL
 FormPars            ::= (ManyFormParsClass) FormPars COMMA Type IDENT:name OptionalArray
                     |   (OneFormParsClass) Type IDENT:name OptionalArray;
 
-
 ActPars             ::= (ManyActPars) ActPars COMMA Expr
                     |   (OneActPars) Expr;
 
@@ -163,20 +162,15 @@ Term                ::= (ManyTermClass) Term Mulop Factor
 AddopTermMany       ::= (AddopTermOptClass) AddopTermMany Addop Term
                     |   (AddopTermOptClass) Addop Term;
 
-
 Expr                ::= (ManyMinusExprClass) MINUS Term AddopTermMany
                     |   (ManyExprClass) MINUS Term
                     |   (ManyExprClass) Term AddopTermMany
                     |   (ManyExprClass) Term;
-
-
 // TODO - Review end        --------------------------------------------------------------------------------------------
-
 
 Designator          ::= (ManyDesignatorClass) IDENT Designator
                     |   (DotDesignatorClass) DOT IDENT
                     |   (BraceDesignatorClass) LSQBRACE Expr RSQBRACE;
-
 
 Factor              ::= (FactorParenParsClass) Designator LPAREN ActPars RPAREN
                     |   (FactorParenClass) Designator LPAREN RPAREN
@@ -187,7 +181,7 @@ Factor              ::= (FactorParenParsClass) Designator LPAREN ActPars RPAREN
                     |   (FactorNewTypeParenClass) NEW Type LPAREN RPAREN
                     |   (FactorParenExprClass) LPAREN Expr RPAREN;
 
-StatementOneOrMany        ::= (ManyStatementOptClass) StatementOneOrMany Statement
+StatementOneOrMany  ::= (ManyStatementOptClass) StatementOneOrMany Statement
                     |   (OneStatementOptClass) Statement;
 
 VarDeclOpt          ::= (ManyStatementOptClass) VarDeclOpt VarDecl
@@ -222,16 +216,13 @@ ConstDecl           ::= (ConstDeclClass) CONST Type ConstDeclPart SEMI;
 ConstDeclPart       ::= (ManyConstDeclPartClass) IDENT:name EQUAL ConstVal:value COMMA ConstDeclPart
                     |   (OneConstDeclPartClass) IDENT:name EQUAL ConstVal:value;
 
-
-//StatementIf			::= (UnmatchedIfClass) If Condition Statement
-//					|	(UnmatchedElseClass) If Condition StatementIfElse Else StatementIf;
-//
-//StatementIfElse     ::=	(StatementIfClass) If Condition StatementIfElse Else StatementIfElse
-
+Label               ::= (LabelClass) IDENT:name;
 
 // TODO - Conflict start    --------------------------------------------------------------------------------------------
 Statement           ::= (StatementDesignatorClass) DesignatorStatement SEMI
                     |   (StatementIfClass) if LPAREN Condition RPAREN Statement
+//                    |   (StatementIfElseClass) if LPAREN Condition RPAREN Statement else Statement  // TODO - conflict
+//                    |   (StatementIfElseClass) Statemtn else Statement                              // TODO - Zakomentarisno ne pravi konflikte
                     |   (StatementWhileClass) WHILE LPAREN Condition RPAREN Statement
                     |   (StatementBreakClass) BREAK SEMI
                     |   (StatementContinueClass) CONTINUE SEMI
