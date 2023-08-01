@@ -90,7 +90,7 @@ nonterminal ConstDecl;
 nonterminal Statement;
 nonterminal VarDeclOpt;
 nonterminal StatementOneOrMany;
-nonterminal MethodDeclList;
+nonterminal MethodDeclOptMany;
 nonterminal AddopTermMany;
 nonterminal Label;
 nonterminal DesignatorPart;
@@ -102,7 +102,7 @@ nonterminal ConstDeclOptMany;
 nonterminal VarDeclOptMany;
 // TODO - new
 
-Program 		    ::= (ProgramClass) PROG IDENT:program ConstDeclOptMany VarDeclOptMany LBRACE MethodDeclList RBRACE;
+Program 		    ::= (ProgramClass) PROG IDENT:program ConstDeclOptMany VarDeclOptMany LBRACE MethodDeclOptMany RBRACE;
 
 ConstDeclOptMany    ::= (ConstDeclOptManyClass) ConstDeclOptMany ConstDecl
 					|	(ConstDeclOptNoClass) /* epsilon */;
@@ -110,8 +110,8 @@ ConstDeclOptMany    ::= (ConstDeclOptManyClass) ConstDeclOptMany ConstDecl
 VarDeclOptMany      ::= (VarDeclOptManyClass) VarDeclOptMany VarDecl
 					|	(VarDeclOptManyClass) /* epsilon */;
 
-MethodDeclList		::= (MethodDeclListClass) MethodDeclList MethodDecl
-					|	(MethodDeclListNoClass) /* epsilon */;
+MethodDeclOptMany	::= (MethodDeclOptManyClass) MethodDeclOptMany MethodDecl
+					|	(MethodDeclOptManyNoClass) /* epsilon */;
 
 ConstVal 			::= (NumConstClass) NUMBER
 					|	(CharConstClass) CHAR
@@ -150,7 +150,6 @@ FormPars            ::= (ManyFormParsClass) FormPars Type IDENT:name OptionalArr
 
 ActPars             ::= (ManyActPars) ActPars COMMA Expr
                     |   (OneActPars) Expr;
-
 
 Condition           ::= (ManyConditionClass) Condition OR CondTerm
                     |   (OneConditionClass) CondTerm;
