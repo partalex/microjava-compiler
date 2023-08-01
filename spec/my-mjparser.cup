@@ -89,7 +89,6 @@ nonterminal ConstDeclPart;
 nonterminal ConstDecl;
 nonterminal Statement;
 nonterminal VarDeclOpt;
-nonterminal StatementOneOrMany;
 nonterminal MethodDeclOptMany;
 nonterminal AddopTermMany;
 nonterminal Label;
@@ -101,6 +100,8 @@ nonterminal FormParsOptOne;
 nonterminal ConstDeclOptMany;
 nonterminal VarDeclOptMany;
 // TODO - new
+
+//precedence left if, else;
 
 Program 		    ::= (ProgramClass) PROG IDENT:program ConstDeclOptMany VarDeclOptMany LBRACE MethodDeclOptMany RBRACE;
 
@@ -184,8 +185,6 @@ Factor              ::= (FactorParenParsClass) Designator LPAREN ActPars RPAREN
                     |   (FactorNewTypeParenClass) NEW Type LPAREN RPAREN
                     |   (FactorParenExprClass) LPAREN Expr RPAREN;
 
-// TODO - Review start      --------------------------------------------------------------------------------------------
-// TODO - Review end        --------------------------------------------------------------------------------------------
 StatementOptMany    ::= (StatementOptClass) StatementOptMany Statement
                     |   (StatementOptNoClass) /* epsilon */;
 
@@ -215,21 +214,22 @@ ConstDeclPart       ::= (ManyConstDeclPartClass) IDENT:name EQUAL ConstVal:value
 
 Label               ::= (LabelClass) IDENT:name;
 
+// TODO - Review start      --------------------------------------------------------------------------------------------
+// TODO - Review end        --------------------------------------------------------------------------------------------
+
 // TODO - Conflict start    --------------------------------------------------------------------------------------------
-//Statement           ::= (StatementDesignatorClass) DesignatorStatement SEMI
-//                    |   (StatementIfClass) if LPAREN Condition RPAREN Statement
-//                    |   (StatementIfElseClass) if LPAREN Condition RPAREN Statement else Statement  // TODO - conflict
-//                    |   (StatementIfElseClass) Statemtn else Statement                              // TODO - Zakomentarisno ne pravi konflikte
-//                    |   (StatementWhileClass) WHILE LPAREN Condition RPAREN Statement
-//                    |   (StatementBreakClass) BREAK SEMI
-//                    |   (StatementContinueClass) CONTINUE SEMI
-//                    |   (StatementExprClass) RETURN Expr SEMI
-//                    |   (StatementReturnClass) RETURN SEMI
-//                    |   (StatementReadClass) READ LPAREN Designator RPAREN SEMI
-//                    |   (StatementPrintManyExprClass) PRINT LPAREN Expr COMMA NUMBER RPAREN SEMI
-//                    |   (StatementPrintOneExprClass) PRINT LPAREN Expr RPAREN SEMI
-//                    |   (StatementStatementManyClass) LBRACE StatementOneOrMany RBRACE
-//                    |   (StatementEmptyClass) LBRACE RBRACE;
+Statement           ::= (StatementDesignatorClass) DesignatorStatement SEMI
+                    |   (StatementIfClass) if LPAREN Condition RPAREN Statement
+                    |   (StatementIfElseClass) if LPAREN Condition RPAREN Statement else Statement  // TODO - conflict
+                    |   (StatementWhileClass) WHILE LPAREN Condition RPAREN Statement
+                    |   (StatementBreakClass) BREAK SEMI
+                    |   (StatementContinueClass) CONTINUE SEMI
+                    |   (StatementExprClass) RETURN Expr SEMI
+                    |   (StatementReturnClass) RETURN SEMI
+                    |   (StatementReadClass) READ LPAREN Designator RPAREN SEMI
+                    |   (StatementPrintManyExprClass) PRINT LPAREN Expr COMMA NUMBER RPAREN SEMI
+                    |   (StatementPrintOneExprClass) PRINT LPAREN Expr RPAREN SEMI
+                    |   (StatementStatementManyClass) LBRACE StatementOptMany RBRACE;
 
 //                    | Designator "." "foreach" "(" ident "=>" Statement ")" ";" * za B i C nivo
 // TODO - Conflict end  ------------------------------------------------------------------------------------------------
