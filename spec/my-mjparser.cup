@@ -99,10 +99,13 @@ nonterminal FormParsPart;
 nonterminal FormParsOptOne;
 nonterminal ConstDeclOptMany;
 nonterminal VarDeclOptMany;
+nonterminal StatementIf;
+nonterminal StatementIfElse;
+
+precedence left ELSE;
+precedence left IF;
+
 // TODO - new
-
-//precedence left if, else;
-
 Program 		    ::= (ProgramClass) PROG IDENT:program ConstDeclOptMany VarDeclOptMany LBRACE MethodDeclOptMany RBRACE;
 
 ConstDeclOptMany    ::= (ConstDeclOptManyClass) ConstDeclOptMany ConstDecl
@@ -216,11 +219,14 @@ Label               ::= (LabelClass) IDENT:name;
 
 // TODO - Review start      --------------------------------------------------------------------------------------------
 // TODO - Review end        --------------------------------------------------------------------------------------------
-
 // TODO - Conflict start    --------------------------------------------------------------------------------------------
+StatementIf         ::= if LPAREN Condition RPAREN Statement;
+
+StatementIfElse     ::= if LPAREN Condition RPAREN Statement else Statement;
+
 Statement           ::= (StatementDesignatorClass) DesignatorStatement SEMI
-                    |   (StatementIfClass) if LPAREN Condition RPAREN Statement
-                    |   (StatementIfElseClass) if LPAREN Condition RPAREN Statement else Statement  // TODO - conflict
+                    |   (StatementIfClass) StatementIf
+                    |   (StatementIfClass) StatementIfElse
                     |   (StatementWhileClass) WHILE LPAREN Condition RPAREN Statement
                     |   (StatementBreakClass) BREAK SEMI
                     |   (StatementContinueClass) CONTINUE SEMI
