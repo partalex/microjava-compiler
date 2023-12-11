@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/../../programksi-prevodioci-1/microjava-compiler/microjava-complailer.iml" filepath="$PROJECT_DIR$/../../programksi-prevodioci-1/microjava-compiler/microjava-complailer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/MJCompiler.iml" filepath="$PROJECT_DIR$/MJCompiler.iml" />
     </modules>
   </component>
 </project>
