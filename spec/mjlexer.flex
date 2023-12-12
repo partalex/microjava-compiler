@@ -48,6 +48,7 @@ import java_cup.runtime.Symbol;
 "void" 		{ return new_symbol(sym.VOID, yytext()); }
 "continue"	{ return new_symbol(sym.CONTINUE, yytext());}
 "for"	    { return new_symbol(sym.FOR, yytext());}
+"namespace"	    { return new_symbol(sym.NAMESPACE, yytext());}
 
 "+" 		{ return new_symbol(sym.PLUS, yytext()); }
 "-"			{ return new_symbol(sym.MINUS, yytext());}
@@ -61,7 +62,6 @@ import java_cup.runtime.Symbol;
 ">="		{ return new_symbol(sym.EGREATER, yytext());}
 "<"			{ return new_symbol(sym.LESS, yytext());}
 "<="		{ return new_symbol(sym.ELESS, yytext());}
-
 "&&"		{ return new_symbol(sym.AND, yytext());}
 "||"		{ return new_symbol(sym.OR, yytext());}
 
@@ -72,7 +72,6 @@ import java_cup.runtime.Symbol;
 ";" 		{ return new_symbol(sym.SEMI, yytext()); }
 ":"			{ return new_symbol(sym.DOUBLEDOT, yytext());}
 "," 		{ return new_symbol(sym.COMMA, yytext()); }
-"."			{ return new_symbol(sym.DOT, yytext());}
 "(" 		{ return new_symbol(sym.LPAREN, yytext()); }
 ")" 		{ return new_symbol(sym.RPAREN, yytext()); }
 "["			{ return new_symbol(sym.LSQBRACE, yytext());}
@@ -81,14 +80,15 @@ import java_cup.runtime.Symbol;
 "}"			{ return new_symbol(sym.RBRACE, yytext()); }
 
 "=>"		{ return new_symbol(sym.LAMBDA, yytext());}
+"::"		{ return new_symbol(sym.DOUBLECOLON, yytext());}
 
 
 <YYINITIAL> "//" { yybegin(COMMENT); }
 <COMMENT> .      { yybegin(COMMENT); }
 <COMMENT> "\r\n" { yybegin(YYINITIAL); }
 
-"true" | "false" { return new_symbol(sym.BOOL, yytext());}      // ne znam
-"'"[ -~]"'"		 { return new_symbol(sym.CHAR, yytext()); }    // ne znam
+"true" | "false" { return new_symbol(sym.BOOL, yytext());}
+"'"[ -~]"'"		 { return new_symbol(sym.CHAR, yytext()); }
 
 [0-9]+           { return new_symbol(sym.NUMBER, new Integer (yytext())); }
 ([a-z]|[A-Z])[a-zA-Z0-9_]* 	{return new_symbol (sym.IDENT, yytext()); }
