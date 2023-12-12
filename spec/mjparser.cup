@@ -62,6 +62,8 @@ terminal String CHAR;
 terminal Integer NUMBER;
 terminal String IDENT;
 
+nonterminal VarDeclPart;
+nonterminal VarDecl;
 nonterminal Type;
 nonterminal Term;
 nonterminal ActPars;
@@ -79,6 +81,13 @@ nonterminal Addop;
 nonterminal Mulop;
 
 // TODO - Review start      --------------------------------------------------------------------------------------------
+VarDeclPart         ::= (ManyVarDeclClass) Type IDENT:name
+                    |	(ManyVarDeclClass) Type IDENT:name LSQBRACE RSQBRACE
+                    |	(ManyVarDeclClass) VarDeclPart COMMA IDENT:name
+                    |	(ManyVarDeclClass) VarDeclPart COMMA IDENT:name LSQBRACE RSQBRACE
+;
+
+VarDecl             ::= (VarDeclClass) VarDeclPart SEMI;
 // TODO - Review end        --------------------------------------------------------------------------------------------
 
 Type                ::= (TypeNamespaceClass) IDENT:namespace DOUBLECOLON IDENT:type
