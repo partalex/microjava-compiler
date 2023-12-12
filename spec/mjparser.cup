@@ -72,6 +72,8 @@ nonterminal FormPars;
 nonterminal Type;
 nonterminal Statement; // not defined
 nonterminal Term;
+nonterminal DesignatorStatePart;
+nonterminal DesignatorStatement;
 nonterminal ActPars;
 nonterminal Condition;
 nonterminal CondTerm;
@@ -93,9 +95,6 @@ VarDeclPart         ::= (ManyVarDeclClass) Type IDENT:name
 
 VarDecl             ::= (VarDeclClass) VarDeclPart SEMI;
 
-// TODO - Review start      --------------------------------------------------------------------------------------------
-// TODO - Review end        --------------------------------------------------------------------------------------------
-
 FormParsOptOne      ::= (FormParsOptOneClass) FormPars
                     |   (FormParsOptOneNoClass) /* epsilon */;
 
@@ -115,6 +114,23 @@ FormPars            ::= (ManyFormParsClass) Type IDENT:name
 
 Type                ::= (TypeNamespaceClass) IDENT:namespace DOUBLECOLON IDENT:type
                     |	(TypeClass) IDENT:type;
+
+// TODO - Review start      --------------------------------------------------------------------------------------------
+// TODO - Review end        --------------------------------------------------------------------------------------------
+
+DesignatorStatePart ::= (DesignatorStatementPartClass ) COMMA
+                    |   (DesignatorStFirstClass) Designator COMMA
+                    |   (DesignatorStFirstClass) COMMA DesignatorStatePart
+                    |   (DesignatorStFirstClass) Designator COMMA DesignatorStatePart
+                    |   (DesignatorStFirstClass) /* epsilon */;
+
+DesignatorStatement ::= (DesignatorStFirstClass) Designator Assignop Expr
+                    |   (DesignatorStFirstClass) Designator LPAREN RPAREN
+                    |   (DesignatorStFirstClass) Designator LPAREN ActPars RPAREN
+                    |   (DesignatorStFirstClass) Designator PLUSPLUS
+                    |   (DesignatorStFirstClass) Designator MINUSMINUS
+                    |   (DesignatorStFirstClass) LSQBRACE DesignatorStatePart MUL Designator RSQBRACE Assignop Designator
+                    ;
 
 ActPars             ::= (ManyActPars) ActPars COMMA Expr
                     |   (OneActPars) Expr;
