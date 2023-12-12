@@ -70,7 +70,7 @@ nonterminal StatementOptMany;
 nonterminal MethodDecl;
 nonterminal FormPars;
 nonterminal Type;
-nonterminal Statement; // not defined
+nonterminal Statement;
 nonterminal Term;
 nonterminal DesignatorStatePart;
 nonterminal DesignatorStatement;
@@ -116,6 +116,23 @@ Type                ::= (TypeNamespaceClass) IDENT:namespace DOUBLECOLON IDENT:t
                     |	(TypeClass) IDENT:type;
 
 // TODO - Review start      --------------------------------------------------------------------------------------------
+
+//StatementIf         ::= IF LPAREN Condition RPAREN Statement;
+//StatementIfElse     ::= StatementIf ELSE Statement;
+
+Statement           ::= (StatementDesignatorClass) DesignatorStatement SEMI
+                    |   (StatementIfClass) IF LPAREN Condition RPAREN Statement
+                    |   (StatementIfClass) IF LPAREN Condition RPAREN Statement ELSE Statement
+                    |   (StatementBreakClass) BREAK SEMI
+                    |   (StatementContinueClass) CONTINUE SEMI
+                    |   (StatementExprClass) RETURN Expr SEMI
+                    |   (StatementReturnClass) RETURN SEMI
+                    |   (StatementReadClass) READ LPAREN Designator RPAREN SEMI
+                    |   (StatementPrintManyExprClass) PRINT LPAREN Expr COMMA NUMBER RPAREN SEMI
+                    |   (StatementPrintOneExprClass) PRINT LPAREN Expr RPAREN SEMI
+                    ;
+//                    |   (StatementWhileClass) FOR LPAREN Condition RPAREN Statement
+
 // TODO - Review end        --------------------------------------------------------------------------------------------
 
 DesignatorStatePart ::= (DesignatorStatementPartClass ) COMMA
