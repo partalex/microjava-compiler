@@ -51,11 +51,89 @@ scan with {:
 	return s;
 :}
 
-terminal PLUS, MINUS, MUL, DIV, MOD, EQUAL, PLUSPLUS, MINUSMINUS, FOREACH, LAMBDA;
-terminal SEMI, COMMA, DOT, LPAREN, RPAREN, LBRACE, RBRACE, LSQBRACE, RSQBRACE, DOUBLEDOT;
-terminal PROG, BREAK, CONST, IF, FOR, NEW, ELSE, PRINT, READ, RETURN, VOID, CONTINUE;
+terminal PROG, BREAK, ELSE, CONST, IF, NEW, PRINT, READ, RETURN, VOID, CONTINUE, FOR, NAMESPACE;
+terminal PLUS, MINUS, MUL, DIV, MOD;
 terminal EQUALSTO, DIFFERENT, GREATER, EGREATER, LESS, ELESS, AND, OR;
-terminal Integer NUMBER;
-terminal String IDENT;
+terminal EQUAL, PLUSPLUS, MINUSMINUS;
+terminal SEMI, DOUBLEDOT, COMMA, LPAREN, RPAREN, LSQBRACE, RSQBRACE, LBRACE, RBRACE;
+terminal LAMBDA, DOUBLECOLON;
 terminal String BOOL;
 terminal String CHAR;
+terminal Integer NUMBER;
+terminal String IDENT;
+
+nonterminal Type;
+nonterminal Term;
+nonterminal ActPars;
+nonterminal Condition;
+nonterminal CondTerm;
+nonterminal CondFact;
+nonterminal Expr;
+nonterminal ConstVal;
+nonterminal Factor;
+nonterminal Designator;
+nonterminal Label;
+nonterminal Assignop;
+nonterminal Relop;
+nonterminal Addop;
+nonterminal Mulop;
+
+// TODO - Review start      --------------------------------------------------------------------------------------------
+// TODO - Review end        --------------------------------------------------------------------------------------------
+
+Type                ::= (TypeNamespaceClass) IDENT:namespace DOUBLECOLON IDENT:type
+                    |	(TypeClass) IDENT:type;
+
+ActPars             ::= (ManyActPars) ActPars COMMA Expr
+                    |   (OneActPars) Expr;
+
+Condition           ::= (ManyConditionClass) Condition OR CondTerm
+                    |   (OneConditionClass) CondTerm;
+
+CondTerm            ::= (ManyCondTermClass) CondTerm AND CondFact
+                    |   (OneCondTermClass) CondFact;
+
+CondFact            ::= (TwoCondFactClass) Expr Relop Expr
+                    |   (OneCondFactClass) Expr;
+
+Expr                ::= (ManyMinusExprClass) MINUS Term
+                    |   (ManyExprClass) Expr Addop Term
+                    |   (OneExprClass) Term;
+
+Term                ::= (ManyTermClass) Term Mulop Factor
+                    |   (OneTermClass) Factor;
+
+ConstVal 			::= (NumConstClass) NUMBER
+					|	(CharConstClass) CHAR
+					|	(BoolConstClass) BOOL;
+
+Factor              ::= (FactorParenParsClass) Designator LPAREN ActPars RPAREN
+                    |   (FactorParenClass) Designator LPAREN RPAREN
+                    |   (FactorClass) Designator
+                    |   (FactorConstValClass) ConstVal
+                    |   (FactorNewTypeBraceClass) NEW Type LSQBRACE Expr RSQBRACE // new Type [ Expr ].
+                    |   (FactorNewTypeParenClass) NEW Type LPAREN ActPars RPAREN // new Type ( ActPars )
+                    |   (FactorNewTypeParenClass) NEW Type LPAREN RPAREN // new Type () // ovo nema smila za ne C
+                    |   (FactorParenExprClass) LPAREN Expr RPAREN; // new Type ( Expr )
+
+Designator          ::= (DesignatorManyClass) Designator LSQBRACE Expr RSQBRACE
+                    |	(DesignatorManyClass) IDENT:namespace DOUBLECOLON IDENT:name
+                    |	(DesignatorManyClass) IDENT:name;
+
+Label               ::= (LabelClass) IDENT:name;
+
+Assignop		    ::= (EqualClass) EQUAL;
+
+Relop				::= (EqualstoClass) EQUALSTO
+					|	(DifferentClass) DIFFERENT
+					|	(LessClass) LESS
+					|	(ElessClass) ELESS
+					|	(GreaterClass) GREATER
+					|	(EgreaterClass) EGREATER;
+
+Addop				::= (PlusClass) PLUS
+					|	(MinusClass) MINUS;
+
+Mulop				::= (MulClass) MUL
+					| 	(DivClass) DIV
+					|	(ModClass) MOD;
