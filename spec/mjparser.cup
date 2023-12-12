@@ -117,8 +117,7 @@ Factor              ::= (FactorParenParsClass) Designator LPAREN ActPars RPAREN
                     |   (FactorParenExprClass) LPAREN Expr RPAREN; // new Type ( Expr )
 
 Designator          ::= (DesignatorManyClass) Designator LSQBRACE Expr RSQBRACE
-                    |	(DesignatorManyClass) IDENT:namespace DOUBLECOLON IDENT:name
-                    |	(DesignatorManyClass) IDENT:name;
+                    |	(DesignatorManyClass) Type IDENT:name;
 
 Label               ::= (LabelClass) IDENT:name;
 
