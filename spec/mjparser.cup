@@ -64,8 +64,13 @@ terminal String IDENT;
 
 nonterminal VarDeclPart;
 nonterminal VarDecl;
+nonterminal VarDeclOpt;
+nonterminal FormParsOptOne;
+nonterminal StatementOptMany;
+nonterminal MethodDecl;
 nonterminal FormPars;
 nonterminal Type;
+nonterminal Statement; // not defined
 nonterminal Term;
 nonterminal ActPars;
 nonterminal Condition;
@@ -81,7 +86,6 @@ nonterminal Relop;
 nonterminal Addop;
 nonterminal Mulop;
 
-
 VarDeclPart         ::= (ManyVarDeclClass) Type IDENT:name
                     |	(ManyVarDeclClass) Type IDENT:name LSQBRACE RSQBRACE
                     |	(ManyVarDeclClass) VarDeclPart COMMA IDENT:name
@@ -90,11 +94,25 @@ VarDeclPart         ::= (ManyVarDeclClass) Type IDENT:name
 VarDecl             ::= (VarDeclClass) VarDeclPart SEMI;
 
 // TODO - Review start      --------------------------------------------------------------------------------------------
+
+FormParsOptOne      ::= (FormParsOptOneClass) FormPars
+                    |   (FormParsOptOneNoClass) /* epsilon */;
+
+VarDeclOpt          ::= (VarDeclOptClass) VarDeclOpt VarDecl
+                    |   (VarDeclOptNoClass) /* epsilon */;
+
+StatementOptMany    ::= (StatementOptClass) StatementOptMany Statement
+                    |   (StatementOptNoClass) /* epsilon */;
+
+MethodDecl          ::= (MethodDeclTypeClass) Type IDENT LPAREN FormParsOptOne RPAREN VarDeclOpt LBRACE StatementOptMany RBRACE
+                    |   (MethodDeclVoidClass) VOID IDENT LPAREN FormParsOptOne RPAREN VarDeclOpt LBRACE StatementOptMany RBRACE;
+
+// TODO - Review end        --------------------------------------------------------------------------------------------
+
 FormPars            ::= (ManyFormParsClass) Type IDENT:name
                     |	(ManyFormParsClass) Type IDENT:name LSQBRACE RSQBRACE
                     |	(ManyFormParsClass) FormPars COMMA Type IDENT:name
                     |	(ManyFormParsClass) FormPars COMMA Type IDENT:name LSQBRACE RSQBRACE;
-// TODO - Review end        --------------------------------------------------------------------------------------------
 
 Type                ::= (TypeNamespaceClass) IDENT:namespace DOUBLECOLON IDENT:type
                     |	(TypeClass) IDENT:type;
