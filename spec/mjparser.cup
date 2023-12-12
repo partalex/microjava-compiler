@@ -120,8 +120,8 @@ Type                ::= (TypeNamespaceClass) IDENT:namespace DOUBLECOLON IDENT:t
 
 DesignatorStatePart ::= (DesignatorStatementPartClass ) COMMA
                     |   (DesignatorStFirstClass) Designator COMMA
-                    |   (DesignatorStFirstClass) COMMA DesignatorStatePart
-                    |   (DesignatorStFirstClass) Designator COMMA DesignatorStatePart
+                    |   (DesignatorStFirstClass) DesignatorStatePart COMMA
+                    |   (DesignatorStFirstClass) DesignatorStatePart Designator COMMA
                     |   (DesignatorStFirstClass) /* epsilon */;
 
 DesignatorStatement ::= (DesignatorStFirstClass) Designator Assignop Expr
