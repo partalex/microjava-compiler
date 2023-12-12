@@ -129,8 +129,7 @@ DesignatorStatement ::= (DesignatorStFirstClass) Designator Assignop Expr
                     |   (DesignatorStFirstClass) Designator LPAREN ActPars RPAREN
                     |   (DesignatorStFirstClass) Designator PLUSPLUS
                     |   (DesignatorStFirstClass) Designator MINUSMINUS
-                    |   (DesignatorStFirstClass) LSQBRACE DesignatorStatePart MUL Designator RSQBRACE Assignop Designator
-                    ;
+                    |   (DesignatorStFirstClass) LSQBRACE DesignatorStatePart MUL Designator RSQBRACE Assignop Designator;
 
 ActPars             ::= (ManyActPars) ActPars COMMA Expr
                     |   (OneActPars) Expr;
