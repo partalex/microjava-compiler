@@ -70,7 +70,9 @@ nonterminal StatementOptMany;
 nonterminal MethodDecl;
 nonterminal FormPars;
 nonterminal Type;
+nonterminal DesignatorStatementOpt;
 nonterminal Statement;
+nonterminal StatementMany;
 nonterminal Term;
 nonterminal DesignatorStatePart;
 nonterminal DesignatorStatement;
@@ -115,10 +117,9 @@ FormPars            ::= (ManyFormParsClass) Type IDENT:name
 Type                ::= (TypeNamespaceClass) IDENT:namespace DOUBLECOLON IDENT:type
                     |	(TypeClass) IDENT:type;
 
-// TODO - Review start      --------------------------------------------------------------------------------------------
 
-//StatementIf         ::= IF LPAREN Condition RPAREN Statement;
-//StatementIfElse     ::= StatementIf ELSE Statement;
+StatementMany       ::= (StatementDesignatorClass) StatementMany Statement
+                    |   (StatementIfClass) /* epsilon */;
 
 Statement           ::= (StatementDesignatorClass) DesignatorStatement SEMI
                     |   (StatementIfClass) IF LPAREN Condition RPAREN Statement
@@ -130,9 +131,11 @@ Statement           ::= (StatementDesignatorClass) DesignatorStatement SEMI
                     |   (StatementReadClass) READ LPAREN Designator RPAREN SEMI
                     |   (StatementPrintManyExprClass) PRINT LPAREN Expr COMMA NUMBER RPAREN SEMI
                     |   (StatementPrintOneExprClass) PRINT LPAREN Expr RPAREN SEMI
-                    ;
-//                    |   (StatementWhileClass) FOR LPAREN Condition RPAREN Statement
+                    |   (StatementWhileClass) FOR LPAREN DesignatorStatementOpt SEMI CondFact SEMI DesignatorStatementOpt RPAREN
+                    |   (StatementWhileClass) FOR LPAREN DesignatorStatementOpt SEMI SEMI DesignatorStatementOpt RPAREN
+                    |   (StatementWhileClass) LBRACE StatementMany RBRACE;
 
+// TODO - Review start      --------------------------------------------------------------------------------------------
 // TODO - Review end        --------------------------------------------------------------------------------------------
 
 DesignatorStatePart ::= (DesignatorStatementPartClass ) COMMA
