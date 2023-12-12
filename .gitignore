@@ -7,3 +7,4 @@
 /bin/
 test/program.obj
 spec/my-mjparser_astbuild.cup
+.idea/workspace.xml
