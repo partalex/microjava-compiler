@@ -64,6 +64,7 @@ terminal String IDENT;
 
 nonterminal VarDeclPart;
 nonterminal VarDecl;
+nonterminal FormPars;
 nonterminal Type;
 nonterminal Term;
 nonterminal ActPars;
@@ -80,8 +81,6 @@ nonterminal Relop;
 nonterminal Addop;
 nonterminal Mulop;
 
-// TODO - Review start      --------------------------------------------------------------------------------------------
-// TODO - Review end        --------------------------------------------------------------------------------------------
 
 VarDeclPart         ::= (ManyVarDeclClass) Type IDENT:name
                     |	(ManyVarDeclClass) Type IDENT:name LSQBRACE RSQBRACE
@@ -89,6 +88,13 @@ VarDeclPart         ::= (ManyVarDeclClass) Type IDENT:name
                     |	(ManyVarDeclClass) VarDeclPart COMMA IDENT:name LSQBRACE RSQBRACE;
 
 VarDecl             ::= (VarDeclClass) VarDeclPart SEMI;
+
+// TODO - Review start      --------------------------------------------------------------------------------------------
+FormPars            ::= (ManyFormParsClass) Type IDENT:name
+                    |	(ManyFormParsClass) Type IDENT:name LSQBRACE RSQBRACE
+                    |	(ManyFormParsClass) FormPars COMMA Type IDENT:name
+                    |	(ManyFormParsClass) FormPars COMMA Type IDENT:name LSQBRACE RSQBRACE;
+// TODO - Review end        --------------------------------------------------------------------------------------------
 
 Type                ::= (TypeNamespaceClass) IDENT:namespace DOUBLECOLON IDENT:type
                     |	(TypeClass) IDENT:type;
