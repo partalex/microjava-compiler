@@ -94,6 +94,7 @@ VarDeclPart         ::= (ManyVarDeclClass) Type IDENT:name
 VarDecl             ::= (VarDeclClass) VarDeclPart SEMI;
 
 // TODO - Review start      --------------------------------------------------------------------------------------------
+// TODO - Review end        --------------------------------------------------------------------------------------------
 
 FormParsOptOne      ::= (FormParsOptOneClass) FormPars
                     |   (FormParsOptOneNoClass) /* epsilon */;
@@ -106,8 +107,6 @@ StatementOptMany    ::= (StatementOptClass) StatementOptMany Statement
 
 MethodDecl          ::= (MethodDeclTypeClass) Type IDENT LPAREN FormParsOptOne RPAREN VarDeclOpt LBRACE StatementOptMany RBRACE
                     |   (MethodDeclVoidClass) VOID IDENT LPAREN FormParsOptOne RPAREN VarDeclOpt LBRACE StatementOptMany RBRACE;
-
-// TODO - Review end        --------------------------------------------------------------------------------------------
 
 FormPars            ::= (ManyFormParsClass) Type IDENT:name
                     |	(ManyFormParsClass) Type IDENT:name LSQBRACE RSQBRACE
