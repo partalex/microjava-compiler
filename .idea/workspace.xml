@@ -5,20 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="37548433-4df9-4744-8550-e2d30ad3cbd3" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/MJCompiler.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/JFlex.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/cup_v10k.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/log4j_1_2_17.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/mj_runtime.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/symboltable.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/symboltable_1_1.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/uiDesigner.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.xml" beforeDir="false" afterPath="$PROJECT_DIR$/build.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/microjava-complailer.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/mjlexer.flex" beforeDir="false" afterPath="$PROJECT_DIR$/spec/mjlexer.flex" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/spec/my-mjparser.cup" beforeDir="false" afterPath="$PROJECT_DIR$/spec/my-mjparser.cup" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/rs/ac/bg/etf/pp1/CodeGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/rs/ac/bg/etf/pp1/CodeGenerator.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/rs/ac/bg/etf/pp1/SemanticPass.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/rs/ac/bg/etf/pp1/SemanticPass.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -59,7 +49,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "lexic-from-0",
+    "git-widget-placeholder": "2023",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/kaoko/Documents/PP1/MJCompiler/lib/symboltable-1-1.jar",
@@ -71,7 +61,7 @@
     "project.structure.last.edited": "Libraries",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "preferences.lookFeel",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -115,11 +105,26 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1702331380094</updated>
-      <workItem from="1702331381205" duration="3087000" />
+      <workItem from="1702331381205" duration="5870000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/rs/ac/bg/etf/pp1/SemanticPass.java</url>
+          <line>685</line>
+          <properties class="rs.ac.bg.etf.pp1.SemanticPass" method="visit">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

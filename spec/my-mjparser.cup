@@ -51,10 +51,10 @@ scan with {:
 	return s;
 :}
 
-terminal PLUS, MINUS, MUL, DIV, MOD, EQUAL, PLUSPLUS, MINUSMINUS, FOREACH, LAMBDA, FINDANY;
+terminal PLUS, MINUS, MUL, DIV, MOD, EQUAL, PLUSPLUS, MINUSMINUS, FOREACH, LAMBDA;
 terminal SEMI, COMMA, DOT, LPAREN, RPAREN, LBRACE, RBRACE, LSQBRACE, RSQBRACE, DOUBLEDOT;
-terminal PROG, BREAK, CONST, IF, WHILE, NEW, ELSE, PRINT, READ, RETURN, VOID, CONTINUE;
-terminal EQUALSTO, DIFFERENT, GREATER, EGREATER, LESS, ELESS, AND, OR, FINDANDREPLACE;
+terminal PROG, BREAK, CONST, IF, FOR, NEW, ELSE, PRINT, READ, RETURN, VOID, CONTINUE;
+terminal EQUALSTO, DIFFERENT, GREATER, EGREATER, LESS, ELESS, AND, OR;
 terminal Integer NUMBER;
 terminal String IDENT;
 terminal String BOOL;
@@ -227,7 +227,6 @@ StatementIfElse     ::= if LPAREN Condition RPAREN Statement else Statement;
 Statement           ::= (StatementDesignatorClass) DesignatorStatement SEMI
                     |   (StatementIfClass) StatementIf
                     |   (StatementIfClass) StatementIfElse
-                    |   (StatementWhileClass) WHILE LPAREN Condition RPAREN Statement
                     |   (StatementBreakClass) BREAK SEMI
                     |   (StatementContinueClass) CONTINUE SEMI
                     |   (StatementExprClass) RETURN Expr SEMI
@@ -236,12 +235,8 @@ Statement           ::= (StatementDesignatorClass) DesignatorStatement SEMI
                     |   (StatementPrintManyExprClass) PRINT LPAREN Expr COMMA NUMBER RPAREN SEMI
                     |   (StatementPrintOneExprClass) PRINT LPAREN Expr RPAREN SEMI
                     |   (StatementManyClass) LBRACE StatementOptMany RBRACE
-//                                                 Designator ʺ=ʺ Designator ʺ.ʺ ʺfindAnyʺ "(" Expr ")" ";".
-//                    |   (StatementFindAnyFClass) Designator EQUAL Designator FINDANY LPAREN Expr RPAREN SEMI
-//                                               Designator ʺ=ʺ Designator ʺ.ʺ ʺfindAndReplaceʺ "(" Expr "," ident "=>" Expr ")" ";".
-//                    |   (StatementFindAnyFClass) Designator EQUAL Designator FINDANDREPLACE LPAREN Expr COMMA IDENT LAMBDA Expr RPAREN SEMI
+//                    |   (StatementWhileClass) FOR LPAREN Condition RPAREN Statement
                     ;
 
 
-//                    | Designator "." "foreach" "(" ident "=>" Statement ")" ";" * za B i C nivo
 // TODO - Conflict end  ------------------------------------------------------------------------------------------------
