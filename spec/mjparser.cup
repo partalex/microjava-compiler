@@ -62,6 +62,13 @@ terminal String CHAR;
 terminal Integer NUMBER;
 terminal String IDENT;
 
+nonterminal Namespace; // not defined
+nonterminal Program;
+nonterminal ConstDeclOptMany;
+nonterminal VarDeclOptMany;
+nonterminal MethodDeclOptMany;
+nonterminal ConstDecl;
+nonterminal ConstDeclPart;
 nonterminal VarDeclPart;
 nonterminal VarDecl;
 nonterminal VarDeclOpt;
@@ -90,10 +97,33 @@ nonterminal Relop;
 nonterminal Addop;
 nonterminal Mulop;
 
+precedence left ELSE;
+precedence left IF;
+
+Namespace 		    ::= (NamespaceClass) NAMESPACE IDENT:namespace LBRACE ConstDeclOptMany LBRACE MethodDeclOptMany RBRACE RBRACE
+					|	(NamespaceClass) PROG IDENT:program Namespace VarDeclOptMany LBRACE MethodDeclOptMany RBRACE;
+
+Program 		    ::= (ProgramClass) PROG IDENT:program ConstDeclOptMany VarDeclOptMany LBRACE MethodDeclOptMany RBRACE
+					|	(ProgramClass) PROG IDENT:program Namespace ConstDeclOptMany VarDeclOptMany LBRACE MethodDeclOptMany RBRACE;
+
+ConstDeclOptMany    ::= (ConstDeclOptManyClass) ConstDeclOptMany ConstDecl
+					|	(ConstDeclOptNoClass) /* epsilon */;
+
+VarDeclOptMany      ::= (VarDeclOptManyClass) VarDeclOptMany VarDecl
+					|	(VarDeclOptManyClass) /* epsilon */;
+
+MethodDeclOptMany	::= (MethodDeclOptManyClass) MethodDeclOptMany MethodDecl
+					|	(MethodDeclOptManyNoClass) /* epsilon */;
+
 VarDeclPart         ::= (ManyVarDeclClass) Type IDENT:name
                     |	(ManyVarDeclClass) Type IDENT:name LSQBRACE RSQBRACE
                     |	(ManyVarDeclClass) VarDeclPart COMMA IDENT:name
                     |	(ManyVarDeclClass) VarDeclPart COMMA IDENT:name LSQBRACE RSQBRACE;
+
+ConstDecl           ::= (ConstDeclClass) CONST Type ConstDeclPart SEMI;
+
+ConstDeclPart       ::= (ManyConstDeclPartClass) ConstDeclPart COMMA EQUAL ConstVal:value
+                    |   (OneConstDeclPartClass) IDENT:name EQUAL ConstVal:value;
 
 VarDecl             ::= (VarDeclClass) VarDeclPart SEMI;
 
@@ -117,23 +147,23 @@ FormPars            ::= (ManyFormParsClass) Type IDENT:name
 Type                ::= (TypeNamespaceClass) IDENT:namespace DOUBLECOLON IDENT:type
                     |	(TypeClass) IDENT:type;
 
-
 StatementMany       ::= (StatementDesignatorClass) StatementMany Statement
                     |   (StatementIfClass) /* epsilon */;
 
-Statement           ::= (StatementDesignatorClass) DesignatorStatement SEMI
-                    |   (StatementIfClass) IF LPAREN Condition RPAREN Statement
-                    |   (StatementIfClass) IF LPAREN Condition RPAREN Statement ELSE Statement
-                    |   (StatementBreakClass) BREAK SEMI
-                    |   (StatementContinueClass) CONTINUE SEMI
-                    |   (StatementExprClass) RETURN Expr SEMI
-                    |   (StatementReturnClass) RETURN SEMI
-                    |   (StatementReadClass) READ LPAREN Designator RPAREN SEMI
-                    |   (StatementPrintManyExprClass) PRINT LPAREN Expr COMMA NUMBER RPAREN SEMI
-                    |   (StatementPrintOneExprClass) PRINT LPAREN Expr RPAREN SEMI
-                    |   (StatementWhileClass) FOR LPAREN DesignatorStatementOpt SEMI CondFact SEMI DesignatorStatementOpt RPAREN
-                    |   (StatementWhileClass) FOR LPAREN DesignatorStatementOpt SEMI SEMI DesignatorStatementOpt RPAREN
-                    |   (StatementWhileClass) LBRACE StatementMany RBRACE;
+//Statement           ::= (StatementDesignatorClass) DesignatorStatement SEMI
+//                    |   (StatementIfClass) IF LPAREN Condition RPAREN Statement
+//                    |   (StatementIfClass) IF LPAREN Condition RPAREN Statement ELSE Statement
+//                    |   (StatementBreakClass) BREAK SEMI
+//                    |   (StatementContinueClass) CONTINUE SEMI
+//                    |   (StatementExprClass) RETURN Expr SEMI
+//                    |   (StatementReturnClass) RETURN SEMI
+//                    |   (StatementReadClass) READ LPAREN Designator RPAREN SEMI
+//                    |   (StatementPrintManyExprClass) PRINT LPAREN Expr COMMA NUMBER RPAREN SEMI
+//                    |   (StatementPrintOneExprClass) PRINT LPAREN Expr RPAREN SEMI
+//                    ;
+//                    |   (StatementWhileClass) FOR LPAREN DesignatorStatementOpt SEMI CondFact SEMI DesignatorStatementOpt RPAREN
+//                    |   (StatementWhileClass) FOR LPAREN DesignatorStatementOpt SEMI SEMI DesignatorStatementOpt RPAREN
+//                    |   (StatementWhileClass) LBRACE StatementMany RBRACE
 
 // TODO - Review start      --------------------------------------------------------------------------------------------
 // TODO - Review end        --------------------------------------------------------------------------------------------
