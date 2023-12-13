@@ -62,7 +62,7 @@ terminal String CHAR;
 terminal Integer NUMBER;
 terminal String IDENT;
 
-nonterminal Namespace; // not defined
+nonterminal Namespace;
 nonterminal Program;
 nonterminal ConstDeclOptMany;
 nonterminal VarDeclOptMany;
@@ -73,7 +73,6 @@ nonterminal VarDeclPart;
 nonterminal VarDecl;
 nonterminal VarDeclOpt;
 nonterminal FormParsOptOne;
-nonterminal StatementOptMany;
 nonterminal MethodDecl;
 nonterminal FormPars;
 nonterminal Type;
@@ -133,16 +132,14 @@ FormParsOptOne      ::= (FormParsOptOneClass) FormPars
 VarDeclOpt          ::= (VarDeclOptClass) VarDeclOpt VarDecl
                     |   (VarDeclOptNoClass) /* epsilon */;
 
-StatementOptMany    ::= (StatementOptClass) StatementOptMany Statement
-                    |   (StatementOptNoClass) /* epsilon */;
-
-MethodDecl          ::= (MethodDeclTypeClass) Type IDENT LPAREN FormParsOptOne RPAREN VarDeclOpt LBRACE StatementOptMany RBRACE
-                    |   (MethodDeclVoidClass) VOID IDENT LPAREN FormParsOptOne RPAREN VarDeclOpt LBRACE StatementOptMany RBRACE;
+MethodDecl          ::= (MethodDeclTypeClass) Type IDENT LPAREN FormParsOptOne RPAREN VarDeclOpt LBRACE StatementMany RBRACE
+                    |   (MethodDeclVoidClass) VOID IDENT LPAREN FormParsOptOne RPAREN VarDeclOpt LBRACE StatementMany RBRACE;
 
 FormPars            ::= (ManyFormParsClass) Type IDENT:name
                     |	(ManyFormParsClass) Type IDENT:name LSQBRACE RSQBRACE
                     |	(ManyFormParsClass) FormPars COMMA Type IDENT:name
                     |	(ManyFormParsClass) FormPars COMMA Type IDENT:name LSQBRACE RSQBRACE;
+
 
 Type                ::= (TypeNamespaceClass) IDENT:namespace DOUBLECOLON IDENT:type
                     |	(TypeClass) IDENT:type;
@@ -150,7 +147,9 @@ Type                ::= (TypeNamespaceClass) IDENT:namespace DOUBLECOLON IDENT:t
 StatementMany       ::= (StatementDesignatorClass) StatementMany Statement
                     |   (StatementIfClass) /* epsilon */;
 
-//Statement           ::= (StatementDesignatorClass) DesignatorStatement SEMI
+// TODO - Review start      --------------------------------------------------------------------------------------------
+
+Statement           ::= (StatementDesignatorClass) DesignatorStatement SEMI
 //                    |   (StatementIfClass) IF LPAREN Condition RPAREN Statement
 //                    |   (StatementIfClass) IF LPAREN Condition RPAREN Statement ELSE Statement
 //                    |   (StatementBreakClass) BREAK SEMI
@@ -158,19 +157,16 @@ StatementMany       ::= (StatementDesignatorClass) StatementMany Statement
 //                    |   (StatementExprClass) RETURN Expr SEMI
 //                    |   (StatementReturnClass) RETURN SEMI
 //                    |   (StatementReadClass) READ LPAREN Designator RPAREN SEMI
-//                    |   (StatementPrintManyExprClass) PRINT LPAREN Expr COMMA NUMBER RPAREN SEMI
 //                    |   (StatementPrintOneExprClass) PRINT LPAREN Expr RPAREN SEMI
-//                    ;
+//                    |   (StatementPrintManyExprClass) PRINT LPAREN Expr COMMA NUMBER RPAREN SEMI
 //                    |   (StatementWhileClass) FOR LPAREN DesignatorStatementOpt SEMI CondFact SEMI DesignatorStatementOpt RPAREN
 //                    |   (StatementWhileClass) FOR LPAREN DesignatorStatementOpt SEMI SEMI DesignatorStatementOpt RPAREN
 //                    |   (StatementWhileClass) LBRACE StatementMany RBRACE
+                    ;
 
-// TODO - Review start      --------------------------------------------------------------------------------------------
 // TODO - Review end        --------------------------------------------------------------------------------------------
 
-DesignatorStatePart ::= (DesignatorStatementPartClass ) COMMA
-                    |   (DesignatorStFirstClass) Designator COMMA
-                    |   (DesignatorStFirstClass) DesignatorStatePart COMMA
+DesignatorStatePart ::= (DesignatorStFirstClass) DesignatorStatePart COMMA
                     |   (DesignatorStFirstClass) DesignatorStatePart Designator COMMA
                     |   (DesignatorStFirstClass) /* epsilon */;
 
