@@ -6,6 +6,7 @@
             <fileset dir="src/rs/ac/bg/etf/pp1">
                 <exclude name="util/Log4JUtils.java"/>
                 <exclude name="RuleVisitor.java"/>
+                <exclude name="_SemanticPass.java"/>
                 <exclude name="SemanticPass.java"/>
                 <exclude name="MyTab.java"/>
                 <exclude name="CodeGenerator.java"/>
@@ -19,7 +20,6 @@
             <fileset dir="spec">
                 <exclude name="mjlexer.flex"/>
                 <exclude name="mjparser.cup"/>
-                <exclude name="mjparser_2022.cup"/>
             </fileset>
         </delete>
     </target>
