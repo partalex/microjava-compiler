@@ -62,9 +62,10 @@ terminal String CHAR;
 terminal Integer NUMBER;
 terminal String IDENT;
 
+nonterminal rs.etf.pp1.symboltable.concepts.Obj Program;
+
 nonterminal Namespace;
 nonterminal NamespaceMany;
-nonterminal Program;
 nonterminal ConstDeclOptMany;
 nonterminal VarDeclOptMany;
 nonterminal MethodDeclOptMany;
@@ -100,61 +101,57 @@ nonterminal Mulop;
 precedence left ELSE;
 precedence left IF;
 
-Namespace 		    ::= (NamespaceConstDecl) NAMESPACE IDENT:namespace LBRACE ConstDeclOptMany LBRACE MethodDeclOptMany RBRACE RBRACE
-					|	(NamespaceVarDecl) PROG IDENT:program Namespace VarDeclOptMany LBRACE MethodDeclOptMany RBRACE;
+Namespace 		    ::= (NamespaceConstDeclClass) NAMESPACE IDENT:namespace LBRACE ConstDeclOptMany LBRACE MethodDeclOptMany RBRACE RBRACE
+					|	(NamespaceVarDeclClass) PROG IDENT:program Namespace VarDeclOptMany LBRACE MethodDeclOptMany RBRACE;
 
-NamespaceMany      ::=  (NamespaceManyOpt) NamespaceMany Namespace
-                    |   (NamespaceManyEmpty) /* epsilon */;
+NamespaceMany      ::=  (NamespaceManyClass) NamespaceMany Namespace
+                    |   (NamespaceManyEmptyClass) /* epsilon */;
 
-Program 		    ::= (ProgramConstDecl) PROG IDENT:program NamespaceMany ConstDeclOptMany LBRACE MethodDeclOptMany RBRACE
-					|	(ProgramVarDecl) PROG IDENT:program NamespaceMany VarDeclOptMany LBRACE MethodDeclOptMany RBRACE;
+Program 		    ::= (ProgramConstDeclClass) PROG IDENT:program NamespaceMany ConstDeclOptMany LBRACE MethodDeclOptMany RBRACE
+					|	(ProgramVarDeclClass) PROG IDENT:program NamespaceMany VarDeclOptMany LBRACE MethodDeclOptMany RBRACE;
 
 ConstDeclOptMany    ::= (ConstDeclOptManyClass) ConstDeclOptMany ConstDecl
 					|	(ConstDeclOptNoClass) /* epsilon */;
 
-VarDeclOptMany      ::= (VarDeclOptManyClass) VarDeclOptMany VarDecl
-					|	(VarDeclOptManyClass) /* epsilon */;
-
 MethodDeclOptMany	::= (MethodDeclOptManyClass) MethodDeclOptMany MethodDecl
-					|	(MethodDeclOptManyNoClass) /* epsilon */;
+					|	(MethodDeclOptEmptyClass) /* epsilon */;
 
-VarDeclPart         ::= (ManyVarDeclClass) Type IDENT:name
+VarDeclPart         ::= (VarDeclOneClass) Type IDENT:name
                     |   error SEMI:l {: parser.report_error("Sintaksa greska deklaracije globalne promenljive na liniji " + lleft, null); :}
-                    |	(ManyVarDeclClass) Type IDENT:name LSQBRACE RSQBRACE
-                    |	(ManyVarDeclClass) VarDeclPart COMMA IDENT:name
-                    |	(ManyVarDeclClass) VarDeclPart COMMA IDENT:name LSQBRACE RSQBRACE;
+                    |	(VarDeclArrayClass) Type IDENT:name LSQBRACE RSQBRACE
+                    |	(VarDeclManyOneClass) VarDeclPart COMMA IDENT:name
+                    |	(VarDeclManyArrayClass) VarDeclPart COMMA IDENT:name LSQBRACE RSQBRACE;
 
 ConstDecl           ::= (ConstDecl) CONST Type ConstDeclPart SEMI;
 
-ConstDeclPart       ::= (ManyConstDeclPartClass) ConstDeclPart COMMA EQUAL ConstVal:value
-                    |   (OneConstDeclPartClass) IDENT:name EQUAL ConstVal:value;
+ConstDeclPart       ::= (ConstDeclPartManyClass) ConstDeclPart COMMA EQUAL ConstVal:value
+                    |   (ConstDeclPartOneClass) IDENT:name EQUAL ConstVal:value;
 
 VarDecl             ::= (VarDecl) VarDeclPart SEMI;
 
 FormParsOptOne      ::= (FormParsOptOneClass) FormPars
-                    |   (FormParsOptOneNoClass) /* epsilon */;
+                    |   (FormParsOptOneEmptyClass) /* epsilon */;
 
-VarDeclOpt          ::= (VarDeclOptClass) VarDeclOpt VarDecl
-                    |   (VarDeclOptNoClass) /* epsilon */;
+VarDeclOpt          ::= (VarDeclOptManyClass) VarDeclOpt VarDecl
+                    |   (VarDeclOptEmptyClass) /* epsilon */;
 
 MethodDecl          ::= (MethodDeclTypeClass) Type IDENT LPAREN FormParsOptOne RPAREN VarDeclOpt LBRACE StatementMany RBRACE
                     |   (MethodDeclVoidClass) VOID IDENT LPAREN FormParsOptOne RPAREN VarDeclOpt LBRACE StatementMany RBRACE;
 
-FormPars            ::= (ManyFormParsClass) Type IDENT:name
-                    |	(ManyFormParsClass) Type IDENT:name LSQBRACE RSQBRACE
-                    |	(ManyFormParsClass) FormPars COMMA Type IDENT:name
-                    |	(ManyFormParsClass) FormPars COMMA Type IDENT:name LSQBRACE RSQBRACE;
-
+FormPars            ::= (FormParsOneClass) Type IDENT:name
+                    |	(FormParsArrayClass) Type IDENT:name LSQBRACE RSQBRACE
+                    |	(FormParsManyOneClass) FormPars COMMA Type IDENT:name
+                    |	(FormParsManyArrayClass) FormPars COMMA Type IDENT:name LSQBRACE RSQBRACE;
 
 Type                ::= (TypeNamespaceClass) IDENT:namespace DOUBLECOLON IDENT:type
                     |	(TypeClass) IDENT:type;
 
-StatementMany       ::= (StatementDesignatorClass) StatementMany Statement
-                    |   (StatementIfClass) /* epsilon */;
+StatementMany       ::= (StatementManyManyClass) StatementMany Statement
+                    |   (StatementEmptyClass) /* epsilon */;
 
 Statement           ::= (StatementDesignatorClass) DesignatorStatement SEMI
                     |   (StatementIfClass) IF LPAREN Condition RPAREN Statement
-                    |   (StatementIfClass) IF LPAREN Condition RPAREN Statement ELSE Statement
+                    |   (StatementIfElseClass) IF LPAREN Condition RPAREN Statement ELSE Statement
                     |   (StatementBreakClass) BREAK SEMI
                     |   (StatementContinueClass) CONTINUE SEMI
                     |   (StatementExprClass) RETURN Expr SEMI
@@ -162,71 +159,71 @@ Statement           ::= (StatementDesignatorClass) DesignatorStatement SEMI
                     |   (StatementReadClass) READ LPAREN Designator RPAREN SEMI
                     |   (StatementPrintOneExprClass) PRINT LPAREN Expr RPAREN SEMI
                     |   (StatementPrintManyExprClass) PRINT LPAREN Expr COMMA NUMBER RPAREN SEMI
-                    |   (StatementWhileClass) FOR LPAREN DesignatorStatementOpt SEMI CondFact SEMI DesignatorStatementOpt RPAREN
-                    |   (StatementWhileClass) FOR LPAREN DesignatorStatementOpt SEMI SEMI DesignatorStatementOpt RPAREN
-                    |   (StatementWhileClass) LBRACE StatementMany RBRACE;
+                    |   (StatementForClass) FOR LPAREN DesignatorStatementOpt SEMI CondFact SEMI DesignatorStatementOpt RPAREN
+                    |   (StatementForConditonClass) FOR LPAREN DesignatorStatementOpt SEMI SEMI DesignatorStatementOpt RPAREN
+                    |   (StatementManyClass) LBRACE StatementMany RBRACE;
 
-DesignatorStatePart ::= (DesignatorStFirstClass) DesignatorStatePart COMMA
-                    |   (DesignatorStFirstClass) DesignatorStatePart Designator COMMA
-                    |   (DesignatorStFirstClass) /* epsilon */;
+DesignatorStatePart ::= (DesignatorStatePartManyClass) DesignatorStatePart Designator COMMA
+                    |   (DesignatorStatePartOneClass) DesignatorStatePart COMMA
+                    |   (DesignatorStatePartEmptyClass) /* epsilon */;
 
-DesignatorStatement ::= (DesignatorStFirstClass) Designator Assignop Expr
-                    |   (DesignatorStFirstClass) Designator LPAREN RPAREN
-                    |   (DesignatorStFirstClass) Designator LPAREN ActPars RPAREN
-                    |   (DesignatorStFirstClass) Designator PLUSPLUS
-                    |   (DesignatorStFirstClass) Designator MINUSMINUS
-                    |   (DesignatorStFirstClass) LSQBRACE DesignatorStatePart MUL Designator RSQBRACE Assignop Designator;
+DesignatorStatement ::= (DesignatorStatementAssignClass) Designator Assignop Expr
+                    |   (DesignatorStatementNoParamsClass) Designator LPAREN RPAREN
+                    |   (DesignatorStatementParamsClass) Designator LPAREN ActPars RPAREN
+                    |   (DesignatorStatementPlusClass) Designator PLUSPLUS
+                    |   (DesignatorStatementMinusClass) Designator MINUSMINUS
+                    |   (DesignatorStatementManyClass) LSQBRACE DesignatorStatePart MUL Designator RSQBRACE Assignop Designator;
 
-ActPars             ::= (ManyActPars) ActPars COMMA Expr
-                    |   (OneActPars) Expr;
+ActPars             ::= (ActParsManyClass) ActPars COMMA Expr
+                    |   (ActParsOneClass) Expr;
 
-Condition           ::= (ManyConditionClass) Condition OR CondTerm
-                    |   (OneConditionClass) CondTerm;
+Condition           ::= (ConditionManyClass) Condition OR CondTerm
+                    |   (ConditionOneClass) CondTerm;
 
-CondTerm            ::= (ManyCondTermClass) CondTerm AND CondFact
-                    |   (OneCondTermClass) CondFact;
+CondTerm            ::= (CondTermManyClass) CondTerm AND CondFact
+                    |   (CondTermOneClass) CondFact;
 
-CondFact            ::= (TwoCondFactClass) Expr Relop Expr
-                    |   (OneCondFactClass) Expr;
+CondFact            ::= (CondFactManyClass) Expr Relop Expr
+                    |   (CondFactOneClass) Expr;
 
-Expr                ::= (ManyMinusExprClass) MINUS Term
-                    |   (ManyExprClass) Expr Addop Term
-                    |   (OneExprClass) Term;
+Expr                ::= (ExprManyClass) Expr Addop Term
+                    |   (ExprNegativeOneClass) MINUS Term
+                    |   (ExprOneClass) Term;
 
-Term                ::= (ManyTermClass) Term Mulop Factor
-                    |   (OneTermClass) Factor;
+Term                ::= (TermManyClass) Term Mulop Factor
+                    |   (TermOneClass) Factor;
 
-ConstVal 			::= (NumConstClass) NUMBER
-					|	(CharConstClass) CHAR
-					|	(BoolConstClass) BOOL;
+ConstVal 			::= (ConstValNumClass) NUMBER
+					|	(ConstValCharClass) CHAR
+					|	(ConstValBoollass) BOOL;
 
 Factor              ::= (FactorParenParsClass) Designator LPAREN ActPars RPAREN
                     |   (FactorParenClass) Designator LPAREN RPAREN
                     |   (FactorClass) Designator
                     |   (FactorConstValClass) ConstVal
-                    |   (FactorNewTypeBraceClass) NEW Type LSQBRACE Expr RSQBRACE
-                    |   (FactorNewTypeParenClass) NEW Type LPAREN ActPars RPAREN
-                    |   (FactorNewTypeParenClass) NEW Type LPAREN RPAREN
+                    |   (FactorNewTypeExprClass) NEW Type LSQBRACE Expr RSQBRACE
+                    |   (FactorNewTypeWithParamsClass) NEW Type LPAREN ActPars RPAREN
+                    |   (FactorNewTypeNoParamsClass) NEW Type LPAREN RPAREN
                     |   (FactorParenExprClass) LPAREN Expr RPAREN;
 
 Designator          ::= (DesignatorManyClass) Designator LSQBRACE Expr RSQBRACE
-                    |	(DesignatorManyClass) Type IDENT:name;
+                    |	(DesignatorOneClass) Type IDENT:name;
 
 Label               ::= (Label) IDENT:name;
 
 Assignop		    ::= (Assignop) EQUAL
                     |	error SEMI:l {: parser.report_error("Sintaksa greska konstrukcije iskaza dodele na liniji " + lleft, null); :};
 
-Relop				::= (EqualstoClass) EQUALSTO
-					|	(DifferentClass) DIFFERENT
-					|	(LessClass) LESS
-					|	(ElessClass) ELESS
-					|	(GreaterClass) GREATER
-					|	(EgreaterClass) EGREATER;
+Relop				::= (RelopEqualstoClass) EQUALSTO
+					|	(RelopDifferentClass) DIFFERENT
+					|	(RelopLessClass) LESS
+					|	(RelopElessClass) ELESS
+					|	(RelopGreaterClass) GREATER
+					|	(RelopEgreaterClass) EGREATER;
 
-Addop				::= (PlusClass) PLUS
-					|	(MinusClass) MINUS;
+Addop				::= (AddopPlusClass) PLUS
+					|	(AddopMinusClass) MINUS;
 
-Mulop				::= (MulClass) MUL
-					| 	(DivClass) DIV
-					|	(ModClass) MOD;
+Mulop				::= (MulopMulClass) MUL
+					| 	(MulopDivClass) DIV
+					|	(MulopModClass) MOD;
