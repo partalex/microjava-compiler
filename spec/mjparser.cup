@@ -63,6 +63,7 @@ terminal Integer NUMBER;
 terminal String IDENT;
 
 nonterminal Namespace;
+nonterminal NamespaceMany;
 nonterminal Program;
 nonterminal ConstDeclOptMany;
 nonterminal VarDeclOptMany;
@@ -99,11 +100,14 @@ nonterminal Mulop;
 precedence left ELSE;
 precedence left IF;
 
-Namespace 		    ::= (NamespaceClass) NAMESPACE IDENT:namespace LBRACE ConstDeclOptMany LBRACE MethodDeclOptMany RBRACE RBRACE
-					|	(NamespaceClass) PROG IDENT:program Namespace VarDeclOptMany LBRACE MethodDeclOptMany RBRACE;
+Namespace 		    ::= (NamespaceConstDecl) NAMESPACE IDENT:namespace LBRACE ConstDeclOptMany LBRACE MethodDeclOptMany RBRACE RBRACE
+					|	(NamespaceVarDecl) PROG IDENT:program Namespace VarDeclOptMany LBRACE MethodDeclOptMany RBRACE;
 
-Program 		    ::= (ProgramClass) PROG IDENT:program ConstDeclOptMany VarDeclOptMany LBRACE MethodDeclOptMany RBRACE
-					|	(ProgramClass) PROG IDENT:program Namespace ConstDeclOptMany VarDeclOptMany LBRACE MethodDeclOptMany RBRACE;
+NamespaceMany      ::=  (NamespaceManyOpt) NamespaceMany Namespace
+                    |   (NamespaceManyEmpty) /* epsilon */;
+
+Program 		    ::= (ProgramConstDecl) PROG IDENT:program NamespaceMany ConstDeclOptMany LBRACE MethodDeclOptMany RBRACE
+					|	(ProgramVarDecl) PROG IDENT:program NamespaceMany VarDeclOptMany LBRACE MethodDeclOptMany RBRACE;
 
 ConstDeclOptMany    ::= (ConstDeclOptManyClass) ConstDeclOptMany ConstDecl
 					|	(ConstDeclOptNoClass) /* epsilon */;
@@ -115,16 +119,17 @@ MethodDeclOptMany	::= (MethodDeclOptManyClass) MethodDeclOptMany MethodDecl
 					|	(MethodDeclOptManyNoClass) /* epsilon */;
 
 VarDeclPart         ::= (ManyVarDeclClass) Type IDENT:name
+                    |   error SEMI:l {: parser.report_error("Sintaksa greska deklaracije globalne promenljive na liniji " + lleft, null); :}
                     |	(ManyVarDeclClass) Type IDENT:name LSQBRACE RSQBRACE
                     |	(ManyVarDeclClass) VarDeclPart COMMA IDENT:name
                     |	(ManyVarDeclClass) VarDeclPart COMMA IDENT:name LSQBRACE RSQBRACE;
 
-ConstDecl           ::= (ConstDeclClass) CONST Type ConstDeclPart SEMI;
+ConstDecl           ::= (ConstDecl) CONST Type ConstDeclPart SEMI;
 
 ConstDeclPart       ::= (ManyConstDeclPartClass) ConstDeclPart COMMA EQUAL ConstVal:value
                     |   (OneConstDeclPartClass) IDENT:name EQUAL ConstVal:value;
 
-VarDecl             ::= (VarDeclClass) VarDeclPart SEMI;
+VarDecl             ::= (VarDecl) VarDeclPart SEMI;
 
 FormParsOptOne      ::= (FormParsOptOneClass) FormPars
                     |   (FormParsOptOneNoClass) /* epsilon */;
@@ -199,17 +204,18 @@ Factor              ::= (FactorParenParsClass) Designator LPAREN ActPars RPAREN
                     |   (FactorParenClass) Designator LPAREN RPAREN
                     |   (FactorClass) Designator
                     |   (FactorConstValClass) ConstVal
-                    |   (FactorNewTypeBraceClass) NEW Type LSQBRACE Expr RSQBRACE // new Type [ Expr ].
-                    |   (FactorNewTypeParenClass) NEW Type LPAREN ActPars RPAREN // new Type ( ActPars )
-                    |   (FactorNewTypeParenClass) NEW Type LPAREN RPAREN // new Type () // ovo nema smila za ne C
-                    |   (FactorParenExprClass) LPAREN Expr RPAREN; // new Type ( Expr )
+                    |   (FactorNewTypeBraceClass) NEW Type LSQBRACE Expr RSQBRACE
+                    |   (FactorNewTypeParenClass) NEW Type LPAREN ActPars RPAREN
+                    |   (FactorNewTypeParenClass) NEW Type LPAREN RPAREN
+                    |   (FactorParenExprClass) LPAREN Expr RPAREN;
 
 Designator          ::= (DesignatorManyClass) Designator LSQBRACE Expr RSQBRACE
                     |	(DesignatorManyClass) Type IDENT:name;
 
-Label               ::= (LabelClass) IDENT:name;
+Label               ::= (Label) IDENT:name;
 
-Assignop		    ::= (EqualClass) EQUAL;
+Assignop		    ::= (Assignop) EQUAL
+                    |	error SEMI:l {: parser.report_error("Sintaksa greska konstrukcije iskaza dodele na liniji " + lleft, null); :};
 
 Relop				::= (EqualstoClass) EQUALSTO
 					|	(DifferentClass) DIFFERENT
