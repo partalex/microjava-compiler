@@ -147,8 +147,6 @@ Type                ::= (TypeNamespaceClass) IDENT:namespace DOUBLECOLON IDENT:t
 StatementMany       ::= (StatementDesignatorClass) StatementMany Statement
                     |   (StatementIfClass) /* epsilon */;
 
-// TODO - Review start      --------------------------------------------------------------------------------------------
-
 Statement           ::= (StatementDesignatorClass) DesignatorStatement SEMI
                     |   (StatementIfClass) IF LPAREN Condition RPAREN Statement
                     |   (StatementIfClass) IF LPAREN Condition RPAREN Statement ELSE Statement
@@ -161,10 +159,7 @@ Statement           ::= (StatementDesignatorClass) DesignatorStatement SEMI
                     |   (StatementPrintManyExprClass) PRINT LPAREN Expr COMMA NUMBER RPAREN SEMI
                     |   (StatementWhileClass) FOR LPAREN DesignatorStatementOpt SEMI CondFact SEMI DesignatorStatementOpt RPAREN
                     |   (StatementWhileClass) FOR LPAREN DesignatorStatementOpt SEMI SEMI DesignatorStatementOpt RPAREN
-                    |   (StatementWhileClass) LBRACE StatementMany RBRACE
-                    ;
-
-// TODO - Review end        --------------------------------------------------------------------------------------------
+                    |   (StatementWhileClass) LBRACE StatementMany RBRACE;
 
 DesignatorStatePart ::= (DesignatorStFirstClass) DesignatorStatePart COMMA
                     |   (DesignatorStFirstClass) DesignatorStatePart Designator COMMA
