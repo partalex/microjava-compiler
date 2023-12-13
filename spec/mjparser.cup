@@ -150,18 +150,18 @@ StatementMany       ::= (StatementDesignatorClass) StatementMany Statement
 // TODO - Review start      --------------------------------------------------------------------------------------------
 
 Statement           ::= (StatementDesignatorClass) DesignatorStatement SEMI
-//                    |   (StatementIfClass) IF LPAREN Condition RPAREN Statement
-//                    |   (StatementIfClass) IF LPAREN Condition RPAREN Statement ELSE Statement
-//                    |   (StatementBreakClass) BREAK SEMI
-//                    |   (StatementContinueClass) CONTINUE SEMI
-//                    |   (StatementExprClass) RETURN Expr SEMI
-//                    |   (StatementReturnClass) RETURN SEMI
-//                    |   (StatementReadClass) READ LPAREN Designator RPAREN SEMI
-//                    |   (StatementPrintOneExprClass) PRINT LPAREN Expr RPAREN SEMI
-//                    |   (StatementPrintManyExprClass) PRINT LPAREN Expr COMMA NUMBER RPAREN SEMI
-//                    |   (StatementWhileClass) FOR LPAREN DesignatorStatementOpt SEMI CondFact SEMI DesignatorStatementOpt RPAREN
-//                    |   (StatementWhileClass) FOR LPAREN DesignatorStatementOpt SEMI SEMI DesignatorStatementOpt RPAREN
-//                    |   (StatementWhileClass) LBRACE StatementMany RBRACE
+                    |   (StatementIfClass) IF LPAREN Condition RPAREN Statement
+                    |   (StatementIfClass) IF LPAREN Condition RPAREN Statement ELSE Statement
+                    |   (StatementBreakClass) BREAK SEMI
+                    |   (StatementContinueClass) CONTINUE SEMI
+                    |   (StatementExprClass) RETURN Expr SEMI
+                    |   (StatementReturnClass) RETURN SEMI
+                    |   (StatementReadClass) READ LPAREN Designator RPAREN SEMI
+                    |   (StatementPrintOneExprClass) PRINT LPAREN Expr RPAREN SEMI
+                    |   (StatementPrintManyExprClass) PRINT LPAREN Expr COMMA NUMBER RPAREN SEMI
+                    |   (StatementWhileClass) FOR LPAREN DesignatorStatementOpt SEMI CondFact SEMI DesignatorStatementOpt RPAREN
+                    |   (StatementWhileClass) FOR LPAREN DesignatorStatementOpt SEMI SEMI DesignatorStatementOpt RPAREN
+                    |   (StatementWhileClass) LBRACE StatementMany RBRACE
                     ;
 
 // TODO - Review end        --------------------------------------------------------------------------------------------
