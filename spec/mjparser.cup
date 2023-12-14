@@ -62,10 +62,9 @@ terminal String CHAR;
 terminal Integer NUMBER;
 terminal String IDENT;
 
-nonterminal rs.etf.pp1.symboltable.concepts.Obj Program;
-
 nonterminal Namespace;
 nonterminal NamespaceMany;
+//nonterminal Program; // defined
 nonterminal ConstDeclOptMany;
 nonterminal VarDeclOptMany;
 nonterminal MethodDeclOptMany;
@@ -77,11 +76,11 @@ nonterminal VarDeclOpt;
 nonterminal FormParsOptOne;
 nonterminal MethodDecl;
 nonterminal FormPars;
-nonterminal Type;
+//nonterminal Type; // defined
 nonterminal DesignatorStatementOpt;
 nonterminal Statement;
 nonterminal StatementMany;
-nonterminal Term;
+//nonterminal Term; // defined
 nonterminal DesignatorStatePart;
 nonterminal DesignatorStatement;
 nonterminal ActPars;
@@ -90,7 +89,7 @@ nonterminal CondTerm;
 nonterminal CondFact;
 nonterminal Expr;
 nonterminal ConstVal;
-nonterminal Factor;
+//nonterminal Factor; // defined
 nonterminal Designator;
 nonterminal Label;
 nonterminal Assignop;
@@ -98,9 +97,14 @@ nonterminal Relop;
 nonterminal Addop;
 nonterminal Mulop;
 
+nonterminal rs.etf.pp1.symboltable.concepts.Struct Type;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct Term;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct Factor;
+
+nonterminal rs.etf.pp1.symboltable.concepts.Obj Program;
+
 //nonterminal If;
 //nonterminal Else;
-
 precedence left ELSE;
 precedence left IF;
 
