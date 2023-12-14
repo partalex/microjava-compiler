@@ -71,7 +71,7 @@ public class MyDumpSymbolTableVisitor extends SymbolTableVisitor {
         output.append(", ");
         output.append(objToVisit.getAdr());
         output.append(", ");
-        output.append(objToVisit.getLevel() + " ");
+        output.append(objToVisit.getLevel()).append(" ");
 
         if (objToVisit.getKind() == Obj.Prog || objToVisit.getKind() == Obj.Meth || objToVisit.getKind() == Obj.Type && objToVisit.getType().getKind() == Struct.Class) {
             output.append("\n");

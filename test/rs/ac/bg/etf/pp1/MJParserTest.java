@@ -2,10 +2,10 @@ package rs.ac.bg.etf.pp1;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.nio.file.Files;
 
 import java_cup.runtime.Symbol;
 
@@ -36,26 +36,26 @@ public class MJParserTest {
             Yylex lexer = new Yylex(br);
 
             MJParser p = new MJParser(lexer);
-            Symbol s = p.parse();  //pocetak parsiranja
+            Symbol s = p.parse();  // start of parsing
 
             if (p.errorDetected)
-                log.info("Postoji sintaksna greska");
+                log.info("Syntax analysis NOT successful!");
             else {
-                Program prog = (Program) (s.value);
+                Program program = (Program) (s.value);
                 //Tab.init();
                 MyTab.myInit();
-                // ispis sintaksnog stabla
-                log.info(prog.toString(""));
+                // syntax tree
+                log.info(program.toString(""));
                 log.info("===================================");
 
 
-                // ispis prepoznatih programskih konstrukcija
+                // print of the program structures
                 SemanticPass v = new SemanticPass();
-                prog.traverseBottomUp(v);
+                program.traverseBottomUp(v);
 
-                //log.info(" Print count calls = " + v.printCallCount);
+//                 log.info(" Print count calls = " + v.printCallCount);
 
-                //log.info(" Deklarisanih promenljivih ima = " + v.varDeclCount);
+//                log.info("Number of declared count = " + v.varDeclCount);
 
                 log.info("===================================");
                 // Tab.dump();
@@ -66,14 +66,14 @@ public class MJParserTest {
 
                     CodeGenerator codeGenerator = new CodeGenerator();
                     Code.dataSize = v.nVars;
-                    prog.traverseBottomUp(codeGenerator);
+                    program.traverseBottomUp(codeGenerator);
 
                     Code.mainPc = codeGenerator.getMainPc();
-                    Code.write(new FileOutputStream(objFile));
+                    Code.write(Files.newOutputStream(objFile.toPath()));
 
-                    log.info("Parsiranje uspesno zavrseno!");
+                    log.info("Successfully compiled program!");
                 } else {
-                    log.error("Parsiranje NIJE uspesno zavrseno!");
+                    log.error("Code is not generated because of semantic errors!");
                 }
                 MyTab.dump();
             }

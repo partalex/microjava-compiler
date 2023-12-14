@@ -13,9 +13,6 @@ public class SemanticPass extends VisitorAdaptor {
     boolean errorDetected = false;
 
     Struct currentType = null;
-    int printCallCount = 0;
-    Obj currentMethod = null;
-    boolean returnFound = false;
     int nVars;
 
     Logger log = Logger.getLogger(getClass());
@@ -25,7 +22,7 @@ public class SemanticPass extends VisitorAdaptor {
         StringBuilder msg = new StringBuilder(message);
         int line = (info == null) ? 0 : info.getLine();
         if (line != 0)
-            msg.append(" na liniji ").append(line);
+            msg.append(" on line ").append(line);
         log.error(msg.toString());
     }
 
@@ -33,7 +30,7 @@ public class SemanticPass extends VisitorAdaptor {
         StringBuilder msg = new StringBuilder(message);
         int line = (info == null) ? 0 : info.getLine();
         if (line != 0)
-            msg.append(" na liniji ").append(line);
+            msg.append(" on line ").append(line);
         log.info(msg.toString());
     }
 
@@ -50,9 +47,9 @@ public class SemanticPass extends VisitorAdaptor {
                 && mainMeth.getKind() == Obj.Meth
                 && mainMeth.getType() == Tab.noType
                 && mainMeth.getLevel() == 0)
-            report_info("Postoji ispravan main.", programConstDeclClass);
+            report_info("Main already exist.", programConstDeclClass);
         else
-            report_error("Ne postoji void main() globalna funkcija.", programConstDeclClass);
+            report_error("Main does not exist.", programConstDeclClass);
 
         Tab.chainLocalSymbols(programConstDeclClass.obj);
         Tab.closeScope();
@@ -67,9 +64,9 @@ public class SemanticPass extends VisitorAdaptor {
                 && mainMeth.getKind() == Obj.Meth
                 && mainMeth.getType() == Tab.noType
                 && mainMeth.getLevel() == 0)
-            report_info("Postoji ispravan main.", programVarDeclClass);
+            report_info("Main already exist.", programVarDeclClass);
         else
-            report_error("Ne postoji void main() globalna funkcija.", programVarDeclClass);
+            report_error("Main does not exist.", programVarDeclClass);
 
         Tab.chainLocalSymbols(programVarDeclClass.obj);
         Tab.closeScope();
@@ -78,7 +75,7 @@ public class SemanticPass extends VisitorAdaptor {
     public void visit(TypeNamespaceClass type) {
         Obj typeNode = Tab.find(type.getNamespace());
         if (typeNode == Tab.noObj) {
-            report_error("Nije pronadjen tip " + type.getNamespace() + " u tabeli simbola!", null);
+            report_error("Type not found " + type.getNamespace() + " in symbol table!", null);
             type.struct = Tab.noType;
         } else {
             if (Obj.Type == typeNode.getKind()) {
@@ -86,7 +83,7 @@ public class SemanticPass extends VisitorAdaptor {
                 type.struct = currentType;
                 //report_info("tip = " + type.getTypeName(), type);
             } else {
-                report_error("Greska: Ime " + type.getNamespace() + " ne predstavlja tip!", null);
+                report_error("Error: Name " + type.getNamespace() + " is not type!", null);
                 type.struct = Tab.noType;
             }
         }
@@ -94,7 +91,7 @@ public class SemanticPass extends VisitorAdaptor {
 
     public void visit(TermManyClass termManyClass) {
         if (termManyClass.getTerm().struct != Tab.intType || termManyClass.getFactor().struct != Tab.intType)
-            report_error("Greska: mnozenje nije tipa int", termManyClass);
+            report_error("Error: multiplication is not int type!", termManyClass);
         termManyClass.struct = termManyClass.getTerm().struct;
     }
 
