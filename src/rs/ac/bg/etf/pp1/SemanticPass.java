@@ -81,7 +81,6 @@ public class SemanticPass extends VisitorAdaptor {
             if (Obj.Type == typeNode.getKind()) {
                 currentType = typeNode.getType();
                 type.struct = currentType;
-                //report_info("tip = " + type.getTypeName(), type);
             } else {
                 report_error("Error: Name " + type.getNamespace() + " is not type!", null);
                 type.struct = Tab.noType;
