@@ -13,7 +13,7 @@ public class SemanticPass extends VisitorAdaptor {
     boolean errorDetected = false;
 
     Struct currentType = null;
-    int nVars;
+    int numberOfVars;
 
     Logger log = Logger.getLogger(getClass());
 
@@ -41,7 +41,7 @@ public class SemanticPass extends VisitorAdaptor {
     public void visit(ProgramConstDeclClass programConstDeclClass) {
         programConstDeclClass.obj = Tab.insert(Obj.Prog, programConstDeclClass.getProgram(), Tab.noType);
         Tab.openScope();
-        nVars = Tab.currentScope.getnVars();
+        numberOfVars = Tab.currentScope.getnVars();
         Obj mainMeth = Tab.find("main");
         if (mainMeth != Tab.noObj
                 && mainMeth.getKind() == Obj.Meth
@@ -58,7 +58,7 @@ public class SemanticPass extends VisitorAdaptor {
     public void visit(ProgramVarDeclClass programVarDeclClass) {
         programVarDeclClass.obj = Tab.insert(Obj.Prog, programVarDeclClass.getProgram(), Tab.noType);
         Tab.openScope();
-        nVars = Tab.currentScope.getnVars();
+        numberOfVars = Tab.currentScope.getnVars();
         Obj mainMeth = Tab.find("main");
         if (mainMeth != Tab.noObj
                 && mainMeth.getKind() == Obj.Meth

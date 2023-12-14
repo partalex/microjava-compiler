@@ -60,7 +60,7 @@ public class Compiler {
                     if (objFile.exists()) objFile.delete();
 
                     CodeGenerator codeGenerator = new CodeGenerator();
-                    Code.dataSize = semanticPass.nVars;
+                    Code.dataSize = semanticPass.numberOfVars;
                     prog.traverseBottomUp(codeGenerator);
 
                     Code.mainPc = codeGenerator.getMainPc();
