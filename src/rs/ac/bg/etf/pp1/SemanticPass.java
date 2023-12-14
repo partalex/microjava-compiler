@@ -6,10 +6,13 @@ import rs.ac.bg.etf.pp1.ast.*;
 
 import rs.etf.pp1.symboltable.Tab;
 import rs.etf.pp1.symboltable.concepts.Obj;
+import rs.etf.pp1.symboltable.concepts.Struct;
 
 public class SemanticPass extends VisitorAdaptor {
 
     boolean errorDetected = false;
+
+    Struct currentType = null;
     int printCallCount = 0;
     Obj currentMethod = null;
     boolean returnFound = false;
@@ -34,8 +37,12 @@ public class SemanticPass extends VisitorAdaptor {
         log.info(msg.toString());
     }
 
-    public void visit(ProgramConstDecl programConstDecl) {
-        programConstDecl.obj = Tab.insert(Obj.Prog, programConstDecl.getProgram(), Tab.noType);
+    public boolean passed() {
+        return !errorDetected;
+    }
+
+    public void visit(ProgramConstDeclClass programConstDeclClass) {
+        programConstDeclClass.obj = Tab.insert(Obj.Prog, programConstDeclClass.getProgram(), Tab.noType);
         Tab.openScope();
         nVars = Tab.currentScope.getnVars();
         Obj mainMeth = Tab.find("main");
@@ -43,16 +50,16 @@ public class SemanticPass extends VisitorAdaptor {
                 && mainMeth.getKind() == Obj.Meth
                 && mainMeth.getType() == Tab.noType
                 && mainMeth.getLevel() == 0)
-            report_info("Postoji ispravan main.", programConstDecl);
+            report_info("Postoji ispravan main.", programConstDeclClass);
         else
-            report_error("Ne postoji void main() globalna funkcija.", programConstDecl);
+            report_error("Ne postoji void main() globalna funkcija.", programConstDeclClass);
 
-        Tab.chainLocalSymbols(programConstDecl.obj);
+        Tab.chainLocalSymbols(programConstDeclClass.obj);
         Tab.closeScope();
     }
 
-    public void visit(ProgramVarDecl programVarDecl) {
-        programVarDecl.obj = Tab.insert(Obj.Prog, programVarDecl.getProgram(), Tab.noType);
+    public void visit(ProgramVarDeclClass programVarDeclClass) {
+        programVarDeclClass.obj = Tab.insert(Obj.Prog, programVarDeclClass.getProgram(), Tab.noType);
         Tab.openScope();
         nVars = Tab.currentScope.getnVars();
         Obj mainMeth = Tab.find("main");
@@ -60,12 +67,39 @@ public class SemanticPass extends VisitorAdaptor {
                 && mainMeth.getKind() == Obj.Meth
                 && mainMeth.getType() == Tab.noType
                 && mainMeth.getLevel() == 0)
-            report_info("Postoji ispravan main.", programVarDecl);
+            report_info("Postoji ispravan main.", programVarDeclClass);
         else
-            report_error("Ne postoji void main() globalna funkcija.", programVarDecl);
+            report_error("Ne postoji void main() globalna funkcija.", programVarDeclClass);
 
-        Tab.chainLocalSymbols(programVarDecl.obj);
+        Tab.chainLocalSymbols(programVarDeclClass.obj);
         Tab.closeScope();
+    }
+
+    public void visit(TypeNamespaceClass type) {
+        Obj typeNode = Tab.find(type.getNamespace());
+        if (typeNode == Tab.noObj) {
+            report_error("Nije pronadjen tip " + type.getNamespace() + " u tabeli simbola!", null);
+            type.struct = Tab.noType;
+        } else {
+            if (Obj.Type == typeNode.getKind()) {
+                currentType = typeNode.getType();
+                type.struct = currentType;
+                //report_info("tip = " + type.getTypeName(), type);
+            } else {
+                report_error("Greska: Ime " + type.getNamespace() + " ne predstavlja tip!", null);
+                type.struct = Tab.noType;
+            }
+        }
+    }
+
+    public void visit(TermManyClass termManyClass) {
+        if (termManyClass.getTerm().struct != Tab.intType || termManyClass.getFactor().struct != Tab.intType)
+            report_error("Greska: mnozenje nije tipa int", termManyClass);
+        termManyClass.struct = termManyClass.getTerm().struct;
+    }
+
+    public void visit(TermOneClass termOneClass) {
+        termOneClass.struct = termOneClass.getFactor().struct;
     }
 
 }
