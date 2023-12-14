@@ -71,34 +71,34 @@ public class CodeGenerator extends VisitorAdaptor {
             });
     }
 
-    private void generateTVF() {
-
-        myClasses.forEach(e -> { // za svaku klasu
-            TVF.put(e.getType(), Code.dataSize);
-            fixTVF(classesAdrToBeFixed.get(e.getType()));
-            Collection<Obj> myFun = e.getType().getMembers();
-            myFun.forEach(f -> {
-                if (f.getKind() == Obj.Meth) { // za svaku metodu
-                    String name = f.getName();
-                    for (int i = 0; i < name.length(); i++) {
-                        Code.loadConst(name.charAt(i));
-                        Code.put(Code.putstatic);
-                        Code.put2(Code.dataSize++);
-                    }
-                    Code.loadConst(-1); // kraj imena metode
-                    Code.put(Code.putstatic);
-                    Code.put2(Code.dataSize++);
-
-                    Code.loadConst(f.getAdr()); // adresa metode
-                    Code.put(Code.putstatic);
-                    Code.put2(Code.dataSize++);
-                }
-            });
-            Code.loadConst(-2); // kraj tabele
-            Code.put(Code.putstatic);
-            Code.put2(Code.dataSize++);
-        });
-    }
+//    private void generateTVF() {
+//
+//        myClasses.forEach(e -> { // za svaku klasu
+//            TVF.put(e.getType(), Code.dataSize);
+//            fixTVF(classesAdrToBeFixed.get(e.getType()));
+//            Collection<Obj> myFun = e.getType().getMembers();
+//            myFun.forEach(f -> {
+//                if (f.getKind() == Obj.Meth) { // za svaku metodu
+//                    String name = f.getName();
+//                    for (int i = 0; i < name.length(); i++) {
+//                        Code.loadConst(name.charAt(i));
+//                        Code.put(Code.putstatic);
+//                        Code.put2(Code.dataSize++);
+//                    }
+//                    Code.loadConst(-1); // kraj imena metode
+//                    Code.put(Code.putstatic);
+//                    Code.put2(Code.dataSize++);
+//
+//                    Code.loadConst(f.getAdr()); // adresa metode
+//                    Code.put(Code.putstatic);
+//                    Code.put2(Code.dataSize++);
+//                }
+//            });
+//            Code.loadConst(-2); // kraj tabele
+//            Code.put(Code.putstatic);
+//            Code.put2(Code.dataSize++);
+//        });
+//    }
 
 //    public void visit(MethodTypeName methodTypeName) {
 //
@@ -306,20 +306,20 @@ public class CodeGenerator extends VisitorAdaptor {
 //        Code.fixup(elseStack.pop());
 //    }
 
-    private void condition(int adr) {
-        if (whereAmI.peek() == inIfCond) {
-            Code.put(Code.jmp);
-            Code.put2(0);
-
-            ifStack.push(Code.pc - 2);
-
-            orList.forEach(o -> {
-                Code.fixup(o); // postavlja then
-            });
-        }
-
-        orList.clear();
-    }
+//    private void condition(int adr) {
+//        if (whereAmI.peek() == inIfCond) {
+//            Code.put(Code.jmp);
+//            Code.put2(0);
+//
+//            ifStack.push(Code.pc - 2);
+//
+//            orList.forEach(o -> {
+//                Code.fixup(o); // postavlja then
+//            });
+//        }
+//
+//        orList.clear();
+//    }
 
 //    public void visit(CondCond condTernary) {
 ////        if (condTernary.getParent() instanceof StatementDo)
@@ -330,21 +330,21 @@ public class CodeGenerator extends VisitorAdaptor {
 //            whereAmI.pop();
 //    }
 
-    private void or() {
-        Code.put(Code.jmp);
-//        if (whereAmI.peek() == inDoWhileBlock)
-        if (whereAmI.peek() == inWhileBlock) // TODO - ako je ovo potebno
-            Code.put2(whileStack.peek() - Code.pc + 1);
-        else {
-            Code.put2(0); // skakanje na then
-            orList.add(Code.pc - 2);
-        }
-
-        andList.forEach(adr -> {
-            Code.fixup(adr);
-        });
-        andList.clear();
-    }
+//    private void or() {
+//        Code.put(Code.jmp);
+////        if (whereAmI.peek() == inDoWhileBlock)
+//        if (whereAmI.peek() == inWhileBlock) // TODO - ako je ovo potebno
+//            Code.put2(whileStack.peek() - Code.pc + 1);
+//        else {
+//            Code.put2(0); // skakanje na then
+//            orList.add(Code.pc - 2);
+//        }
+//
+//        andList.forEach(adr -> {
+//            Code.fixup(adr);
+//        });
+//        andList.clear();
+//    }
 
 //    public void visit(ConditionT cond) {
 //        or();
@@ -355,9 +355,9 @@ public class CodeGenerator extends VisitorAdaptor {
 //    }
 
 
-    private void and() {
-        andList.add(Code.pc - 2);
-    }
+//    private void and() {
+//        andList.add(Code.pc - 2);
+//    }
 
 //    public void visit(CondTermC cond) {
 //        and();
