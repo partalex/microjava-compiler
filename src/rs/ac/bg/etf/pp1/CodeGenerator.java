@@ -2,7 +2,6 @@ package rs.ac.bg.etf.pp1;
 
 import rs.ac.bg.etf.pp1.ast.*;
 import rs.etf.pp1.mj.runtime.Code;
-import rs.etf.pp1.symboltable.Tab;
 import rs.etf.pp1.symboltable.concepts.Obj;
 import rs.etf.pp1.symboltable.concepts.Struct;
 
@@ -29,11 +28,11 @@ public class CodeGenerator extends VisitorAdaptor {
     }
 
     private final List<Obj> myClasses = new ArrayList<Obj>();
-    private int staticSizeCnt = 0;
+    private final int staticSizeCounter = 0;
     private final HashMap<Struct, Integer> TVF = new HashMap<Struct, Integer>();
     private final HashMap<Struct, ArrayList<Integer>> classesAdrToBeFixed = new HashMap<Struct, ArrayList<Integer>>();
 
-    private boolean globalMethDeclar = false;
+    private final boolean globalMethDeclaration = false;
 
     public int getMainPc() {
         return mainPc;
