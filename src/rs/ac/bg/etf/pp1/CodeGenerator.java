@@ -281,18 +281,18 @@ public class CodeGenerator extends VisitorAdaptor {
 //        Code.putFalseJump(Code.eq, 0);
 //    }
 
-    public void visit(If i) {
-        whereAmI.push(inIfCond);
-    }
+//    public void visit(If i) {
+//        whereAmI.push(inIfCond);
+//    }
 
-    public void visit(Else els) {
-
-        Code.put(Code.jmp);
-        Code.put2(0);
-        elseStack.push(Code.pc - 2);
-
-        Code.fixup(ifStack.pop());
-    }
+//    public void visit(Else els) {
+//
+//        Code.put(Code.jmp);
+//        Code.put2(0);
+//        elseStack.push(Code.pc - 2);
+//
+//        Code.fixup(ifStack.pop());
+//    }
 
 //    public void visit(UnmatchedIf unmatchedIf) {
 //        Code.fixup(ifStack.pop());
@@ -302,9 +302,9 @@ public class CodeGenerator extends VisitorAdaptor {
 //        Code.fixup(elseStack.pop());
 //    }
 
-    public void visit(StatementIf stmIf) {
-        Code.fixup(elseStack.pop());
-    }
+//    public void visit(StatementIf stmIf) {
+//        Code.fixup(elseStack.pop());
+//    }
 
     private void condition(int adr) {
         if (whereAmI.peek() == inIfCond) {
