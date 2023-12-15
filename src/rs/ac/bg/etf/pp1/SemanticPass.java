@@ -15,7 +15,7 @@ public class SemanticPass extends VisitorAdaptor {
     private int formalParamCount = 0;
 
     private Struct currentType = null;
-    private int numberOfVars;
+    int numberOfVars;
 
     private final Logger log = Logger.getLogger(getClass());
 
@@ -41,13 +41,13 @@ public class SemanticPass extends VisitorAdaptor {
     public void visit(Program program) {
         program.obj = Tab.insert(Obj.Prog, program.getProgramName(), Tab.noType);
         Tab.openScope();
+        MyTab.tempHelp = Tab.insert(Obj.Var, "#", Tab.intType); // TODO - check if this is ok
         numberOfVars = Tab.currentScope.getnVars();
         Obj mainMeth = Tab.find("main");
         if (mainMeth != Tab.noObj && mainMeth.getKind() == Obj.Meth && mainMeth.getType() == Tab.noType && mainMeth.getLevel() == 0)
             report_info("Main already exist.", program);
         else report_error("Main does not exist.", program);
-
-        Tab.chainLocalSymbols(program.obj);
+            Tab.chainLocalSymbols(program.obj);
         Tab.closeScope();
     }
 
