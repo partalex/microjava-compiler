@@ -231,23 +231,44 @@ public class SemanticPass extends VisitorAdaptor {
         condTermOneClass.struct = condTermOneClass.getCondFact().struct;
     }
 
-//    public void visit(CondFactManyClass condFactManyClass) {
-//        condFactManyClass.struct = condFactManyClass.getExprNonTer().struct;
-//        if (condFactManyClass.struct != MyTab.boolType)
-//            report_error("Greska: nije bool", condFactManyClass);
-//    }
+    public void visit(CondFactOneClass condFactOneClass) {
+        condFactOneClass.struct = condFactOneClass.getExpr().struct;
+        if (condFactOneClass.struct != MyTab.boolType)
+            report_error("Error: not Bool", condFactOneClass);
+    }
 
-//    public void visit(CondFactOneClass cond) {
-//        if (checkTypes(cond.getExprNonTer().struct, cond.getExprNonTer1().struct))
-//            if ((cond.getExprNonTer().struct.getKind() == Struct.Array ||
-//                    cond.getExprNonTer().struct.getKind() == Struct.Class) &&
-//                    !(cond.getRelOp() instanceof RelOpEL || cond.getRelOp() instanceof RelOpD)) {
-//                report_error("Greska: klasu i niz mogu samo da poredim po jednakosti ", cond);
-//                cond.struct = Tab.noType;
-//            } else cond.struct = MyTab.boolType;
-//        else {
-//            report_error("Greska: nisu kompatibilni tipovi", cond);
-//            cond.struct = Tab.noType;
-//        }
-//    }
+    public void visit(CondFactManyClass condFactManyClass) {
+        if (checkTypes(condFactManyClass.getExpr().struct, condFactManyClass.getExpr1().struct))
+            if (condFactManyClass.getExpr().struct.getKind() == Struct.Array &&
+                    !(condFactManyClass.getRelop() instanceof RelopEqualstoClass || condFactManyClass.getRelop() instanceof RelopDifferentClass)) {
+                report_error("Error: array can only be compared by == and !=", condFactManyClass);
+                condFactManyClass.struct = Tab.noType;
+            } else
+                condFactManyClass.struct = MyTab.boolType;
+        else {
+            report_error("Error: types are incompatible", condFactManyClass);
+            condFactManyClass.struct = Tab.noType;
+        }
+    }
+
+    public void visit(AddTermManyClass addTermManyClass) {
+        addTermManyClass.struct = addTermManyClass.getTerm().struct;
+        if (
+                (addTermManyClass.getAddTerm() instanceof AddTermManyClass &&
+                        addTermManyClass.getAddTerm().struct != Tab.intType)
+                        || addTermManyClass.getTerm().struct != Tab.intType) {
+            report_error("Error: can not sum non Int value", addTermManyClass.getParent());
+            addTermManyClass.struct = Tab.noType;
+        }
+    }
+
+    public void visit(Expr expr) {
+        expr.struct = expr.getTerm().struct;
+        if (expr.getOptMinus() instanceof OptMin) if (expr.struct != Tab.intType) {
+            report_error("Greska: expr mora biti tipa int", expr);
+            expr.struct = Tab.noType;
+        }
+        if (!(expr.getAddTerm() instanceof AddTermEmptyClass) && expr.getTerm().struct != Tab.intType)
+            report_error("Error: can not sum non Int value", expr.getParent());
+    }
 }
