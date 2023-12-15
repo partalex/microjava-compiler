@@ -210,4 +210,44 @@ public class SemanticPass extends VisitorAdaptor {
             actPartsPassed = new ArrayList<>();
         actPartsPassed.add(actParsManyClass.getExpr().struct);
     }
+
+    public void visit(ConditionManyClass conditionManyClass) {
+        if (conditionManyClass.getCondition().struct == MyTab.boolType && conditionManyClass.getCondTerm().struct == MyTab.boolType)
+            conditionManyClass.struct = MyTab.boolType;
+        else
+            report_error("Bad condition type", conditionManyClass);
+    }
+
+    public void visit(ConditionOneClass conditionOneClass) {
+        conditionOneClass.struct = conditionOneClass.getCondTerm().struct;
+    }
+
+    public void visit(CondTermManyClass condTermManyClass) {
+        if (condTermManyClass.getCondFact().struct == MyTab.boolType && condTermManyClass.getCondTerm().struct == MyTab.boolType)
+            condTermManyClass.struct = MyTab.boolType;
+    }
+
+    public void visit(CondTermOneClass condTermOneClass) {
+        condTermOneClass.struct = condTermOneClass.getCondFact().struct;
+    }
+
+//    public void visit(CondFactManyClass condFactManyClass) {
+//        condFactManyClass.struct = condFactManyClass.getExprNonTer().struct;
+//        if (condFactManyClass.struct != MyTab.boolType)
+//            report_error("Greska: nije bool", condFactManyClass);
+//    }
+
+//    public void visit(CondFactOneClass cond) {
+//        if (checkTypes(cond.getExprNonTer().struct, cond.getExprNonTer1().struct))
+//            if ((cond.getExprNonTer().struct.getKind() == Struct.Array ||
+//                    cond.getExprNonTer().struct.getKind() == Struct.Class) &&
+//                    !(cond.getRelOp() instanceof RelOpEL || cond.getRelOp() instanceof RelOpD)) {
+//                report_error("Greska: klasu i niz mogu samo da poredim po jednakosti ", cond);
+//                cond.struct = Tab.noType;
+//            } else cond.struct = MyTab.boolType;
+//        else {
+//            report_error("Greska: nisu kompatibilni tipovi", cond);
+//            cond.struct = Tab.noType;
+//        }
+//    }
 }

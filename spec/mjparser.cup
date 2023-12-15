@@ -76,6 +76,7 @@ nonterminal VarDeclOpt;
 nonterminal FormParsOptOne;
 //nonterminal MethodDecl; // defined
 nonterminal FormPars;
+nonterminal OptMinus;
 nonterminal OptActPars;
 //nonterminal Type; // defined
 nonterminal DesignatorStatementOpt;
@@ -86,9 +87,9 @@ nonterminal StatementMany;
 nonterminal DesignatorStatePart;
 nonterminal DesignatorStatement;
 nonterminal ActPars;
-nonterminal Condition;
-nonterminal CondTerm;
-nonterminal CondFact;
+//nonterminal Condition; // defined
+//nonterminal CondTerm; // defined
+//nonterminal CondFact; // defined
 //nonterminal Expr; // defined
 nonterminal OptExpr;
 nonterminal OptFactorParenPars;
@@ -107,6 +108,9 @@ nonterminal rs.etf.pp1.symboltable.concepts.Struct Term;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Factor;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct ConstVal;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Expr;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct Condition;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct CondTerm;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct CondFact;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Obj Program;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj Namespace;
@@ -203,18 +207,26 @@ DesignatorStatement ::= (DesignatorStatementAssignClass) Designator Assignop Exp
 ActPars             ::= (ActParsManyClass) ActPars COMMA Expr
                     |   (ActParsOneClass) Expr;
 
+// Done
 Condition           ::= (ConditionManyClass) Condition OR CondTerm
                     |   (ConditionOneClass) CondTerm;
 
+// Done
 CondTerm            ::= (CondTermManyClass) CondTerm AND CondFact
                     |   (CondTermOneClass) CondFact;
 
+// Done
 CondFact            ::= (CondFactManyClass) Expr Relop Expr
                     |   (CondFactOneClass) Expr;
 
-Expr                ::= (ExprManyClass) Expr Addop Term
-                    |   (ExprNegativeOneClass) MINUS Term
-                    |   (ExprOneClass) Term;
+// Done
+AddTerm				::= (AddTermManyClass) AddTerm AddOp Term
+					|	(AddTermEmptyClass) /* epsilon */;
+
+Expr                ::= (Expr) OptMinus Term AddTerm;
+
+OptMinus 			::= (OptMin) MINUS
+					|	(NoMinus) /* epsilon */;
 
 Term                ::= (TermManyClass) Term Mulop Factor
                     |   (TermOneClass) Factor;
