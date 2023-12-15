@@ -78,6 +78,7 @@ nonterminal FormParsOptOne;
 nonterminal FormPars;
 //nonterminal Type; // defined
 nonterminal DesignatorStatementOpt;
+nonterminal OptPrint;
 nonterminal Statement;
 nonterminal StatementMany;
 //nonterminal Term; // defined
@@ -91,7 +92,7 @@ nonterminal CondFact;
 nonterminal OptExpr;
 //nonterminal ConstVal; // defined
 //nonterminal Factor; // defined
-nonterminal Designator;
+//nonterminal Designator; // defined
 nonterminal Label;
 nonterminal Assignop;
 nonterminal Relop;
@@ -107,6 +108,7 @@ nonterminal rs.etf.pp1.symboltable.concepts.Struct Expr;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj Program;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj Namespace;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj MethodDecl;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj Designator;
 
 nonterminal If;
 nonterminal Else;
@@ -174,11 +176,13 @@ Statement           ::= (StatementDesignatorClass) DesignatorStatement SEMI
                     |   (StatementContinueClass) CONTINUE SEMI
                     |   (StatementReturnClass) RETURN OptExpr SEMI
                     |   (StatementReadClass) READ LPAREN Designator RPAREN SEMI
-                    |   (StatementPrintOneExprClass) PRINT LPAREN Expr RPAREN SEMI
-                    |   (StatementPrintManyExprClass) PRINT LPAREN Expr COMMA NUMBER RPAREN SEMI
+                    |   (StatementPrintClass) PRINT LPAREN Expr OptPrint RPAREN SEMI
                     |   (StatementForClass) FOR LPAREN DesignatorStatementOpt SEMI CondFact SEMI DesignatorStatementOpt RPAREN
                     |   (StatementForConditonClass) FOR LPAREN DesignatorStatementOpt SEMI SEMI DesignatorStatementOpt RPAREN
                     |   (StatementManyClass) LBRACE StatementMany RBRACE;
+
+OptPrint	        ::= (OptPrintOneClass) COMMA NUMBER
+					|	(OptPrintEmptyClass) /* epsilon */;
 
 DesignatorStatePart ::= (DesignatorStatePartManyClass) DesignatorStatePart Designator COMMA
                     |   (DesignatorStatePartOneClass) DesignatorStatePart COMMA

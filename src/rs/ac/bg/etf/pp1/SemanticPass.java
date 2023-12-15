@@ -141,4 +141,25 @@ public class SemanticPass extends VisitorAdaptor {
                 !checkTypes(((OptExprOneClass) statementReturnClass.getOptExpr()).getExpr().struct, currentMethod.getType()))
             report_error("Error: returned value and required return type are different ", statementReturnClass);
     }
+
+    private boolean checkDesignType(Designator designator) {
+        int localKind = designator.obj.getKind();
+        return localKind == Obj.Var || localKind == Obj.Elem || localKind == Obj.Fld;
+    }
+
+    public void visit(StatementReadClass statementReadClass) {
+        Designator d = statementReadClass.getDesignator();
+        if (checkDesignType(d))
+            if (d.obj.getType() == MyTab.intType || d.obj.getType() == MyTab.charType || d.obj.getType() == MyTab.boolType) {
+                report_info("read()", statementReadClass);
+                return;
+            }
+        report_error("Error: read has no good parameters", statementReadClass);
+    }
+
+    public void visit(StatementPrintClass statementPrintClass) {
+        Struct kind = statementPrintClass.getExpr().struct;
+        if (kind != Tab.intType && kind != Tab.charType && kind != MyTab.boolType)
+            report_error("Error: print must have Int/Char/Bool", statementPrintClass);
+    }
 }
