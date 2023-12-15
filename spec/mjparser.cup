@@ -76,6 +76,7 @@ nonterminal VarDeclOpt;
 nonterminal FormParsOptOne;
 //nonterminal MethodDecl; // defined
 nonterminal FormPars;
+nonterminal OptActPars;
 //nonterminal Type; // defined
 nonterminal DesignatorStatementOpt;
 nonterminal OptPrint;
@@ -223,9 +224,11 @@ Factor              ::= (FactorParenParsClass) Designator LPAREN ActPars RPAREN
                     |   (FactorClass) Designator
                     |   (FactorConstValClass) ConstVal
                     |   (FactorNewTypeExprClass) NEW Type LSQBRACE Expr RSQBRACE
-                    |   (FactorNewTypeWithParamsClass) NEW Type LPAREN ActPars RPAREN
-                    |   (FactorNewTypeNoParamsClass) NEW Type LPAREN RPAREN
+                    |   (FactorNewTypeWithParamsClass) NEW Type LPAREN OptActPars RPAREN
                     |   (FactorParenExprClass) LPAREN Expr RPAREN;
+
+OptActPars          ::= (OptActParsOneClass) ActPars
+                    |   (OptActParsEmptyClass) /* epsilon */;
 
 Designator          ::= (DesignatorManyClass) Designator LSQBRACE Expr RSQBRACE
                     |	(DesignatorOneClass) Type IDENT:name;
