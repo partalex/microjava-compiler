@@ -113,10 +113,9 @@ precedence left Else;
 If					::= (If) IF;
 Else 				::= (Else) ELSE;
 
-Namespace 		    ::= (NamespaceConstDeclClass) NAMESPACE IDENT:namespace LBRACE ConstDeclOptMany LBRACE MethodDeclOptMany RBRACE RBRACE
-					|	(NamespaceVarDeclClass) PROG IDENT:program Namespace VarDeclOptMany LBRACE MethodDeclOptMany RBRACE;
+Namespace 		    ::= (Namespace) NAMESPACE IDENT:namespace LBRACE ConstDeclOptMany VarDeclOptMany LBRACE MethodDeclOptMany RBRACE RBRACE;
 
-NamespaceMany      ::=  (NamespaceManyClass) NamespaceMany Namespace
+NamespaceMany       ::=  (NamespaceManyClass) NamespaceMany Namespace
                     |   (NamespaceManyEmptyClass) /* epsilon */;
 
 Program 		    ::= (ProgramConstDeclClass) PROG IDENT:program NamespaceMany ConstDeclOptMany LBRACE MethodDeclOptMany RBRACE
