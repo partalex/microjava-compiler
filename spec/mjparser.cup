@@ -62,7 +62,7 @@ terminal String CHAR;
 terminal Integer NUMBER;
 terminal String IDENT;
 
-nonterminal Namespace;
+//nonterminal Namespace; // defined
 nonterminal NamespaceMany;
 //nonterminal Program; // defined
 nonterminal ConstDeclOptMany;
@@ -74,7 +74,7 @@ nonterminal VarDeclPart;
 nonterminal VarDecl;
 nonterminal VarDeclOpt;
 nonterminal FormParsOptOne;
-nonterminal MethodDecl;
+//nonterminal MethodDecl; // defined
 nonterminal FormPars;
 //nonterminal Type; // defined
 nonterminal DesignatorStatementOpt;
@@ -88,7 +88,7 @@ nonterminal Condition;
 nonterminal CondTerm;
 nonterminal CondFact;
 nonterminal Expr;
-nonterminal ConstVal;
+//nonterminal ConstVal; // defined
 //nonterminal Factor; // defined
 nonterminal Designator;
 nonterminal Label;
@@ -100,8 +100,11 @@ nonterminal Mulop;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Term;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Factor;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct ConstVal;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Obj Program;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj Namespace;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj MethodDecl;
 
 nonterminal If;
 nonterminal Else;
@@ -113,13 +116,12 @@ precedence left Else;
 If					::= (If) IF;
 Else 				::= (Else) ELSE;
 
-Namespace 		    ::= (Namespace) NAMESPACE IDENT:namespace LBRACE ConstDeclOptMany VarDeclOptMany LBRACE MethodDeclOptMany RBRACE RBRACE;
+Namespace 		    ::= (Namespace) NAMESPACE IDENT:namespaceName LBRACE ConstDeclOptMany VarDeclOptMany LBRACE MethodDeclOptMany RBRACE RBRACE;
 
-NamespaceMany       ::=  (NamespaceManyClass) NamespaceMany Namespace
+NamespaceMany       ::= (NamespaceManyClass) NamespaceMany Namespace
                     |   (NamespaceManyEmptyClass) /* epsilon */;
 
-Program 		    ::= (ProgramConstDeclClass) PROG IDENT:program NamespaceMany ConstDeclOptMany LBRACE MethodDeclOptMany RBRACE
-					|	(ProgramVarDeclClass) PROG IDENT:program NamespaceMany VarDeclOptMany LBRACE MethodDeclOptMany RBRACE;
+Program 		    ::= (Program) PROG IDENT:programName NamespaceMany ConstDeclOptMany VarDeclOptMany LBRACE MethodDeclOptMany RBRACE;
 
 ConstDeclOptMany    ::= (ConstDeclOptManyClass) ConstDeclOptMany ConstDecl
 					|	(ConstDeclOptNoClass) /* epsilon */;
@@ -146,8 +148,8 @@ FormParsOptOne      ::= (FormParsOptOneClass) FormPars
 VarDeclOpt          ::= (VarDeclOptManyClass) VarDeclOpt VarDecl
                     |   (VarDeclOptEmptyClass) /* epsilon */;
 
-MethodDecl          ::= (MethodDeclTypeClass) Type IDENT LPAREN FormParsOptOne RPAREN VarDeclOpt LBRACE StatementMany RBRACE
-                    |   (MethodDeclVoidClass) VOID IDENT LPAREN FormParsOptOne RPAREN VarDeclOpt LBRACE StatementMany RBRACE;
+MethodDecl          ::= (MethodDeclTypeClass) Type IDENT:methodName LPAREN FormParsOptOne RPAREN VarDeclOpt LBRACE StatementMany RBRACE
+                    |   (MethodDeclVoidClass) VOID IDENT:methodName LPAREN FormParsOptOne RPAREN VarDeclOpt LBRACE StatementMany RBRACE;
 
 FormPars            ::= (FormParsOneClass) Type IDENT:name
                     |	(FormParsArrayClass) Type IDENT:name LSQBRACE RSQBRACE
@@ -206,7 +208,7 @@ Term                ::= (TermManyClass) Term Mulop Factor
 
 ConstVal 			::= (ConstValNumClass) NUMBER
 					|	(ConstValCharClass) CHAR
-					|	(ConstValBoollass) BOOL;
+					|	(ConstValBooCllass) BOOL;
 
 Factor              ::= (FactorParenParsClass) Designator LPAREN ActPars RPAREN
                     |   (FactorParenClass) Designator LPAREN RPAREN

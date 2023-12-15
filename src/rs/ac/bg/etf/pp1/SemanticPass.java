@@ -10,27 +10,27 @@ import rs.etf.pp1.symboltable.concepts.Struct;
 
 public class SemanticPass extends VisitorAdaptor {
 
-    boolean errorDetected = false;
+    private boolean errorDetected = false;
+    private Obj currentMethod = null;
+    private int formalParamCount = 0;
 
-    Struct currentType = null;
-    int numberOfVars;
+    private Struct currentType = null;
+    private int numberOfVars;
 
-    Logger log = Logger.getLogger(getClass());
+    private final Logger log = Logger.getLogger(getClass());
 
     public void report_error(String message, SyntaxNode info) {
         errorDetected = true;
         StringBuilder msg = new StringBuilder(message);
         int line = (info == null) ? 0 : info.getLine();
-        if (line != 0)
-            msg.append(" on line ").append(line);
+        if (line != 0) msg.append(" on line ").append(line);
         log.error(msg.toString());
     }
 
     public void report_info(String message, SyntaxNode info) {
         StringBuilder msg = new StringBuilder(message);
         int line = (info == null) ? 0 : info.getLine();
-        if (line != 0)
-            msg.append(" on line ").append(line);
+        if (line != 0) msg.append(" on line ").append(line);
         log.info(msg.toString());
     }
 
@@ -38,39 +38,19 @@ public class SemanticPass extends VisitorAdaptor {
         return !errorDetected;
     }
 
-    public void visit(ProgramConstDeclClass programConstDeclClass) {
-        programConstDeclClass.obj = Tab.insert(Obj.Prog, programConstDeclClass.getProgram(), Tab.noType);
+    public void visit(Program program) {
+        program.obj = Tab.insert(Obj.Prog, program.getProgramName(), Tab.noType);
         Tab.openScope();
         numberOfVars = Tab.currentScope.getnVars();
         Obj mainMeth = Tab.find("main");
-        if (mainMeth != Tab.noObj
-                && mainMeth.getKind() == Obj.Meth
-                && mainMeth.getType() == Tab.noType
-                && mainMeth.getLevel() == 0)
-            report_info("Main already exist.", programConstDeclClass);
-        else
-            report_error("Main does not exist.", programConstDeclClass);
+        if (mainMeth != Tab.noObj && mainMeth.getKind() == Obj.Meth && mainMeth.getType() == Tab.noType && mainMeth.getLevel() == 0)
+            report_info("Main already exist.", program);
+        else report_error("Main does not exist.", program);
 
-        Tab.chainLocalSymbols(programConstDeclClass.obj);
+        Tab.chainLocalSymbols(program.obj);
         Tab.closeScope();
     }
 
-    public void visit(ProgramVarDeclClass programVarDeclClass) {
-        programVarDeclClass.obj = Tab.insert(Obj.Prog, programVarDeclClass.getProgram(), Tab.noType);
-        Tab.openScope();
-        numberOfVars = Tab.currentScope.getnVars();
-        Obj mainMeth = Tab.find("main");
-        if (mainMeth != Tab.noObj
-                && mainMeth.getKind() == Obj.Meth
-                && mainMeth.getType() == Tab.noType
-                && mainMeth.getLevel() == 0)
-            report_info("Main already exist.", programVarDeclClass);
-        else
-            report_error("Main does not exist.", programVarDeclClass);
-
-        Tab.chainLocalSymbols(programVarDeclClass.obj);
-        Tab.closeScope();
-    }
 
     public void visit(TypeNamespaceClass type) {
         Obj typeNode = Tab.find(type.getNamespace());
@@ -96,6 +76,33 @@ public class SemanticPass extends VisitorAdaptor {
 
     public void visit(TermOneClass termOneClass) {
         termOneClass.struct = termOneClass.getFactor().struct;
+    }
+
+    public void visit(MethodDecl methodDecl) {
+        currentMethod.setLevel(formalParamCount);
+        Tab.chainLocalSymbols(currentMethod);
+        Tab.closeScope();
+        methodDecl.obj = currentMethod;
+        currentMethod = null;
+        formalParamCount = 0;
+    }
+
+    /*
+    ConstValNumClass) NUMBER
+	(ConstValCharClass) CHAR
+	(ConstValBoollass) BOOL;
+    */
+
+    public void visit(ConstValNumClass constValNumClass) {
+        constValNumClass.struct = Tab.intType;
+    }
+
+    public void visit(ConstValCharClass constValCharClass) {
+        constValCharClass.struct = Tab.charType;
+    }
+
+    public void visit(ConstValBooCllass constValBooCllass) {
+        constValBooCllass.struct = MyTab.boolType;
     }
 
 }
