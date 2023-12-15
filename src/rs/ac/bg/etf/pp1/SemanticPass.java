@@ -152,9 +152,9 @@ public class SemanticPass extends VisitorAdaptor {
     }
 
     public void visit(StatementReadClass statementReadClass) {
-        Designator d = statementReadClass.getDesignator();
-        if (checkDesignType(d))
-            if (d.obj.getType() == MyTab.intType || d.obj.getType() == MyTab.charType || d.obj.getType() == MyTab.boolType) {
+        Designator designator = statementReadClass.getDesignator();
+        if (checkDesignType(designator))
+            if (designator.obj.getType() == MyTab.intType || designator.obj.getType() == MyTab.charType || designator.obj.getType() == MyTab.boolType) {
                 report_info("read()", statementReadClass);
                 return;
             }

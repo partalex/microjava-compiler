@@ -169,6 +169,7 @@ FormPars            ::= (FormParsOneClass) Type IDENT:name
                     |	(FormParsManyOneClass) FormPars COMMA Type IDENT:name
                     |	(FormParsManyArrayClass) FormPars COMMA Type IDENT:name LSQBRACE RSQBRACE;
 
+// Done
 Type                ::= (TypeNamespaceClass) IDENT:namespace DOUBLECOLON IDENT:type
                     |	(TypeClass) IDENT:type;
 
@@ -181,15 +182,16 @@ OptExpr				::= (OptExprOneClass) Expr
 Statement           ::= (StatementDesignatorClass) DesignatorStatement SEMI
                     |   (StatementIfClass) If LPAREN Condition RPAREN Statement
                     |   (StatementIfElseClass) If LPAREN Condition RPAREN Statement Else Statement
-                    |   (StatementBreakClass) BREAK SEMI
-                    |   (StatementContinueClass) CONTINUE SEMI
-                    |   (StatementReturnClass) RETURN OptExpr SEMI
+                    |   (StatementBreakClass) BREAK SEMI // Done
+                    |   (StatementContinueClass) CONTINUE SEMI // Done
+                    |   (StatementReturnClass) RETURN OptExpr SEMI // Done
                     |   (StatementReadClass) READ LPAREN Designator RPAREN SEMI
-                    |   (StatementPrintClass) PRINT LPAREN Expr OptPrint RPAREN SEMI
+                    |   (StatementPrintClass) PRINT LPAREN Expr OptPrint RPAREN SEMI // Done
                     |   (StatementForClass) FOR LPAREN DesignatorStatementOpt SEMI CondFact SEMI DesignatorStatementOpt RPAREN
                     |   (StatementForConditonClass) FOR LPAREN DesignatorStatementOpt SEMI SEMI DesignatorStatementOpt RPAREN
                     |   (StatementManyClass) LBRACE StatementMany RBRACE;
 
+// Done
 OptPrint	        ::= (OptPrintOneClass) COMMA NUMBER
 					|	(OptPrintEmptyClass) /* epsilon */;
 
@@ -258,11 +260,14 @@ Designator          ::= (Designator) Type IDENT:name OptDesignatorPart;
 OptDesignatorPart   ::= (OptDesignatorPartClass) LSQBRACE Expr RSQBRACE
                     |   (OptDesignatorPartEmptyClass) /* epsilon */;
 
+//Done
 Label               ::= (Label) IDENT:name;
 
+//Done
 Assignop		    ::= (Assignop) EQUAL
                     |	error SEMI:l {: parser.report_error("Sintaksa greska konstrukcije iskaza dodele na liniji " + lleft, null); :};
 
+//Done
 Relop				::= (RelopEqualstoClass) EQUALSTO
 					|	(RelopDifferentClass) DIFFERENT
 					|	(RelopLessClass) LESS
@@ -270,9 +275,11 @@ Relop				::= (RelopEqualstoClass) EQUALSTO
 					|	(RelopGreaterClass) GREATER
 					|	(RelopEgreaterClass) EGREATER;
 
+//Done
 Addop				::= (AddopPlusClass) PLUS
 					|	(AddopMinusClass) MINUS;
 
+//Done
 Mulop				::= (MulopMulClass) MUL
 					| 	(MulopDivClass) DIV
 					|	(MulopModClass) MOD;
