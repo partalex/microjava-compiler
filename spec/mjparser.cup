@@ -87,7 +87,8 @@ nonterminal ActPars;
 nonterminal Condition;
 nonterminal CondTerm;
 nonterminal CondFact;
-nonterminal Expr;
+//nonterminal Expr; // defined
+nonterminal OptExpr;
 //nonterminal ConstVal; // defined
 //nonterminal Factor; // defined
 nonterminal Designator;
@@ -101,6 +102,7 @@ nonterminal rs.etf.pp1.symboltable.concepts.Struct Type;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Term;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Factor;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct ConstVal;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct Expr;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Obj Program;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj Namespace;
@@ -162,13 +164,15 @@ Type                ::= (TypeNamespaceClass) IDENT:namespace DOUBLECOLON IDENT:t
 StatementMany       ::= (StatementManyManyClass) StatementMany Statement
                     |   (StatementEmptyClass) /* epsilon */;
 
+OptExpr				::= (OptExprOneClass) Expr
+					| 	(OptExprEmptyClass);
+
 Statement           ::= (StatementDesignatorClass) DesignatorStatement SEMI
                     |   (StatementIfClass) If LPAREN Condition RPAREN Statement
                     |   (StatementIfElseClass) If LPAREN Condition RPAREN Statement Else Statement
                     |   (StatementBreakClass) BREAK SEMI
                     |   (StatementContinueClass) CONTINUE SEMI
-                    |   (StatementExprClass) RETURN Expr SEMI
-                    |   (StatementReturnClass) RETURN SEMI
+                    |   (StatementReturnClass) RETURN OptExpr SEMI
                     |   (StatementReadClass) READ LPAREN Designator RPAREN SEMI
                     |   (StatementPrintOneExprClass) PRINT LPAREN Expr RPAREN SEMI
                     |   (StatementPrintManyExprClass) PRINT LPAREN Expr COMMA NUMBER RPAREN SEMI
