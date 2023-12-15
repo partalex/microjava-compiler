@@ -118,6 +118,7 @@ nonterminal rs.etf.pp1.symboltable.concepts.Obj Namespace;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj MethodDecl;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj Designator;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj OptDesignatorPart;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj DesigPart;
 
 nonterminal If;
 nonterminal Else;
@@ -249,17 +250,24 @@ Factor              ::= (FactorParenParsClass) Designator OptFactorParenPars
                     |   (FactorNewTypeExprClass) NEW Type LSQBRACE Expr RSQBRACE
                     |   (FactorParenExprClass) LPAREN Expr RPAREN;
 
+// Done
 OptFactorParenPars  ::= (OptFactorParenParsClass) LPAREN ActPars RPAREN
                     |   (OptFactorParenClass) LPAREN RPAREN
                     |   (OptFactorEmptyClass) /* epsilon */;
 
+// Done
 OptActPars          ::= (OptActParsOneClass) ActPars
                     |   (OptActParsEmptyClass) /* epsilon */;
 
+// Done
 Designator          ::= (Designator) Type IDENT:name OptDesignatorPart;
 
-OptDesignatorPart   ::= (OptDesignatorPartClass) LSQBRACE Expr RSQBRACE
+// Done
+OptDesignatorPart   ::= (OptDesignatorPartManyClass) OptDesignatorPart DesigPart
                     |   (OptDesignatorPartEmptyClass) /* epsilon */;
+
+// Done
+DesigPart			::= (DesigPart) LSQBRACE Expr RSQBRACE;
 
 //Done
 Label               ::= (Label) IDENT:name;

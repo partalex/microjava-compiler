@@ -300,4 +300,36 @@ public class SemanticPass extends VisitorAdaptor {
 
         design.obj = design.getOptDesignatorPart().obj;
     }
+
+    public void visit(OptDesignatorPartManyClass optDesignatorPartManyClass) {
+        optDesignatorPartManyClass.obj = optDesignatorPartManyClass.getDesigPart().obj;
+    }
+
+    public void visit(DesigPart desigPart) {
+        Obj firstLeft = getFirstLeft((OptDesignatorPartManyClass) desigPart.getParent());
+
+        if (firstLeft == Tab.noObj) desigPart.obj = Tab.noObj;
+        else {
+            if (desigPart.getExpr().struct != Tab.intType)
+                report_error("Error: inside [] muse be an Int", desigPart);
+
+            if (firstLeft.getType().getKind() == Struct.Array)
+                desigPart.obj = new Obj(Obj.Elem, "elem", firstLeft.getType().getElemType());
+            else {
+                report_error("Error: " + firstLeft.getName() + " is not array ", desigPart);
+                desigPart.obj = Tab.noObj;
+            }
+        }
+    }
+
+    private Obj getFirstLeft(OptDesignatorPartManyClass optDesignatorPartManyClass) {
+        if (optDesignatorPartManyClass.getOptDesignatorPart() instanceof OptDesignatorPartEmptyClass) {
+            SyntaxNode parent = optDesignatorPartManyClass.getParent();
+            while (parent instanceof OptDesignatorPartManyClass)
+                parent = parent.getParent();
+            return ((Designator) parent).obj;
+        } else
+            return optDesignatorPartManyClass.getOptDesignatorPart().obj;
+
+    }
 }
