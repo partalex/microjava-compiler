@@ -103,13 +103,15 @@ nonterminal rs.etf.pp1.symboltable.concepts.Struct Factor;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Obj Program;
 
-//nonterminal If;
-//nonterminal Else;
-precedence left ELSE;
-precedence left IF;
+nonterminal If;
+nonterminal Else;
 
-//If					::= (If) IF;
-//Else 				::= (Else) ELSE;
+precedence left Else;
+//precedence left ELSE;
+//precedence left IF;
+
+If					::= (If) IF;
+Else 				::= (Else) ELSE;
 
 Namespace 		    ::= (NamespaceConstDeclClass) NAMESPACE IDENT:namespace LBRACE ConstDeclOptMany LBRACE MethodDeclOptMany RBRACE RBRACE
 					|	(NamespaceVarDeclClass) PROG IDENT:program Namespace VarDeclOptMany LBRACE MethodDeclOptMany RBRACE;
@@ -160,8 +162,8 @@ StatementMany       ::= (StatementManyManyClass) StatementMany Statement
                     |   (StatementEmptyClass) /* epsilon */;
 
 Statement           ::= (StatementDesignatorClass) DesignatorStatement SEMI
-                    |   (StatementIfClass) IF LPAREN Condition RPAREN Statement
-                    |   (StatementIfElseClass) IF LPAREN Condition RPAREN Statement ELSE Statement
+                    |   (StatementIfClass) If LPAREN Condition RPAREN Statement
+                    |   (StatementIfElseClass) If LPAREN Condition RPAREN Statement Else Statement
                     |   (StatementBreakClass) BREAK SEMI
                     |   (StatementContinueClass) CONTINUE SEMI
                     |   (StatementExprClass) RETURN Expr SEMI
