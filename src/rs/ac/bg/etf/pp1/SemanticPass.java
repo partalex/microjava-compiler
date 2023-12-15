@@ -87,12 +87,6 @@ public class SemanticPass extends VisitorAdaptor {
         formalParamCount = 0;
     }
 
-    /*
-    ConstValNumClass) NUMBER
-	(ConstValCharClass) CHAR
-	(ConstValBoollass) BOOL;
-    */
-
     public void visit(ConstValNumClass constValNumClass) {
         constValNumClass.struct = Tab.intType;
     }
