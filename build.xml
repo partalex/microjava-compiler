@@ -48,12 +48,10 @@
     </target>
 
     <target name="repackage" depends="parserGen">
-        <!-- Replaces all of the references to the old package name in files in the "src" directory -->
         <replace dir="src" value="rs.ac.bg.etf.pp1.ast" token="src.rs.ac.bg.etf.pp1.ast" summary="true"/>
     </target>
 
-<!--    <target name="compile" depends="repackage">-->
-    <target name="compile">
+    <target name="compile" depends="repackage">
         <javac srcdir="src/rs/ac/bg/etf/pp1" includeantruntime="false">
             <classpath>
                 <pathelement path="lib/JFlex.jar"/>
