@@ -265,10 +265,39 @@ public class SemanticPass extends VisitorAdaptor {
     public void visit(Expr expr) {
         expr.struct = expr.getTerm().struct;
         if (expr.getOptMinus() instanceof OptMin) if (expr.struct != Tab.intType) {
-            report_error("Greska: expr mora biti tipa int", expr);
+            report_error("Error: expression must be an int type", expr);
             expr.struct = Tab.noType;
         }
         if (!(expr.getAddTerm() instanceof AddTermEmptyClass) && expr.getTerm().struct != Tab.intType)
             report_error("Error: can not sum non Int value", expr.getParent());
+    }
+
+    public void visit(FactorConstValClass factorConstValClass) {
+        factorConstValClass.struct = factorConstValClass.getConstVal().struct;
+    }
+
+    public void visit(FactorParenExprClass factorParenExprClass) {
+        factorParenExprClass.struct = factorParenExprClass.getExpr().struct;
+    }
+
+    public void visit(FactorNewTypeExprClass factorNewTypeExprClass) {
+        factorNewTypeExprClass.struct = new Struct(Struct.Array, factorNewTypeExprClass.getType().struct);
+        if (factorNewTypeExprClass.getExpr().struct != Tab.intType)
+            report_error("Error: inside [] must be an Int ", factorNewTypeExprClass);
+
+    }
+
+    public void visit(Designator design) {
+        boolean isDesignatorEmpty = design.getOptDesignatorPart() instanceof OptDesignatorPartEmptyClass;
+
+        if (isDesignatorEmpty) {
+            if (design.obj.getKind() == Obj.Con)
+                report_info("Access to const " + design.obj.getName(), design);
+            else if (design.obj.getKind() == Obj.Var)
+                report_info("Access to variable " + design.obj.getName(), design);
+            return;
+        }
+
+        design.obj = design.getOptDesignatorPart().obj;
     }
 }

@@ -96,7 +96,7 @@ nonterminal OptFactorParenPars;
 //nonterminal ConstVal; // defined
 //nonterminal Factor; // defined
 //nonterminal Designator; // defined
-nonterminal OptDesignatorPart;
+//nonterminal OptDesignatorPart; // defined
 nonterminal Label;
 nonterminal Assignop;
 nonterminal Relop;
@@ -117,6 +117,7 @@ nonterminal rs.etf.pp1.symboltable.concepts.Obj Program;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj Namespace;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj MethodDecl;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj Designator;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj OptDesignatorPart;
 
 nonterminal If;
 nonterminal Else;
@@ -242,10 +243,10 @@ ConstVal 			::= (ConstValNumClass) NUMBER
 					|	(ConstValCharClass) CHAR
 					|	(ConstValBooCllass) BOOL;
 
-Factor              ::= (FactorParenParsClass) Designator OptFactorParenPars // Done
+// Done
+Factor              ::= (FactorParenParsClass) Designator OptFactorParenPars
                     |   (FactorConstValClass) ConstVal
                     |   (FactorNewTypeExprClass) NEW Type LSQBRACE Expr RSQBRACE
-                    |   (FactorNewTypeWithParamsClass) NEW Type LPAREN OptActPars RPAREN
                     |   (FactorParenExprClass) LPAREN Expr RPAREN;
 
 OptFactorParenPars  ::= (OptFactorParenParsClass) LPAREN ActPars RPAREN
