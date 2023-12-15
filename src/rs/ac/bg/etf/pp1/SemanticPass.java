@@ -8,6 +8,9 @@ import rs.etf.pp1.symboltable.Tab;
 import rs.etf.pp1.symboltable.concepts.Obj;
 import rs.etf.pp1.symboltable.concepts.Struct;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 public class SemanticPass extends VisitorAdaptor {
     private boolean errorDetected = false;
     private Obj currentMethod = null;
@@ -15,6 +18,8 @@ public class SemanticPass extends VisitorAdaptor {
     private Struct currentType = null;
     int numberOfVars;
 
+    private ArrayList<Struct> actPartsPassed;
+    private Collection<Obj> actPartsRequired;
     private final Logger log = Logger.getLogger(getClass());
     private int breakCount;
     private int continueCount;
@@ -160,5 +165,49 @@ public class SemanticPass extends VisitorAdaptor {
         Struct kind = statementPrintClass.getExpr().struct;
         if (kind != Tab.intType && kind != Tab.charType && kind != MyTab.boolType)
             report_error("Error: print must have Int/Char/Bool", statementPrintClass);
+    }
+
+    public void visit(FactorParenParsClass factorParenParsClass) {
+        factorParenParsClass.struct = factorParenParsClass.getDesignator().obj.getType();
+        if (factorParenParsClass.getOptFactorParenPars() instanceof OptFactorEmptyClass)
+            return;
+        if (factorParenParsClass.getDesignator().obj.getKind() != Obj.Meth) {
+            report_error("Error: " + factorParenParsClass.getDesignator().getName() + " not a function", factorParenParsClass);
+            return;
+        }
+
+        actPartsRequired = factorParenParsClass.getDesignator().obj.getLocalSymbols();
+        if (!checkParams())
+            report_error("Error: bad parameters for calling method " + factorParenParsClass.getDesignator().getName(), factorParenParsClass);
+
+        factorParenParsClass.struct = factorParenParsClass.getDesignator().obj.getType();
+
+        actPartsRequired = null;
+        actPartsPassed = null;
+    }
+
+    private boolean checkParams() {
+        if (actPartsPassed.size() == actPartsRequired.size()) {
+            int i = 0;
+            for (Obj required : actPartsRequired) {
+                if (required.getType() != actPartsPassed.get(i))
+                    if (required.getType().getKind() != Struct.Array && actPartsPassed.get(i).getKind() != Struct.Array)
+                        return false;
+                i++;
+            }
+        }
+        return true;
+    }
+
+    public void visit(ActParsOneClass actParsOneClass) {
+        if (actPartsPassed == null)
+            actPartsPassed = new ArrayList<>();
+        actPartsPassed.add(actParsOneClass.getExpr().struct);
+    }
+
+    public void visit(ActParsManyClass actParsManyClass) {
+        if (actPartsPassed == null)
+            actPartsPassed = new ArrayList<>();
+        actPartsPassed.add(actParsManyClass.getExpr().struct);
     }
 }

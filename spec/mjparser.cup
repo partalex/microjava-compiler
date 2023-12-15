@@ -91,9 +91,11 @@ nonterminal CondTerm;
 nonterminal CondFact;
 //nonterminal Expr; // defined
 nonterminal OptExpr;
+nonterminal OptFactorParenPars;
 //nonterminal ConstVal; // defined
 //nonterminal Factor; // defined
 //nonterminal Designator; // defined
+nonterminal OptDesignatorPart;
 nonterminal Label;
 nonterminal Assignop;
 nonterminal Relop;
@@ -126,6 +128,7 @@ Namespace 		    ::= (Namespace) NAMESPACE IDENT:namespaceName LBRACE ConstDeclOp
 NamespaceMany       ::= (NamespaceManyClass) NamespaceMany Namespace
                     |   (NamespaceManyEmptyClass) /* epsilon */;
 
+// Done
 Program 		    ::= (Program) PROG IDENT:programName NamespaceMany ConstDeclOptMany VarDeclOptMany LBRACE MethodDeclOptMany RBRACE;
 
 ConstDeclOptMany    ::= (ConstDeclOptManyClass) ConstDeclOptMany ConstDecl
@@ -196,6 +199,7 @@ DesignatorStatement ::= (DesignatorStatementAssignClass) Designator Assignop Exp
                     |   (DesignatorStatementMinusClass) Designator MINUSMINUS
                     |   (DesignatorStatementManyClass) LSQBRACE DesignatorStatePart MUL Designator RSQBRACE Assignop Designator;
 
+// Done
 ActPars             ::= (ActParsManyClass) ActPars COMMA Expr
                     |   (ActParsOneClass) Expr;
 
@@ -215,23 +219,28 @@ Expr                ::= (ExprManyClass) Expr Addop Term
 Term                ::= (TermManyClass) Term Mulop Factor
                     |   (TermOneClass) Factor;
 
+// Done
 ConstVal 			::= (ConstValNumClass) NUMBER
 					|	(ConstValCharClass) CHAR
 					|	(ConstValBooCllass) BOOL;
 
-Factor              ::= (FactorParenParsClass) Designator LPAREN ActPars RPAREN
-                    |   (FactorParenClass) Designator LPAREN RPAREN
-                    |   (FactorClass) Designator
+Factor              ::= (FactorParenParsClass) Designator OptFactorParenPars // Done
                     |   (FactorConstValClass) ConstVal
                     |   (FactorNewTypeExprClass) NEW Type LSQBRACE Expr RSQBRACE
                     |   (FactorNewTypeWithParamsClass) NEW Type LPAREN OptActPars RPAREN
                     |   (FactorParenExprClass) LPAREN Expr RPAREN;
 
+OptFactorParenPars  ::= (OptFactorParenParsClass) LPAREN ActPars RPAREN
+                    |   (OptFactorParenClass) LPAREN RPAREN
+                    |   (OptFactorEmptyClass) /* epsilon */;
+
 OptActPars          ::= (OptActParsOneClass) ActPars
                     |   (OptActParsEmptyClass) /* epsilon */;
 
-Designator          ::= (DesignatorManyClass) Designator LSQBRACE Expr RSQBRACE
-                    |	(DesignatorOneClass) Type IDENT:name;
+Designator          ::= (Designator) Type IDENT:name OptDesignatorPart;
+
+OptDesignatorPart   ::= (OptDesignatorPartClass) LSQBRACE Expr RSQBRACE
+                    |   (OptDesignatorPartEmptyClass) /* epsilon */;
 
 Label               ::= (Label) IDENT:name;
 
