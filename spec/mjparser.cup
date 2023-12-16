@@ -204,9 +204,11 @@ FormPars            ::= (FormPars) Type IDENT:name OptionalArray;
 Type                ::= (TypeNamespaceClass) IDENT:namespace DOUBLECOLON IDENT:type
                     |	(TypeClass) IDENT:type;
 
+// Done
 StatementMany       ::= (StatementManyManyClass) StatementMany Statement
                     |   (StatementEmptyClass) /* epsilon */;
 
+// Done
 OptExpr				::= (OptExprOneClass) Expr
 					| 	(OptExprEmptyClass);
 
@@ -238,6 +240,7 @@ DesignatorStatement ::= (DesignatorStatementAssignClass) Designator Assignop Exp
                     |   (DesignatorStatementMinusClass) Designator MINUSMINUS // Done
                     |   (DesignatorStatementManyClass) LSQBRACE DesignatorStatePart MUL Designator RSQBRACE Assignop Designator;
 
+// Done
 ActPartsOptional	::= (ActPartsOptionalOneClass) ActPars
 					|	(ActPartsOptionalEmptyClass) /* epsilon */;
 
