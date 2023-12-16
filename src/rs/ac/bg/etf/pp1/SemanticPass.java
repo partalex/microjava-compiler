@@ -447,28 +447,31 @@ public class SemanticPass extends VisitorAdaptor {
         actPartsPassed = new ArrayList<>();
     }
 
-    private Obj findInCurrentScope(String namespaceName) {
-        Obj result = Tab.currentScope.findSymbol(namespaceName);
-        if (result == null) {
+    private Obj findInCurrentScope(String localSymbol) {
+        Obj result = Tab.currentScope.findSymbol(localSymbol);
+        if (result == null)
             result = Tab.noObj;
-        }
         return result;
     }
 
     public void visit(Namespace namespace) {
         String namespaceName = namespace.getNamespaceName();
         Obj namespaceObj = findInCurrentScope(namespaceName);
+        namespace.obj = currentNamespace = Tab.insert(Obj.Type, namespaceName, new Struct(Struct.None));
 
-        if (namespaceObj == Tab.noObj) {
+        if (namespaceObj == null ) {
             namespace.obj = currentNamespace = Tab.insert(Obj.Type, namespaceName, new Struct(Struct.None));
-            namespaceObj.setLevel(lastNamespaceLevel++);
+            namespace.obj.setLevel(lastNamespaceLevel++);
+//            namespaceObj.setLevel(lastNamespaceLevel++);
         } else {
             namespace.obj = currentNamespace = Tab.insert(Obj.Type, namespaceName, new Struct(Struct.None));
             report_error("Duplicate namespace", namespace);
         }
+        Tab.openScope();
+        Tab.chainLocalSymbols(namespace.obj);
+        Tab.closeScope();
         currentNamespace = null;
 
     }
-
 
 }
