@@ -82,14 +82,14 @@ public class SemanticPass extends VisitorAdaptor {
         termOneClass.struct = termOneClass.getFactor().struct;
     }
 
-    public void visit(MethodDeclTypeClass methodDeclTypeClass) {
-        currentMethod = Tab.insert(Obj.Meth, methodDeclTypeClass.getMethodName(), currentType);
-        methodDeclTypeClass.obj = currentMethod;
+    public void visit(MethodDecl methodDecl) {
+        currentMethod = Tab.insert(Obj.Meth, methodDecl.getMethodName(), currentType);
+        methodDecl.obj = currentMethod;
         Tab.openScope();
         currentMethod.setLevel(formalParamCount);
         Tab.chainLocalSymbols(currentMethod);
         Tab.closeScope();
-        methodDeclTypeClass.obj = currentMethod;
+        methodDecl.obj = currentMethod;
         currentMethod = null;
         formalParamCount = 0;
     }
@@ -332,4 +332,82 @@ public class SemanticPass extends VisitorAdaptor {
             return optDesignatorPartManyClass.getOptDesignatorPart().obj;
 
     }
+
+    public void visit(DesignatorStatementPlusClass designatorStatementPlusClass) {
+        if (!checkDesignType(designatorStatementPlusClass.getDesignator()) || designatorStatementPlusClass.getDesignator().obj.getType() != Tab.intType)
+            report_error("Error: plus plus require int type", designatorStatementPlusClass);
+    }
+
+    public void visit(DesignatorStatementMinusClass designatorStatementMinusClass) {
+        if (!checkDesignType(designatorStatementMinusClass.getDesignator()) || designatorStatementMinusClass.getDesignator().obj.getType() != Tab.intType)
+            report_error("Error: plus plus require int type", designatorStatementMinusClass);
+    }
+
+    public void visit(DesignatorStatementParamsClass designatorStatementParamsClass) {
+
+        if (designatorStatementParamsClass.getDesignator().obj.getKind() != Obj.Meth)
+            report_error("method does not exist" + designatorStatementParamsClass.getDesignator().obj.getName(), designatorStatementParamsClass);
+        else {
+            actPartsRequired = designatorStatementParamsClass.getDesignator().obj.getLocalSymbols();
+            if (badParams())
+                report_error("Error: bad parameters " + designatorStatementParamsClass.getDesignator().obj.getName(), designatorStatementParamsClass);
+            else
+                report_info("Method call " + designatorStatementParamsClass.getDesignator().obj.getName(), designatorStatementParamsClass);
+        }
+        actPartsPassed = null;
+        actPartsRequired = null;
+    }
+
+    private boolean badParams() {
+
+        if (actPartsPassed.size() == actPartsRequired.size()) {
+            int i = 0;
+            for (Obj required : actPartsRequired) {
+                if (required.getType() != actPartsPassed.get(i))
+                    if (required.getType().getKind() != Struct.Array && actPartsPassed.get(i).getKind() != Struct.Array) {
+                        i = -1;
+                        break;
+                    }
+                i++;
+            }
+            if (i != -1)
+                return false;
+        }
+        if (actPartsPassed.size() + 1 == actPartsRequired.size()) {
+            int i = 0;
+            boolean prvi = true;
+            for (Obj req : actPartsRequired) {
+                if (prvi) {
+                    prvi = false;
+                    continue;
+                }
+                if (req.getType() != actPartsPassed.get(i))
+                    if (!(req.getType().getKind() == Struct.Array && actPartsPassed.get(i).getKind() == Struct.Array)) {
+                        i = -1;
+                        break;
+                    }
+                i++;
+            }
+            return i == -1;
+        }
+
+        return true;
+    }
+
+    public void visit(DesignatorStatementAssignClass designatorStatementAssignClass) {
+        checkDesignType(designatorStatementAssignClass.getDesignator()); // dodaj if
+
+        Struct tempL = designatorStatementAssignClass.getDesignator().obj.getType();
+        Struct tempR = designatorStatementAssignClass.getExpr().struct;
+
+        if (!checkTypes(tempL, tempR))
+            report_error("Error: can not assign type", designatorStatementAssignClass);
+
+    }
+
+    public void visit(MethodTypeVoidClass methodTypeVoidClass) {
+        methodTypeVoidClass.struct = Tab.noType;
+        currentType = Tab.noType;
+    }
+
 }
