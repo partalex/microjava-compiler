@@ -396,11 +396,11 @@ public class SemanticPass extends VisitorAdaptor {
         return false;
     }
 
-    public void visit(ConstDeclPartOneClass constDeclPartOneClass) {
-        if (tryToDefine(constDeclPartOneClass.getName(), constDeclPartOneClass))
-            if (constDeclPartOneClass.getConstVal().struct == currentType)
-                constDeclPartOneClass.obj = Tab.insert(Obj.Con, constDeclPartOneClass.getName(), currentType);
-            else report_error("Error: incorrect type for defining const", constDeclPartOneClass);
+    public void visit(ConstDeclPart constDeclPart) {
+        if (tryToDefine(constDeclPart.getName(), constDeclPart))
+            if (constDeclPart.getConstVal().struct == currentType)
+                constDeclPart.obj = Tab.insert(Obj.Con, constDeclPart.getName(), currentType);
+            else report_error("Error: incorrect type for defining const", constDeclPart);
 
     }
 

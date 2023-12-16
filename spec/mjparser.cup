@@ -69,6 +69,7 @@ nonterminal ConstDeclOptMany;
 nonterminal VarDeclOptMany;
 nonterminal MethodDeclOptMany;
 nonterminal ConstDecl;
+nonterminal ConstList;
 //nonterminal ConstDeclPart; // defined
 nonterminal VarDeclPart;
 nonterminal VarDecl;
@@ -153,12 +154,16 @@ VarDeclPart         ::= (VarDeclOneClass) Type IDENT:name
                     |	(VarDeclArrayClass) Type IDENT:name LSQBRACE RSQBRACE
                     |	(VarDeclManyOneClass) VarDeclPart COMMA IDENT:name
                     |	(VarDeclManyArrayClass) VarDeclPart COMMA IDENT:name LSQBRACE RSQBRACE;
-
+                    
 // Done
 ConstDecl           ::= (ConstDecl) CONST Type ConstDeclPart SEMI;
 
-ConstDeclPart       ::= (ConstDeclPartManyClass) ConstDeclPart COMMA EQUAL ConstVal:value
-                    |   (ConstDeclPartOneClass) IDENT:name EQUAL ConstVal:value;
+// Done
+ConstDeclPart       ::= (ConstDeclPart) IDENT:name EQUAL ConstVal:value;
+
+// Done
+ConstList           ::= (ConstListManyClass) ConstList COMMA ConstDeclPart
+                    |   (ConstListOneClass) ConstDeclPart;
 
 VarDecl             ::= (VarDecl) VarDeclPart SEMI;
 
