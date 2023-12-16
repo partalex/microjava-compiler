@@ -406,6 +406,9 @@ public class SemanticPass extends VisitorAdaptor {
     }
 
     public void visit(ConstDecl constDecl) {
+        currentType = constDecl.getType().struct;
+        if (currentType != Tab.intType && currentType != Tab.charType && currentType != MyTab.boolType)
+            report_error("Error: const must be Int|Char|Bool", constDecl.getType());
         currentType = null;
     }
 
@@ -430,5 +433,6 @@ public class SemanticPass extends VisitorAdaptor {
         formalParamCount++;
         isArray = false;
     }
+
 
 }

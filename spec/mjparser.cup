@@ -161,7 +161,6 @@ VarDeclPart         ::= (VarDeclPart) Type IDENT:name OptionalArray;
 VarDeclList         ::= (VarDeclListOneClass) VarDeclPart
                     |	(VarDeclListManyClass) VarDeclList COMMA VarDeclPart
                     |   error SEMI:l {: parser.report_error("Sintaksa greska deklaracije globalne promenljive na liniji " + lleft, null); :};
-// TODO - #########################################################################
 
 // Done
 ConstDeclOptMany    ::= (ConstDeclOptManyClass) ConstList
@@ -176,7 +175,6 @@ ConstDeclPart       ::= (ConstDeclPart) IDENT:name EQUAL ConstVal:value;
 ConstList           ::= (ConstListManyClass) ConstList COMMA ConstDeclPart
                     |   (ConstListOneClass) ConstDeclPart;
 
-// TODO - #########################################################################
 // Done
 VarDecl             ::= (VarDecl) VarDeclPart SEMI;
 
