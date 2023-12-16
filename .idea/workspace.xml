@@ -6,9 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="37548433-4df9-4744-8550-e2d30ad3cbd3" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/spec/mjlexer.flex" beforeDir="false" afterPath="$PROJECT_DIR$/spec/mjlexer.flex" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/spec/my-mjparser.cup" beforeDir="false" afterPath="$PROJECT_DIR$/spec/my-mjparser.cup" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/rs/ac/bg/etf/pp1/CodeGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/rs/ac/bg/etf/pp1/CodeGenerator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MJCompiler.iml" beforeDir="false" afterPath="$PROJECT_DIR$/MJCompiler.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/rs/ac/bg/etf/pp1/SemanticPass.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/rs/ac/bg/etf/pp1/SemanticPass.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -19,18 +17,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="KubernetesApiProvider"><![CDATA[{
-  "isMigrated": true
-}]]></component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="ProjectErrors" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 8
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 8
+}</component>
   <component name="ProjectId" id="2ZPl1ANiOlHluC44N3VwfISAIpD" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -49,7 +47,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "2023",
+    "git-widget-placeholder": "2023-kraj-trece-faze",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/kaoko/Documents/PP1/MJCompiler/lib/symboltable-1-1.jar",
@@ -65,7 +63,7 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
-  <component name="RunManager" selected="Ant Target.4. repackage">
+  <component name="RunManager" selected="Ant Target.1. delete">
     <configuration name="1. delete" type="AntRunConfiguration">
       <antsettings antfile="file://$PROJECT_DIR$/build.xml" target="delete" />
       <method v="2" />
@@ -82,11 +80,16 @@
       <antsettings antfile="file://$PROJECT_DIR$/build.xml" target="repackage" />
       <method v="2" />
     </configuration>
+    <configuration name="5. compile" type="AntRunConfiguration">
+      <antsettings antfile="file://$PROJECT_DIR$/build.xml" target="compile" />
+      <method v="2" />
+    </configuration>
     <list>
       <item itemvalue="Ant Target.1. delete" />
       <item itemvalue="Ant Target.2. lexerGen" />
       <item itemvalue="Ant Target.3. parserGen" />
       <item itemvalue="Ant Target.4. repackage" />
+      <item itemvalue="Ant Target.5. compile" />
     </list>
   </component>
   <component name="SharedIndexes">
@@ -111,20 +114,5 @@
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-method">
-          <url>file://$PROJECT_DIR$/src/rs/ac/bg/etf/pp1/SemanticPass.java</url>
-          <line>685</line>
-          <properties class="rs.ac.bg.etf.pp1.SemanticPass" method="visit">
-            <option name="EMULATED" value="true" />
-            <option name="WATCH_EXIT" value="false" />
-          </properties>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>

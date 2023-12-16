@@ -22,7 +22,6 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="false" />
     </content>
-    <orderEntry type="jdk" jdkName="corretto-1.8" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library">
       <library name="cup_v10k.jar">
@@ -51,15 +50,16 @@
         <SOURCES />
       </library>
     </orderEntry>
-       <orderEntry type="module-library">
-          <library name="symboltable-1-1.jar">
-            <CLASSES>
-              <root url="jar://$MODULE_DIR$/lib/symboltable-1-1.jar!/" />
-            </CLASSES>
-            <JAVADOC />
-            <SOURCES />
-          </library>
-        </orderEntry>
+    <orderEntry type="module-library">
+      <library name="symboltable.jar">
+        <CLASSES>
+          <root url="file://lib/symboltable.jar" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="inheritedJdk" />
     <orderEntry type="module-library">
       <library name="mj-runtime.jar">
         <CLASSES>
@@ -69,6 +69,6 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="cup_v10k" level="project" />
+    <orderEntry type="library" name="symboltable-1-1" level="project" />
   </component>
 </module>
