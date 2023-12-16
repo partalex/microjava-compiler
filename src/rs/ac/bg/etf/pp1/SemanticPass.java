@@ -25,6 +25,9 @@ public class SemanticPass extends VisitorAdaptor {
     private int continueCount;
     private boolean isArray;
 
+    private int lastNamespaceLevel = 0;
+    private Obj currentNamespace;
+
     public void report_error(String message, SyntaxNode info) {
         errorDetected = true;
         StringBuilder msg = new StringBuilder(message);
@@ -93,6 +96,11 @@ public class SemanticPass extends VisitorAdaptor {
         methodDecl.obj = currentMethod;
         currentMethod = null;
         formalParamCount = 0;
+
+        if (currentNamespace != null) {
+            Tab.insert(Obj.Var, currentNamespace.getName(), currentNamespace.getType());
+        }
+
     }
 
     public void visit(ConstValNumClass constValNumClass) {
@@ -437,6 +445,29 @@ public class SemanticPass extends VisitorAdaptor {
 
     public void visit(OptActParsEmptyClass optActParsEmptyClass) {
         actPartsPassed = new ArrayList<>();
+    }
+
+    private Obj findInCurrentScope(String namespaceName) {
+        Obj result = Tab.currentScope.findSymbol(namespaceName);
+        if (result == null) {
+            result = Tab.noObj;
+        }
+        return result;
+    }
+
+    public void visit(Namespace namespace) {
+        String namespaceName = namespace.getNamespaceName();
+        Obj namespaceObj = findInCurrentScope(namespaceName);
+
+        if (namespaceObj == Tab.noObj) {
+            namespace.obj = currentNamespace = Tab.insert(Obj.Type, namespaceName, new Struct(Struct.None));
+            namespaceObj.setLevel(lastNamespaceLevel++);
+        } else {
+            namespace.obj = currentNamespace = Tab.insert(Obj.Type, namespaceName, new Struct(Struct.None));
+            report_error("Duplicate namespace", namespace);
+        }
+        currentNamespace = null;
+
     }
 
 
