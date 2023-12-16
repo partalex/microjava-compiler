@@ -178,19 +178,21 @@ ConstList           ::= (ConstListManyClass) ConstList COMMA ConstDeclPart
 // Done
 VarDecl             ::= (VarDecl) VarDeclPart SEMI;
 
-FormParsOptOne      ::= (FormParsOptOneClass) FormPars
-                    |   (FormParsOptOneEmptyClass) /* epsilon */;
+
 
 VarDeclOpt          ::= (VarDeclOptManyClass) VarDeclOpt VarDecl
                     |   (VarDeclOptEmptyClass) /* epsilon */;
 
 // Done
-MethodDecl          ::= (MethodDecl) MethodType IDENT:methodName LPAREN FormParsOptOne RPAREN VarDeclOpt LBRACE StatementMany RBRACE;
-
-// Done
 MethodType			::= (MethodTypeVoidClass) VOID
 					|	(MethodTypeTypeClass) Type;
 // TODO - #########################################################################
+
+// Done
+MethodDecl          ::= (MethodDecl) MethodType IDENT:methodName LPAREN FormParsOptOne RPAREN VarDeclOpt LBRACE StatementMany RBRACE;
+
+FormParsOptOne      ::= (FormParsOptOneClass) FormPars
+                    |   (FormParsOptOneEmptyClass) /* epsilon */;
 
 FormPars            ::= (FormParsOneClass) Type IDENT:name OptionalArray
                     |	(FormParsManyManyClass) FormPars COMMA Type IDENT:name OptionalArray;
