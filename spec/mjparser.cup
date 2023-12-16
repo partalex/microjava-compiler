@@ -179,8 +179,7 @@ ConstList           ::= (ConstListManyClass) ConstList COMMA ConstDeclPart
 // Done
 VarDecl             ::= (VarDecl) VarDeclPart SEMI;
 
-
-
+// Done
 VarDeclOpt          ::= (VarDeclOptManyClass) VarDeclOpt VarDecl
                     |   (VarDeclOptEmptyClass) /* epsilon */;
 
