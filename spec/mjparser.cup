@@ -148,10 +148,6 @@ NamespaceMany       ::= (NamespaceManyClass) NamespaceMany Namespace
 Program 		    ::= (Program) PROG IDENT:programName NamespaceMany ConstDeclOptMany VarDeclOptMany LBRACE MethodDeclOptMany RBRACE;
 
 // Done
-ConstDeclOptMany    ::= (ConstDeclOptManyClass) ConstList
-					|	(ConstDeclOptNoClass) /* epsilon */;
-
-// Done
 MethodDeclOptMany	::= (MethodDeclOptManyClass) MethodDeclOptMany MethodDecl
 					|	(MethodDeclOptEmptyClass) /* epsilon */;
 // Done
@@ -165,7 +161,11 @@ VarDeclPart         ::= (VarDeclPart) Type IDENT:name OptionalArray;
 VarDeclList         ::= (VarDeclListOneClass) VarDeclPart
                     |	(VarDeclListManyClass) VarDeclList COMMA VarDeclPart
                     |   error SEMI:l {: parser.report_error("Sintaksa greska deklaracije globalne promenljive na liniji " + lleft, null); :};
+// TODO - #########################################################################
 
+// Done
+ConstDeclOptMany    ::= (ConstDeclOptManyClass) ConstList
+					|	(ConstDeclOptNoClass) /* epsilon */;
 // Done
 ConstDecl           ::= (ConstDecl) CONST Type ConstDeclPart SEMI;
 
@@ -176,6 +176,7 @@ ConstDeclPart       ::= (ConstDeclPart) IDENT:name EQUAL ConstVal:value;
 ConstList           ::= (ConstListManyClass) ConstList COMMA ConstDeclPart
                     |   (ConstListOneClass) ConstDeclPart;
 
+// TODO - #########################################################################
 // Done
 VarDecl             ::= (VarDecl) VarDeclPart SEMI;
 
