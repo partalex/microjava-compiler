@@ -396,11 +396,11 @@ public class SemanticPass extends VisitorAdaptor {
         return false;
     }
 
-    public void visit(ConstDecl constDecl) { // ime i vrednost konstante
-        if (tryToDefine(constDecl.getConstName(), constDecl))
-            if (constDecl.getConstVal().struct == currentType)
-                constDecl.obj = Tab.insert(Obj.Con, constDecl.getConstName(), currentType);
-            else report_error("Error: losi tipovi definisanja konstante", constDecl);
+    public void visit(ConstDeclPartOneClass constDeclPartOneClass) { //
+        if (tryToDefine(constDeclPartOneClass.getName(), constDeclPartOneClass))
+            if (constDeclPartOneClass.getConstVal().struct == currentType)
+                constDeclPartOneClass.obj = Tab.insert(Obj.Con, constDeclPartOneClass.getName(), currentType);
+            else report_error("Error: incorrect type for defining const", constDeclPartOneClass);
 
     }
 
