@@ -151,18 +151,18 @@ ConstDeclOptMany    ::= (ConstDeclOptManyClass) ConstDeclOptMany ConstDecl
 
 MethodDeclOptMany	::= (MethodDeclOptManyClass) MethodDeclOptMany MethodDecl
 					|	(MethodDeclOptEmptyClass) /* epsilon */;
-// TODO - #########################################################################
-
+// Done
 OptionalArray		::= (OptionalArrayClass) LSQBRACE RSQBRACE
-					|	(OptionalArrayEmptyClass);
+					|	(OptionalArrayEmptyClass) /* epsilon */;
 
+// Done
 VarDeclPart         ::= (VarDeclPart) Type IDENT:name OptionalArray;
 
+// Done
 VarDeclList         ::= (VarDeclListOneClass) VarDeclPart
                     |	(VarDeclListManyClass) VarDeclList COMMA VarDeclPart
                     |   error SEMI:l {: parser.report_error("Sintaksa greska deklaracije globalne promenljive na liniji " + lleft, null); :};
 
-// TODO - #########################################################################
 // Done
 ConstDecl           ::= (ConstDecl) CONST Type ConstDeclPart SEMI;
 
