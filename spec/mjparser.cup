@@ -148,7 +148,7 @@ NamespaceMany       ::= (NamespaceManyClass) NamespaceMany Namespace
 Program 		    ::= (Program) PROG IDENT:programName NamespaceMany ConstDeclOptMany VarDeclOptMany LBRACE MethodDeclOptMany RBRACE;
 
 // Done
-ConstDeclOptMany    ::= (ConstDeclOptManyClass) ConstDeclOptMany ConstDecl
+ConstDeclOptMany    ::= (ConstDeclOptManyClass) ConstList
 					|	(ConstDeclOptNoClass) /* epsilon */;
 
 // Done
@@ -180,7 +180,7 @@ ConstList           ::= (ConstListManyClass) ConstList COMMA ConstDeclPart
 VarDecl             ::= (VarDecl) VarDeclPart SEMI;
 
 // Done
-VarDeclOpt          ::= (VarDeclOptManyClass) VarDeclOpt VarDecl
+VarDeclOpt          ::= (VarDeclOptManyClass) VarDeclList
                     |   (VarDeclOptEmptyClass) /* epsilon */;
 
 // Done
