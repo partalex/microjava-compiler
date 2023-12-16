@@ -434,5 +434,8 @@ public class SemanticPass extends VisitorAdaptor {
         isArray = false;
     }
 
+    public void visit(OptActParsEmptyClass optActParsEmptyClass) {
+        actPartsPassed = new ArrayList<>();
+    }
 
 }

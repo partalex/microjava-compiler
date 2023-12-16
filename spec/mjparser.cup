@@ -239,7 +239,7 @@ DesignatorStatement ::= (DesignatorStatementAssignClass) Designator Assignop Exp
                     |   (DesignatorStatementManyClass) LSQBRACE DesignatorStatePart MUL Designator RSQBRACE Assignop Designator;
 
 ActPartsOptional	::= (ActPartsOptionalOneClass) ActPars
-					|	(ActPartsOptionalEmptyClass);
+					|	(ActPartsOptionalEmptyClass) /* epsilon */;
 
 // Done
 ActPars             ::= (ActParsManyClass) ActPars COMMA Expr
