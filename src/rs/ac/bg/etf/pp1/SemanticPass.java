@@ -417,6 +417,7 @@ public class SemanticPass extends VisitorAdaptor {
     }
 
     public void visit(VarDeclPart varDeclPart) {
+        currentType = varDeclPart.getType().struct;
         if (tryToDefine(varDeclPart.getName(), varDeclPart)) {
             if (isArray) {
                 varDeclPart.obj = Tab.insert(Obj.Var, varDeclPart.getName(), new Struct(Struct.Array, currentType));
@@ -437,5 +438,6 @@ public class SemanticPass extends VisitorAdaptor {
     public void visit(OptActParsEmptyClass optActParsEmptyClass) {
         actPartsPassed = new ArrayList<>();
     }
+
 
 }
