@@ -422,4 +422,13 @@ public class SemanticPass extends VisitorAdaptor {
         }
     }
 
+    public void visit(FormPars formPars) {
+        Struct type = formPars.getType().struct;
+        if (isArray)
+            type = new Struct(Struct.Array, type);
+        Tab.insert(Obj.Var, formPars.getName(), type);
+        formalParamCount++;
+        isArray = false;
+    }
+
 }

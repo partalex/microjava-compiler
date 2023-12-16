@@ -106,6 +106,7 @@ nonterminal Relop;
 nonterminal Addop;
 nonterminal Mulop;
 nonterminal VarDeclList;
+nonterminal FormParsList;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Term;
@@ -186,18 +187,18 @@ VarDeclOpt          ::= (VarDeclOptManyClass) VarDeclOpt VarDecl
 // Done
 MethodType			::= (MethodTypeVoidClass) VOID
 					|	(MethodTypeTypeClass) Type;
-// TODO - #########################################################################
 
 // Done
 MethodDecl          ::= (MethodDecl) MethodType IDENT:methodName LPAREN FormParsOptOne RPAREN VarDeclOpt LBRACE StatementMany RBRACE;
 
-FormParsOptOne      ::= (FormParsOptOneClass) FormPars
+FormParsOptOne      ::= (FormParsOptOneClass) FormParsList
                     |   (FormParsOptOneEmptyClass) /* epsilon */;
 
-FormPars            ::= (FormParsOneClass) Type IDENT:name OptionalArray
-                    |	(FormParsManyManyClass) FormPars COMMA Type IDENT:name OptionalArray;
+FormParsList        ::= (FormParsListManyClass) FormParsList COMMA FormPars
+                    |   (FormParsListOneClass) FormPars;
 
-// TODO - #########################################################################
+FormPars            ::= (FormPars) Type IDENT:name OptionalArray;
+
 // Done
 Type                ::= (TypeNamespaceClass) IDENT:namespace DOUBLECOLON IDENT:type
                     |	(TypeClass) IDENT:type;
