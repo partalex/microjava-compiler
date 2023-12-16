@@ -146,9 +146,11 @@ NamespaceMany       ::= (NamespaceManyClass) NamespaceMany Namespace
 // Done
 Program 		    ::= (Program) PROG IDENT:programName NamespaceMany ConstDeclOptMany VarDeclOptMany LBRACE MethodDeclOptMany RBRACE;
 
+// Done
 ConstDeclOptMany    ::= (ConstDeclOptManyClass) ConstDeclOptMany ConstDecl
 					|	(ConstDeclOptNoClass) /* epsilon */;
 
+// Done
 MethodDeclOptMany	::= (MethodDeclOptManyClass) MethodDeclOptMany MethodDecl
 					|	(MethodDeclOptEmptyClass) /* epsilon */;
 // Done
@@ -173,6 +175,7 @@ ConstDeclPart       ::= (ConstDeclPart) IDENT:name EQUAL ConstVal:value;
 ConstList           ::= (ConstListManyClass) ConstList COMMA ConstDeclPart
                     |   (ConstListOneClass) ConstDeclPart;
 
+// Done
 VarDecl             ::= (VarDecl) VarDeclPart SEMI;
 
 FormParsOptOne      ::= (FormParsOptOneClass) FormPars
@@ -188,11 +191,9 @@ MethodDecl          ::= (MethodDecl) MethodType IDENT:methodName LPAREN FormPars
 MethodType			::= (MethodTypeVoidClass) VOID
 					|	(MethodTypeTypeClass) Type;
 
-FormPars            ::= (FormParsOneClass) Type IDENT:name
-                    |	(FormParsArrayClass) Type IDENT:name LSQBRACE RSQBRACE
-                    |	(FormParsManyOneClass) FormPars COMMA Type IDENT:name
-                    |	(FormParsManyArrayClass) FormPars COMMA Type IDENT:name LSQBRACE RSQBRACE;
-
+FormPars            ::= (FormParsOneClass) Type IDENT:name OptionalArray
+                    |	(FormParsManyManyClass) FormPars COMMA Type IDENT:name OptionalArray;
+ 
 // Done
 Type                ::= (TypeNamespaceClass) IDENT:namespace DOUBLECOLON IDENT:type
                     |	(TypeClass) IDENT:type;
