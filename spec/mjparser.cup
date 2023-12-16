@@ -152,10 +152,12 @@ VarDeclPart         ::= (VarDeclOneClass) Type IDENT:name
                     |	(VarDeclManyOneClass) VarDeclPart COMMA IDENT:name
                     |	(VarDeclManyArrayClass) VarDeclPart COMMA IDENT:name LSQBRACE RSQBRACE;
 
+// TODO - ################################################
 ConstDecl           ::= (ConstDecl) CONST Type ConstDeclPart SEMI;
 
 ConstDeclPart       ::= (ConstDeclPartManyClass) ConstDeclPart COMMA EQUAL ConstVal:value
                     |   (ConstDeclPartOneClass) IDENT:name EQUAL ConstVal:value;
+// TODO - ################################################
 
 VarDecl             ::= (VarDecl) VarDeclPart SEMI;
 
@@ -195,9 +197,11 @@ Statement           ::= (StatementDesignatorClass) DesignatorStatement SEMI
                     |   (StatementReturnClass) RETURN OptExpr SEMI // Done
                     |   (StatementReadClass) READ LPAREN Designator RPAREN SEMI
                     |   (StatementPrintClass) PRINT LPAREN Expr OptPrint RPAREN SEMI // Done
-                    |   (StatementForClass) FOR LPAREN DesignatorStatementOpt SEMI CondFact SEMI DesignatorStatementOpt RPAREN
-                    |   (StatementForConditonClass) FOR LPAREN DesignatorStatementOpt SEMI SEMI DesignatorStatementOpt RPAREN
+                    |   (StatementForClass) FOR LPAREN DesignatorStatementOpt SEMI CondFactOptional SEMI DesignatorStatementOpt RPAREN
                     |   (StatementManyClass) LBRACE StatementMany RBRACE;
+
+CondFactOptional    ::= (CondFactOptionalOneClass) CondFact
+                    |	(CondFactOptionalEmptyClass) /* epsilon */;
 
 // Done
 OptPrint	        ::= (OptPrintOneClass) COMMA NUMBER

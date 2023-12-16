@@ -365,33 +365,12 @@ public class SemanticPass extends VisitorAdaptor {
             for (Obj required : actPartsRequired) {
                 if (required.getType() != actPartsPassed.get(i))
                     if (required.getType().getKind() != Struct.Array && actPartsPassed.get(i).getKind() != Struct.Array) {
-                        i = -1;
-                        break;
+                        return true;
                     }
                 i++;
             }
-            if (i != -1)
-                return false;
         }
-        if (actPartsPassed.size() + 1 == actPartsRequired.size()) {
-            int i = 0;
-            boolean prvi = true;
-            for (Obj req : actPartsRequired) {
-                if (prvi) {
-                    prvi = false;
-                    continue;
-                }
-                if (req.getType() != actPartsPassed.get(i))
-                    if (!(req.getType().getKind() == Struct.Array && actPartsPassed.get(i).getKind() == Struct.Array)) {
-                        i = -1;
-                        break;
-                    }
-                i++;
-            }
-            return i == -1;
-        }
-
-        return true;
+        return false;
     }
 
     public void visit(DesignatorStatementAssignClass designatorStatementAssignClass) {
@@ -408,6 +387,21 @@ public class SemanticPass extends VisitorAdaptor {
     public void visit(MethodTypeVoidClass methodTypeVoidClass) {
         methodTypeVoidClass.struct = Tab.noType;
         currentType = Tab.noType;
+    }
+
+    private boolean tryToDefine(String name, SyntaxNode info) {
+        if (Tab.currentScope.findSymbol(name) == null)
+            return true;
+        report_error("Error: name is already defined in this scope" + name, info);
+        return false;
+    }
+
+    public void visit(ConstDecl constDecl) { // ime i vrednost konstante
+        if (tryToDefine(constDecl.getConstName(), constDecl))
+            if (constDecl.getConstVal().struct == currentType)
+                constDecl.obj = Tab.insert(Obj.Con, constDecl.getConstName(), currentType);
+            else report_error("Error: losi tipovi definisanja konstante", constDecl);
+
     }
 
 }
