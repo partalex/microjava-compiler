@@ -89,6 +89,7 @@ nonterminal DesignatorStatePart;
 nonterminal DesignatorStatement;
 nonterminal ActPars;
 nonterminal ActPartsOptional;
+nonterminal OptionalArray;
 //nonterminal Condition; // defined
 //nonterminal CondTerm; // defined
 //nonterminal CondFact; // defined
@@ -149,12 +150,13 @@ ConstDeclOptMany    ::= (ConstDeclOptManyClass) ConstDeclOptMany ConstDecl
 MethodDeclOptMany	::= (MethodDeclOptManyClass) MethodDeclOptMany MethodDecl
 					|	(MethodDeclOptEmptyClass) /* epsilon */;
 
-VarDeclPart         ::= (VarDeclOneClass) Type IDENT:name
-                    |   error SEMI:l {: parser.report_error("Sintaksa greska deklaracije globalne promenljive na liniji " + lleft, null); :}
-                    |	(VarDeclArrayClass) Type IDENT:name LSQBRACE RSQBRACE
-                    |	(VarDeclManyOneClass) VarDeclPart COMMA IDENT:name
-                    |	(VarDeclManyArrayClass) VarDeclPart COMMA IDENT:name LSQBRACE RSQBRACE;
-                    
+OptionalArray		::= (OptionalArrayClass) LSQBRACE RSQBRACE
+					|	(OptionalArrayEmptyClass);
+
+VarDeclPart         ::= (VarDeclOneClass) Type IDENT:name OptionalArray
+                    |	(VarDeclManyClass) VarDeclPart COMMA IDENT:name OptionalArray
+                    |   error SEMI:l {: parser.report_error("Sintaksa greska deklaracije globalne promenljive na liniji " + lleft, null); :};
+
 // Done
 ConstDecl           ::= (ConstDecl) CONST Type ConstDeclPart SEMI;
 
