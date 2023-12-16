@@ -71,7 +71,7 @@ nonterminal MethodDeclOptMany;
 nonterminal ConstDecl;
 nonterminal ConstList;
 //nonterminal ConstDeclPart; // defined
-nonterminal VarDeclPart;
+//nonterminal VarDeclPart; // defined
 nonterminal VarDecl;
 nonterminal VarDeclOpt;
 nonterminal FormParsOptOne;
@@ -105,6 +105,7 @@ nonterminal Assignop;
 nonterminal Relop;
 nonterminal Addop;
 nonterminal Mulop;
+nonterminal VarDeclList;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Term;
@@ -125,6 +126,7 @@ nonterminal rs.etf.pp1.symboltable.concepts.Obj Designator;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj OptDesignatorPart;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj DesigPart;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj ConstDeclPart;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj VarDeclPart;
 
 nonterminal If;
 nonterminal Else;
@@ -149,14 +151,18 @@ ConstDeclOptMany    ::= (ConstDeclOptManyClass) ConstDeclOptMany ConstDecl
 
 MethodDeclOptMany	::= (MethodDeclOptManyClass) MethodDeclOptMany MethodDecl
 					|	(MethodDeclOptEmptyClass) /* epsilon */;
+// TODO - #########################################################################
 
 OptionalArray		::= (OptionalArrayClass) LSQBRACE RSQBRACE
 					|	(OptionalArrayEmptyClass);
 
-VarDeclPart         ::= (VarDeclOneClass) Type IDENT:name OptionalArray
-                    |	(VarDeclManyClass) VarDeclPart COMMA IDENT:name OptionalArray
+VarDeclPart         ::= (VarDeclPart) Type IDENT:name OptionalArray;
+
+VarDeclList         ::= (VarDeclListOneClass) VarDeclPart
+                    |	(VarDeclListManyClass) VarDeclList COMMA VarDeclPart
                     |   error SEMI:l {: parser.report_error("Sintaksa greska deklaracije globalne promenljive na liniji " + lleft, null); :};
 
+// TODO - #########################################################################
 // Done
 ConstDecl           ::= (ConstDecl) CONST Type ConstDeclPart SEMI;
 

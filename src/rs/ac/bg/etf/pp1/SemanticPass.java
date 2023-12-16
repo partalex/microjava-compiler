@@ -23,6 +23,7 @@ public class SemanticPass extends VisitorAdaptor {
     private final Logger log = Logger.getLogger(getClass());
     private int breakCount;
     private int continueCount;
+    private boolean isArray;
 
     public void report_error(String message, SyntaxNode info) {
         errorDetected = true;
@@ -406,6 +407,19 @@ public class SemanticPass extends VisitorAdaptor {
 
     public void visit(ConstDecl constDecl) {
         currentType = null;
+    }
+
+    public void visit(OptionalArrayClass optionalArrayClass) {
+        isArray = true;
+    }
+
+    public void visit(VarDeclPart varDeclPart) {
+        if (tryToDefine(varDeclPart.getName(), varDeclPart)) {
+            if (isArray) {
+                varDeclPart.obj = Tab.insert(Obj.Var, varDeclPart.getName(), new Struct(Struct.Array, currentType));
+                isArray = false;
+            } else varDeclPart.obj = Tab.insert(Obj.Var, varDeclPart.getName(), currentType);
+        }
     }
 
 }
