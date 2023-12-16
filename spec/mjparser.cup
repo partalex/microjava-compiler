@@ -154,12 +154,11 @@ VarDeclPart         ::= (VarDeclOneClass) Type IDENT:name
                     |	(VarDeclManyOneClass) VarDeclPart COMMA IDENT:name
                     |	(VarDeclManyArrayClass) VarDeclPart COMMA IDENT:name LSQBRACE RSQBRACE;
 
-// TODO - ################################################
+// Done
 ConstDecl           ::= (ConstDecl) CONST Type ConstDeclPart SEMI;
 
 ConstDeclPart       ::= (ConstDeclPartManyClass) ConstDeclPart COMMA EQUAL ConstVal:value
                     |   (ConstDeclPartOneClass) IDENT:name EQUAL ConstVal:value;
-// TODO - ################################################
 
 VarDecl             ::= (VarDecl) VarDeclPart SEMI;
 
