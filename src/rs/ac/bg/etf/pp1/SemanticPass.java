@@ -27,6 +27,7 @@ public class SemanticPass extends VisitorAdaptor {
 
     private int lastNamespaceLevel = 0;
     private Obj currentNamespace;
+    private boolean inFor;
 
     public void report_error(String message, SyntaxNode info) {
         errorDetected = true;
@@ -457,21 +458,23 @@ public class SemanticPass extends VisitorAdaptor {
     public void visit(Namespace namespace) {
         String namespaceName = namespace.getNamespaceName();
         Obj namespaceObj = findInCurrentScope(namespaceName);
-        namespace.obj = currentNamespace = Tab.insert(Obj.Type, namespaceName, new Struct(Struct.None));
 
-        if (namespaceObj == null ) {
+        if (namespaceObj == Tab.noObj) {
             namespace.obj = currentNamespace = Tab.insert(Obj.Type, namespaceName, new Struct(Struct.None));
             namespace.obj.setLevel(lastNamespaceLevel++);
-//            namespaceObj.setLevel(lastNamespaceLevel++);
-        } else {
-            namespace.obj = currentNamespace = Tab.insert(Obj.Type, namespaceName, new Struct(Struct.None));
+        } else
             report_error("Duplicate namespace", namespace);
-        }
         Tab.openScope();
         Tab.chainLocalSymbols(namespace.obj);
         Tab.closeScope();
         currentNamespace = null;
 
+    }
+
+    public void visit(StatementForClass statementForClass) {
+        inFor = true;
+        breakCount ++;
+        continueCount++;
     }
 
 }

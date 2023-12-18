@@ -221,8 +221,8 @@ Statement           ::= (StatementDesignatorClass) DesignatorStatement SEMI
                     |   (StatementReturnClass) RETURN OptExpr SEMI // Done
                     |   (StatementReadClass) READ LPAREN Designator RPAREN SEMI
                     |   (StatementPrintClass) PRINT LPAREN Expr OptPrint RPAREN SEMI // Done
-                    |   (StatementForClass) FOR LPAREN DesignatorStatementOpt SEMI CondFactOptional SEMI DesignatorStatementOpt RPAREN
-                    |   (StatementManyClass) LBRACE StatementMany RBRACE;
+                    |   (StatementForClass) FOR LPAREN DesignatorStatementOpt SEMI CondFactOptional SEMI DesignatorStatementOpt RPAREN // Done
+                    |   (StatementManyClass) LBRACE StatementMany RBRACE; // Done
 
 CondFactOptional    ::= (CondFactOptionalOneClass) CondFact
                     |	(CondFactOptionalEmptyClass) /* epsilon */;
@@ -231,6 +231,7 @@ CondFactOptional    ::= (CondFactOptionalOneClass) CondFact
 OptPrint	        ::= (OptPrintOneClass) COMMA NUMBER
 					|	(OptPrintEmptyClass) /* epsilon */;
 
+// Done
 DesignatorStatePart ::= (DesignatorStatePartManyClass) DesignatorStatePart Designator COMMA
                     |   (DesignatorStatePartOneClass) DesignatorStatePart COMMA
                     |   (DesignatorStatePartEmptyClass) /* epsilon */;
