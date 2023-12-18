@@ -62,44 +62,29 @@ terminal String CHAR;
 terminal Integer NUMBER;
 terminal String IDENT;
 
-//nonterminal Namespace; // defined
 nonterminal NamespaceMany;
-//nonterminal Program; // defined
 nonterminal ConstDeclOptMany;
 nonterminal VarDeclOptMany;
 nonterminal MethodDeclOptMany;
 nonterminal ConstDecl;
 nonterminal ConstList;
-//nonterminal ConstDeclPart; // defined
-//nonterminal VarDeclPart; // defined
 nonterminal VarDecl;
 nonterminal VarDeclOpt;
 nonterminal FormParsOptOne;
-//nonterminal MethodDecl; // defined
 nonterminal FormPars;
 nonterminal OptMinus;
 nonterminal OptActPars;
-//nonterminal Type; // defined
 nonterminal DesignatorStatementOpt;
 nonterminal OptPrint;
 nonterminal Statement;
 nonterminal StatementMany;
-//nonterminal Term; // defined
 nonterminal DesignatorStatePart;
 nonterminal DesignatorStatement;
 nonterminal ActPars;
 nonterminal ActPartsOptional;
 nonterminal OptionalArray;
-//nonterminal Condition; // defined
-//nonterminal CondTerm; // defined
-//nonterminal CondFact; // defined
-//nonterminal Expr; // defined
 nonterminal OptExpr;
 nonterminal OptFactorParenPars;
-//nonterminal ConstVal; // defined
-//nonterminal Factor; // defined
-//nonterminal Designator; // defined
-//nonterminal OptDesignatorPart; // defined
 nonterminal Label;
 nonterminal Assignop;
 nonterminal Relop;
@@ -145,7 +130,6 @@ NamespaceMany       ::= (NamespaceManyClass) NamespaceMany Namespace
                     |   (NamespaceManyEmptyClass) /* epsilon */;
 
 // Done
-// namespace koka{}
 Program 		    ::= (Program) PROG IDENT:programName NamespaceMany ConstDeclOptMany VarDeclOptMany LBRACE MethodDeclOptMany RBRACE;
 
 // Done
