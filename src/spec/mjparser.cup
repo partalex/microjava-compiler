@@ -145,6 +145,7 @@ NamespaceMany       ::= (NamespaceManyClass) NamespaceMany Namespace
                     |   (NamespaceManyEmptyClass) /* epsilon */;
 
 // Done
+// namespace koka{}
 Program 		    ::= (Program) PROG IDENT:programName NamespaceMany ConstDeclOptMany VarDeclOptMany LBRACE MethodDeclOptMany RBRACE;
 
 // Done
