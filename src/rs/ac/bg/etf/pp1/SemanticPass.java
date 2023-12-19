@@ -184,13 +184,13 @@ public class SemanticPass extends VisitorAdaptor {
         if (factorParenParsClass.getOptFactorParenPars() instanceof OptFactorEmptyClass)
             return;
         if (factorParenParsClass.getDesignator().obj.getKind() != Obj.Meth) {
-            report_error("Error: " + factorParenParsClass.getDesignator().getDesignatorName() + " not a function", factorParenParsClass);
+            report_error("Error: not a function " , factorParenParsClass);
             return;
         }
 
         actPartsRequired = factorParenParsClass.getDesignator().obj.getLocalSymbols();
         if (!checkParams())
-            report_error("Error: bad parameters for calling method " + factorParenParsClass.getDesignator().getDesignatorName(), factorParenParsClass);
+            report_error("Error: bad parameters for calling method ", factorParenParsClass);
 
         factorParenParsClass.struct = factorParenParsClass.getDesignator().obj.getType();
 

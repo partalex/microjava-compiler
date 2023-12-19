@@ -92,6 +92,7 @@ nonterminal Addop;
 nonterminal Mulop;
 nonterminal VarDeclList;
 nonterminal FormParsList;
+nonterminal OptNamespace;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Term;
@@ -284,8 +285,11 @@ OptFactorParenPars  ::= (OptFactorParenParsClass) LPAREN OptActPars RPAREN
 OptActPars          ::= (OptActParsOneClass) ActPars
                     |   (OptActParsEmptyClass) /* epsilon */;
 
+OptNamespace          ::= (OptNamespaceClass) IDENT:namespace DOUBLECOLON DesignatorName
+                      |   (OptNamespaceEmptyClass) DesignatorName;
+
 // Done
-Designator          ::= (Designator) Type DesignatorName OptDesignatorPart;
+Designator          ::= (Designator) OptNamespace OptDesignatorPart;
 
 
 // Done
