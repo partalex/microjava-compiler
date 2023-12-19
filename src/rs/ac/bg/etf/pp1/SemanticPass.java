@@ -87,21 +87,23 @@ public class SemanticPass extends VisitorAdaptor {
         termOneClass.struct = termOneClass.getFactor().struct;
     }
 
-    public void visit(MethodDecl methodDecl) {
-        currentMethod = Tab.insert(Obj.Meth, methodDecl.getMethodName(), currentType);
-        methodDecl.obj = currentMethod;
+
+    public void visit(MethodTypeName methodTypeName) {
+        currentMethod = Tab.insert(Obj.Meth, methodTypeName.getMethodName(), currentType);
+        methodTypeName.obj = currentMethod;
         Tab.openScope();
+    }
+
+    public void visit(MethodDecl methodDec) {
         currentMethod.setLevel(formalParamCount);
         Tab.chainLocalSymbols(currentMethod);
         Tab.closeScope();
-        methodDecl.obj = currentMethod;
+        methodDec.obj = currentMethod;
         currentMethod = null;
         formalParamCount = 0;
 
-        if (currentNamespace != null) {
+        if (currentNamespace != null)
             Tab.insert(Obj.Var, currentNamespace.getName(), currentNamespace.getType());
-        }
-
     }
 
     public void visit(ConstValNumClass constValNumClass) {
@@ -182,13 +184,13 @@ public class SemanticPass extends VisitorAdaptor {
         if (factorParenParsClass.getOptFactorParenPars() instanceof OptFactorEmptyClass)
             return;
         if (factorParenParsClass.getDesignator().obj.getKind() != Obj.Meth) {
-            report_error("Error: " + factorParenParsClass.getDesignator().getName() + " not a function", factorParenParsClass);
+            report_error("Error: " + factorParenParsClass.getDesignator().getDesignatorName() + " not a function", factorParenParsClass);
             return;
         }
 
         actPartsRequired = factorParenParsClass.getDesignator().obj.getLocalSymbols();
         if (!checkParams())
-            report_error("Error: bad parameters for calling method " + factorParenParsClass.getDesignator().getName(), factorParenParsClass);
+            report_error("Error: bad parameters for calling method " + factorParenParsClass.getDesignator().getDesignatorName(), factorParenParsClass);
 
         factorParenParsClass.struct = factorParenParsClass.getDesignator().obj.getType();
 
@@ -473,7 +475,7 @@ public class SemanticPass extends VisitorAdaptor {
 
     public void visit(StatementForClass statementForClass) {
         inFor = true;
-        breakCount ++;
+        breakCount++;
         continueCount++;
     }
 
