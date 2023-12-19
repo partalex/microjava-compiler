@@ -61,18 +61,35 @@ public class SemanticPass extends VisitorAdaptor {
         Tab.closeScope();
     }
 
-    public void visit(TypeNamespaceClass type) {
-        Obj typeNode = Tab.find(type.getNamespace());
+    public void visit(TypeNamespaceClass typeNamespaceClass) {
+        Obj typeNode = Tab.find(typeNamespaceClass.getNamespace());
         if (typeNode == Tab.noObj) {
-            report_error("Type not found " + type.getNamespace() + " in symbol table!", null);
-            type.struct = Tab.noType;
+            report_error("Type not found " + typeNamespaceClass.getNamespace() + " in symbol table!", null);
+            typeNamespaceClass.struct = Tab.noType;
         } else {
             if (Obj.Type == typeNode.getKind()) {
                 currentType = typeNode.getType();
-                type.struct = currentType;
+                typeNamespaceClass.struct = currentType;
             } else {
-                report_error("Error: Name " + type.getNamespace() + " is not type!", null);
-                type.struct = Tab.noType;
+                report_error("Error: Name " + typeNamespaceClass.getNamespace() + " is not type!", null);
+                typeNamespaceClass.struct = Tab.noType;
+            }
+        }
+    }
+
+    public void visit(TypeClass typeClass) {
+        Obj typeNode = Tab.find(typeClass.getTypeName());
+
+        if (typeNode == Tab.noObj) {
+            report_error("Type not found " + typeClass.getTypeName() + " in symbol table!", null);
+            typeClass.struct = Tab.noType;
+        } else {
+            if (Obj.Type == typeNode.getKind()) {
+                currentType = typeNode.getType();
+                typeClass.struct = currentType;
+            } else {
+                report_error("Error: Name " + typeClass.getTypeName() + " is not type!", null);
+                typeClass.struct = Tab.noType;
             }
         }
     }
@@ -184,7 +201,7 @@ public class SemanticPass extends VisitorAdaptor {
         if (factorParenParsClass.getOptFactorParenPars() instanceof OptFactorEmptyClass)
             return;
         if (factorParenParsClass.getDesignator().obj.getKind() != Obj.Meth) {
-            report_error("Error: not a function " , factorParenParsClass);
+            report_error("Error: not a function ", factorParenParsClass);
             return;
         }
 
@@ -303,11 +320,18 @@ public class SemanticPass extends VisitorAdaptor {
         boolean isDesignatorEmpty = design.getOptDesignatorPart() instanceof OptDesignatorPartEmptyClass;
 
         if (isDesignatorEmpty) {
-            if (design.obj.getKind() == Obj.Con)
-                report_info("Access to const " + design.obj.getName(), design);
-            else if (design.obj.getKind() == Obj.Var)
-                report_info("Access to variable " + design.obj.getName(), design);
-            return;
+            try {
+
+                if (design.obj.getKind() == Obj.Con)
+                    report_info("Access to const " + design.obj.getName(), design);
+                else if (design.obj.getKind() == Obj.Var)
+                    report_info("Access to variable " + design.obj.getName(), design);
+                return;
+            }
+            catch (NullPointerException e) {
+                report_error("Error: designator is not defined", design);
+                return;
+            }
         }
 
         design.obj = design.getOptDesignatorPart().obj;
@@ -417,6 +441,7 @@ public class SemanticPass extends VisitorAdaptor {
     }
 
     public void visit(ConstDecl constDecl) {
+//        currentType = constDecl.getType().struct;
         currentType = constDecl.getType().struct;
         if (currentType != Tab.intType && currentType != Tab.charType && currentType != MyTab.boolType)
             report_error("Error: const must be Int|Char|Bool", constDecl.getType());

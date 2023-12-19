@@ -189,7 +189,7 @@ FormPars            ::= (FormPars) Type IDENT:name OptionalArray;
 
 // Done
 Type                ::= (TypeNamespaceClass) IDENT:namespace DOUBLECOLON IDENT:type
-                    |	(TypeClass) IDENT:type;
+                    |	(TypeClass) IDENT:typeName;
 
 // Done
 StatementMany       ::= (StatementManyManyClass) StatementMany Statement
@@ -294,7 +294,6 @@ OptNamespace          ::= (OptNamespaceClass) IDENT:namespace DOUBLECOLON Design
 
 // Done
 Designator          ::= (Designator) OptNamespace OptDesignatorPart;
-
 
 // Done
 DesignatorName      ::= IDENT:designatorName;
