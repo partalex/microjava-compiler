@@ -123,17 +123,13 @@ precedence left Else;
 //precedence left ELSE;
 //precedence left IF;
 
-If					::= (If) IF;
-Else 				::= (Else) ELSE;
+// Done
+Program 		    ::= (Program) PROG IDENT:programName NamespaceMany ConstDeclOptMany VarDeclOptMany LBRACE MethodDeclOptMany RBRACE;
 
 Namespace 		    ::= (Namespace) NAMESPACE IDENT:namespaceName LBRACE ConstDeclOptMany VarDeclOptMany LBRACE MethodDeclOptMany RBRACE RBRACE;
 
 NamespaceMany       ::= (NamespaceManyClass) NamespaceMany Namespace
                     |   (NamespaceManyEmptyClass) /* epsilon */;
-
-// Done
-Program 		    ::= (Program) PROG IDENT:programName NamespaceMany ConstDeclOptMany VarDeclOptMany LBRACE MethodDeclOptMany RBRACE;
-
 // Done
 MethodDeclOptMany	::= (MethodDeclOptManyClass) MethodDeclOptMany MethodDecl
 					|	(MethodDeclOptEmptyClass) /* epsilon */;
@@ -212,6 +208,9 @@ Statement           ::= (StatementDesignatorClass) DesignatorStatement SEMI
                     |   (StatementPrintClass) PRINT LPAREN Expr OptPrint RPAREN SEMI // Done
                     |   (StatementForClass) FOR LPAREN DesignatorStatementOpt SEMI CondFactOptional SEMI DesignatorStatementOpt RPAREN // Done
                     |   (StatementManyClass) LBRACE StatementMany RBRACE; // Done
+
+If					::= (If) IF;
+Else 				::= (Else) ELSE;
 
 CondFactOptional    ::= (CondFactOptionalOneClass) CondFact
                     |	(CondFactOptionalEmptyClass) /* epsilon */;
