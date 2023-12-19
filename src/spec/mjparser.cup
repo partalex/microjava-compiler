@@ -230,7 +230,7 @@ DesignatorStatePart ::= (DesignatorStatePartManyClass) DesignatorStatePart Desig
                     |   (DesignatorStatePartEmptyClass) /* epsilon */;
 
 DesignatorStatement ::= (DesignatorStatementAssignClass) Designator Assignop Expr // Done
-                    |   (DesignatorStatementParamsClass) Designator LPAREN ActPartsOptional RPAREN // TODO -
+                    |   (DesignatorStatementParamsClass) Designator LPAREN ActPartsOptional RPAREN //
                     |   (DesignatorStatementPlusClass) Designator PLUSPLUS // Done
                     |   (DesignatorStatementMinusClass) Designator MINUSMINUS // Done
                     |   (DesignatorStatementManyClass) LSQBRACE DesignatorStatePart MUL Designator RSQBRACE Assignop Designator;
