@@ -428,13 +428,16 @@ public class SemanticPass extends VisitorAdaptor {
     }
 
     public void visit(VarDeclPart varDeclPart) {
-        currentType = varDeclPart.getType().struct;
         if (tryToDefine(varDeclPart.getName(), varDeclPart)) {
             if (isArray) {
                 varDeclPart.obj = Tab.insert(Obj.Var, varDeclPart.getName(), new Struct(Struct.Array, currentType));
                 isArray = false;
             } else varDeclPart.obj = Tab.insert(Obj.Var, varDeclPart.getName(), currentType);
         }
+    }
+
+    public void visit(VarDecl varDecl) {
+        currentType = varDecl.getType().struct;
     }
 
     public void visit(FormPars formPars) {

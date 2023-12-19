@@ -139,7 +139,7 @@ OptionalArray		::= (OptionalArrayClass) LSQBRACE RSQBRACE
 					|	(OptionalArrayEmptyClass) /* epsilon */;
 
 // Done
-VarDeclPart         ::= (VarDeclPart) Type IDENT:name OptionalArray;
+VarDeclPart         ::= (VarDeclPart) IDENT:name OptionalArray;
 
 // Done
 VarDeclList         ::= (VarDeclListManyClass) VarDeclList COMMA VarDeclPart
@@ -160,7 +160,7 @@ ConstList           ::= (ConstListManyClass) ConstList COMMA ConstDeclPart
                     |   (ConstListOneClass) ConstDeclPart;
 
 // Done
-VarDecl             ::= (VarDecl) VarDeclPart SEMI;
+VarDecl             ::= (VarDecl) Type VarDeclList SEMI;
 
 // Done
 VarDeclOpt          ::= (VarDeclOptManyClass) VarDeclOpt VarDecl
@@ -209,6 +209,10 @@ Statement           ::= (StatementDesignatorClass) DesignatorStatement SEMI
                     |   (StatementPrintClass) PRINT LPAREN Expr OptPrint RPAREN SEMI // Done
                     |   (StatementForClass) FOR LPAREN DesignatorStatementOpt SEMI CondFactOptional SEMI DesignatorStatementOpt RPAREN // Done
                     |   (StatementManyClass) LBRACE StatementMany RBRACE; // Done
+
+DesignatorStatementOpt      ::= (DesignatorStatementOptManyClass) DesignatorStatementOpt COMMA DesignatorStatement
+                            |	  (DesignatorStatementOptOneClass) DesignatorStatement
+                            |	  (DesignatorStatementOptEmptyClass) /* epsilon */;
 
 If					::= (If) IF;
 Else 				::= (Else) ELSE;
