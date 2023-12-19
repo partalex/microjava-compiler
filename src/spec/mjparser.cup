@@ -119,8 +119,8 @@ nonterminal rs.etf.pp1.symboltable.concepts.Obj VarDeclPart;
 nonterminal If;
 nonterminal Else;
 
-precedence left Else;
-//precedence left ELSE;
+//precedence left Else;
+precedence left ELSE;
 //precedence left IF;
 
 // Done
