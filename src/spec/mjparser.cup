@@ -296,7 +296,7 @@ OptNamespace          ::= (OptNamespaceClass) IDENT:namespace DOUBLECOLON Design
 Designator          ::= (Designator) OptNamespace OptDesignatorPart;
 
 // Done
-DesignatorName      ::= IDENT:designatorName;
+DesignatorName      ::= (DesignatorName) IDENT:designatorName;
 
 // Done
 OptDesignatorPart   ::= (OptDesignatorPartManyClass) OptDesignatorPart DesigPart

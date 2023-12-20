@@ -316,12 +316,24 @@ public class SemanticPass extends VisitorAdaptor {
 
     }
 
+    String getDesignName(Designator design) {
+        String designName="";
+        if (design.getOptNamespace() instanceof OptNamespaceEmptyClass) {
+            designName = ((OptNamespaceEmptyClass) design.getOptNamespace()).getDesignatorName().getDesignatorName();
+        }
+        else {
+            designName = ((OptNamespaceClass) design.getOptNamespace()).getDesignatorName().getDesignatorName();
+        }
+
+        return designName;
+    }
+
     public void visit(Designator design) {
         boolean isDesignatorEmpty = design.getOptDesignatorPart() instanceof OptDesignatorPartEmptyClass;
-
+        String designName = getDesignName(design);
+        design.obj = Tab.find(designName);
         if (isDesignatorEmpty) {
             try {
-
                 if (design.obj.getKind() == Obj.Con)
                     report_info("Access to const " + design.obj.getName(), design);
                 else if (design.obj.getKind() == Obj.Var)
@@ -332,9 +344,9 @@ public class SemanticPass extends VisitorAdaptor {
                 report_error("Error: designator is not defined", design);
                 return;
             }
+        } else {
+            design.obj = design.getOptDesignatorPart().obj;
         }
-
-        design.obj = design.getOptDesignatorPart().obj;
     }
 
     public void visit(OptDesignatorPartManyClass optDesignatorPartManyClass) {
@@ -363,7 +375,8 @@ public class SemanticPass extends VisitorAdaptor {
             SyntaxNode parent = optDesignatorPartManyClass.getParent();
             while (parent instanceof OptDesignatorPartManyClass)
                 parent = parent.getParent();
-            return ((Designator) parent).obj;
+            String name = getDesignName((Designator) parent);
+            return findInCurrentScope(name);
         } else
             return optDesignatorPartManyClass.getOptDesignatorPart().obj;
 
@@ -451,6 +464,7 @@ public class SemanticPass extends VisitorAdaptor {
     public void visit(OptionalArrayClass optionalArrayClass) {
         isArray = true;
     }
+
 
     public void visit(VarDeclPart varDeclPart) {
         if (tryToDefine(varDeclPart.getName(), varDeclPart)) {

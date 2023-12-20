@@ -61,7 +61,7 @@ public class MJParserTest {
                 // Tab.dump();
 
                 if (!p.errorDetected && v.passed()) {
-                    File objFile = new File("test/program.obj");
+                    File objFile = new File("test/2023/test301.obj");
                     if (objFile.exists()) objFile.delete();
 
                     CodeGenerator codeGenerator = new CodeGenerator();
