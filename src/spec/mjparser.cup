@@ -92,8 +92,8 @@ nonterminal Addop;
 nonterminal Mulop;
 nonterminal VarDeclList;
 nonterminal FormParsList;
-nonterminal OptNamespace;
 
+nonterminal rs.etf.pp1.symboltable.concepts.Struct OptNamespace;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Term;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Factor;
@@ -188,7 +188,7 @@ FormParsList        ::= (FormParsListManyClass) FormParsList COMMA FormPars
 FormPars            ::= (FormPars) Type IDENT:name OptionalArray;
 
 // Done
-Type                ::= (TypeNamespaceClass) IDENT:namespace DOUBLECOLON IDENT:type
+Type                ::= (TypeNamespaceClass) IDENT:namespace DOUBLECOLON
                     |	(TypeClass) IDENT:typeName;
 
 // Done

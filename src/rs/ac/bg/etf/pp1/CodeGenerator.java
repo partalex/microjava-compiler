@@ -253,21 +253,21 @@ public class CodeGenerator extends VisitorAdaptor {
     }
 
     public void visit(DesignatorName designatorName) {
-
+        Obj designatorNameObj = Tab.find(designatorName.getDesignatorName());
         if (!globalMethDeclaration)
-            if (designatorName.obj.getKind() == Obj.Fld || designatorName.obj.getKind() == Obj.Meth)
+            if (designatorNameObj.getKind() == Obj.Fld || designatorNameObj.getKind() == Obj.Meth)
                 Code.put(Code.load_n);
 
-        if (((Designator) designatorName.getParent()).getOptDesignatorPart() instanceof OptDesignatorPartEmptyClass) {
+        if (((Designator) designatorName.getParent().getParent()).getOptDesignatorPart() instanceof OptDesignatorPartEmptyClass) {
             SyntaxNode parent = designatorName.getParent().getParent();
             if (!(parent instanceof DesignatorStatementAssignClass) // ako je dodela vrednosti nije mi potrebno da dohvatam vrednost, ali ako ima delove, onda jeste
                     && !(parent instanceof DesignatorStatementParamsClass)
                     && !(parent instanceof FactorParenParsClass && ((FactorParenParsClass) parent).getOptFactorParenPars()
                     instanceof OptFactorParenParsClass) // poziv funkcije u izrazu
                     && !(parent instanceof StatementReadClass))
-                Code.load(designatorName.obj);
+                Code.load(designatorNameObj);
         } else
-            Code.load(designatorName.obj);
+            Code.load(designatorNameObj);
     }
 
     public void visit(OptDesignatorPartManyClass optDesignatorPartManyClass) {
@@ -316,30 +316,26 @@ public class CodeGenerator extends VisitorAdaptor {
     }
 
 
-//    public void visit(DesigPart desigPart) { // TODO - da i Milena nesto radi
-//        if (desigPart.getParent().getParent() instanceof Designator) {
-//            SyntaxNode desig = desigPart.getParent().getParent();
-//            SyntaxNode parent = desig.getParent();
-//            if (!(parent instanceof DesignatorStatementAssignClass) // ako je dodela vrednosti nije mi potrebno da dohvatam vrednost, ali ako ima delove, onda jeste
-//                    && !(parent instanceof DesignatorStatementParamsClass)
-//                    && !(parent instanceof FactorParenParsClass && ((FactorParenParsClass) parent).getOptActPartsOpt() instanceof OActPO) // poziv funkcije u izrazu
-//                    && !(parent instanceof StatementReadClass))
-//                if (desigPart.obj.getType() == Tab.charType)
-//                    Code.put(Code.baload);
-//                else
-//                    Code.put(Code.aload);
-//        } else {
-//            if (desigPart.obj.getType() == Tab.charType)
-//                Code.put(Code.baload);
-//            else
-//                Code.put(Code.aload);
-//            if (desigPart.getParent().getParent() instanceof OptDesignatorPartManyClass
-//                    && ((OptDesignatorPartManyClass) desigPart.getParent().getParent()).getDesigParts() instanceof DesigId) {
-//                Code.put(Code.dup);
-//                Code.store(MyTab.tempHelp);
-//            }
-//        }
-//    }
+    public void visit(DesigPart desigPart) { // TODO - da i Milena nesto radi
+        if (desigPart.getParent().getParent() instanceof Designator) {
+            SyntaxNode desig = desigPart.getParent().getParent();
+            SyntaxNode parent = desig.getParent();
+            if (!(parent instanceof DesignatorStatementAssignClass) // ako je dodela vrednosti nije mi potrebno da dohvatam vrednost, ali ako ima delove, onda jeste
+                    && !(parent instanceof DesignatorStatementParamsClass)
+                    && !(parent instanceof FactorParenParsClass && ((FactorParenParsClass) parent).getOptFactorParenPars() instanceof OptFactorParenParsClass) // poziv funkcije u izrazu
+                    && !(parent instanceof StatementReadClass))
+                if (desigPart.obj.getType() == Tab.charType)
+                    Code.put(Code.baload);
+                else
+                    Code.put(Code.aload);
+        } else {
+            if (desigPart.obj.getType() == Tab.charType)
+                Code.put(Code.baload);
+            else
+                Code.put(Code.aload);
+
+        }
+    }
 
 
 }

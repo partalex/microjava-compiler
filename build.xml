@@ -64,16 +64,26 @@
 
     <target name="disasm">
         <java classname="rs.etf.pp1.mj.runtime.disasm">
-            <arg value="test/program.obj"/>
+            <arg value="test/2023/test301.obj"/>
             <classpath>
                 <pathelement location="lib/mj-runtime.jar"/>
             </classpath>
         </java>
     </target>
-
+    <target name="debug" depends="disasm">
+        <java classname="rs.etf.pp1.mj.runtime.Run">
+            <arg value="test/2023/test301.obj" />
+            <arg value="-debug" />
+            <redirector input="input.txt" />
+            <classpath>
+                <pathelement location="lib/mj-runtime.jar" />
+            </classpath>
+        </java>
+    </target>
     <target name="runObj" depends="disasm" >
         <java classname="rs.etf.pp1.mj.runtime.Run">
-            <arg value="test/program.obj"/>
+            <arg value="test/2023/test301.obj"/>
+            <redirector input="input.txt" output="output.txt" error="error.txt" />
             <classpath>
                 <pathelement location="lib/mj-runtime.jar"/>
             </classpath>

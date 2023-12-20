@@ -61,18 +61,24 @@ public class SemanticPass extends VisitorAdaptor {
         Tab.closeScope();
     }
 
-    public void visit(TypeNamespaceClass typeNamespaceClass) {
-        Obj typeNode = Tab.find(typeNamespaceClass.getNamespace());
+    public void visit(OptNamespaceClass optNamespaceClass) {//moguce je da ce raditi i ako je definisano u drugom namespacu
+        Obj typeNode = Tab.find(optNamespaceClass.getNamespace());
         if (typeNode == Tab.noObj) {
-            report_error("Type not found " + typeNamespaceClass.getNamespace() + " in symbol table!", null);
-            typeNamespaceClass.struct = Tab.noType;
+            report_error("Type not found " + optNamespaceClass.getNamespace() + " in symbol table!", null);
+            optNamespaceClass.struct = Tab.noType;
         } else {
-            if (Obj.Type == typeNode.getKind()) {
+            if (typeNode.getKind()==Obj.Type) {
                 currentType = typeNode.getType();
-                typeNamespaceClass.struct = currentType;
+                Obj temp = Tab.currentScope().getOuter().getLocals().searchKey(optNamespaceClass.getDesignatorName().getDesignatorName());
+                if (temp==null) {
+                    report_error("Error: Field " + optNamespaceClass.getDesignatorName().getDesignatorName() +
+                                    " is not in namespace" + optNamespaceClass.getNamespace()+"!", null);
+                }
+                currentType = temp.getType();
+                optNamespaceClass.struct = currentType;
             } else {
-                report_error("Error: Name " + typeNamespaceClass.getNamespace() + " is not type!", null);
-                typeNamespaceClass.struct = Tab.noType;
+                report_error("Error: Name " + optNamespaceClass.getNamespace() + " is not namespace!", null);
+                optNamespaceClass.struct = Tab.noType;
             }
         }
     }
@@ -148,7 +154,7 @@ public class SemanticPass extends VisitorAdaptor {
     }
 
     private boolean checkTypes(Struct leftType, Struct rightType) {
-        if (leftType == Tab.noType && (rightType.getKind() == Struct.Class || rightType.getKind() == Struct.Array))
+        if (leftType == Tab.noType && rightType.getKind() == Struct.Array)
             return true;
 
         if (leftType.getKind() == Struct.Array && rightType.getKind() == Struct.Array) {
@@ -156,15 +162,13 @@ public class SemanticPass extends VisitorAdaptor {
             rightType = rightType.getElemType();
         }
 
+
         if (leftType != rightType) {
-            while (rightType.getKind() == Struct.Class) {
-                rightType = rightType.getElemType();
-                if (rightType == leftType)
-                    return true;
-            }
             return false;
         }
-        return true;
+        else{
+            return true;
+        }
     }
 
     public void visit(StatementReturnClass statementReturnClass) {
@@ -346,6 +350,7 @@ public class SemanticPass extends VisitorAdaptor {
             }
         } else {
             design.obj = design.getOptDesignatorPart().obj;
+            report_info("Access to" + design.obj.getType().getKind(), design);
         }
     }
 
@@ -376,7 +381,7 @@ public class SemanticPass extends VisitorAdaptor {
             while (parent instanceof OptDesignatorPartManyClass)
                 parent = parent.getParent();
             String name = getDesignName((Designator) parent);
-            return findInCurrentScope(name);
+            return Tab.find(name);
         } else
             return optDesignatorPartManyClass.getOptDesignatorPart().obj;
 
@@ -426,8 +431,9 @@ public class SemanticPass extends VisitorAdaptor {
         checkDesignType(designatorStatementAssignClass.getDesignator()); // dodaj if
 
         Struct tempL = designatorStatementAssignClass.getDesignator().obj.getType();
+        report_info("levi tip "+ tempL.getKind(),designatorStatementAssignClass);
         Struct tempR = designatorStatementAssignClass.getExpr().struct;
-
+        report_info("desni tip "+ tempR.getKind(),designatorStatementAssignClass);
         if (!checkTypes(tempL, tempR))
             report_error("Error: can not assign type", designatorStatementAssignClass);
 
@@ -439,9 +445,10 @@ public class SemanticPass extends VisitorAdaptor {
     }
 
     private boolean tryToDefine(String name, SyntaxNode info) {
+
         if (Tab.currentScope.findSymbol(name) == null)
             return true;
-        report_error("Error: name is already defined in this scope" + name, info);
+        report_error("Error: name is already defined in this scope " + name, info);
         return false;
     }
 
