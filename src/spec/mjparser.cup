@@ -93,7 +93,7 @@ nonterminal Mulop;
 nonterminal VarDeclList;
 nonterminal FormParsList;
 
-nonterminal rs.etf.pp1.symboltable.concepts.Struct OptNamespace;
+
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Term;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Factor;
@@ -107,7 +107,10 @@ nonterminal rs.etf.pp1.symboltable.concepts.Struct AddTerm;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct CondFactOptional;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Obj Program;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgramName;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj Namespace;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj NamespaceName;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj OptNamespace;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj MethodTypeName;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj MethodDecl;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj Designator;
@@ -117,6 +120,7 @@ nonterminal rs.etf.pp1.symboltable.concepts.Obj DesigPart;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj ConstDeclPart;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj VarDeclPart;
 
+
 nonterminal If;
 nonterminal Else;
 
@@ -125,9 +129,13 @@ precedence left ELSE;
 //precedence left IF;
 
 // Done
-Program 		    ::= (Program) PROG IDENT:programName NamespaceMany ConstDeclOptMany VarDeclOpt LBRACE MethodDeclOptMany RBRACE;
+Program 		    ::= (Program) PROG ProgramName NamespaceMany ConstDeclOptMany VarDeclOpt LBRACE MethodDeclOptMany RBRACE;
 
-Namespace 		    ::= (Namespace) NAMESPACE IDENT:namespaceName LBRACE ConstDeclOptMany VarDeclOpt LBRACE MethodDeclOptMany RBRACE RBRACE;
+ProgramName		    ::= (ProgramName) IDENT:programName;
+
+Namespace 		    ::= (Namespace) NAMESPACE NamespaceName LBRACE ConstDeclOptMany VarDeclOpt LBRACE MethodDeclOptMany RBRACE RBRACE;
+
+NamespaceName 		::= (NamespaceName) IDENT:namespaceName;
 
 NamespaceMany       ::= (NamespaceManyClass) NamespaceMany Namespace
                     |   (NamespaceManyEmptyClass) /* epsilon */;

@@ -48,9 +48,13 @@ public class SemanticPass extends VisitorAdaptor {
         return !errorDetected;
     }
 
-    public void visit(Program program) {
-        program.obj = Tab.insert(Obj.Prog, program.getProgramName(), Tab.noType);
+    public void visit(ProgramName programName) {
+        programName.obj = Tab.insert(Obj.Prog, programName.getProgramName(), Tab.noType);
         Tab.openScope();
+    }
+
+    public void visit(Program program) {
+        program.obj = program.getProgramName().obj;
         MyTab.tempHelp = Tab.insert(Obj.Var, "#", Tab.intType); // TODO - check if this is ok
         numberOfVars = Tab.currentScope.getnVars();
         Obj mainMeth = Tab.find("main");
@@ -61,27 +65,43 @@ public class SemanticPass extends VisitorAdaptor {
         Tab.closeScope();
     }
 
-    public void visit(OptNamespaceClass optNamespaceClass) {//moguce je da ce raditi i ako je definisano u drugom namespacu
+    public Obj findSymbol(String symbolName, Obj namespace) {
+        for (Obj symbol : namespace.getLocalSymbols()) {
+            if (symbol.getName().equals(symbolName)) {
+                return symbol;
+            }
+        }
+        return null; // Symbol not found
+    }
+
+    public void visit(OptNamespaceClass optNamespaceClass) {
         Obj typeNode = Tab.find(optNamespaceClass.getNamespace());
         if (typeNode == Tab.noObj) {
             report_error("Type not found " + optNamespaceClass.getNamespace() + " in symbol table!", null);
-            optNamespaceClass.struct = Tab.noType;
+            optNamespaceClass.obj = typeNode;
         } else {
             if (typeNode.getKind()==Obj.Type) {
                 currentType = typeNode.getType();
-                Obj temp = Tab.currentScope().getOuter().getLocals().searchKey(optNamespaceClass.getDesignatorName().getDesignatorName());
+                Obj temp = findSymbol(optNamespaceClass.getDesignatorName().getDesignatorName(), typeNode);
                 if (temp==null) {
+                    report_info(Tab.currentScope().getOuter().getLocals().toString(), optNamespaceClass);
                     report_error("Error: Field " + optNamespaceClass.getDesignatorName().getDesignatorName() +
-                                    " is not in namespace" + optNamespaceClass.getNamespace()+"!", null);
+                                    " is not in namespace " + optNamespaceClass.getNamespace()+"!", null);
+                    return;
                 }
                 currentType = temp.getType();
-                optNamespaceClass.struct = currentType;
+                optNamespaceClass.obj = temp;
             } else {
                 report_error("Error: Name " + optNamespaceClass.getNamespace() + " is not namespace!", null);
-                optNamespaceClass.struct = Tab.noType;
+                optNamespaceClass.obj = typeNode;;
             }
         }
     }
+
+    public void visit(OptNamespaceEmptyClass optNamespaceEmptyClass) {
+        optNamespaceEmptyClass.obj = Tab.find(optNamespaceEmptyClass.getDesignatorName().getDesignatorName());
+    }
+
 
     public void visit(TypeClass typeClass) {
         Obj typeNode = Tab.find(typeClass.getTypeName());
@@ -101,6 +121,7 @@ public class SemanticPass extends VisitorAdaptor {
     }
 
     public void visit(TermManyClass termManyClass) {
+
         if (termManyClass.getTerm().struct != Tab.intType || termManyClass.getFactor().struct != Tab.intType)
             report_error("Error: multiplication is not Int type!", termManyClass);
         termManyClass.struct = termManyClass.getTerm().struct;
@@ -108,6 +129,9 @@ public class SemanticPass extends VisitorAdaptor {
 
     public void visit(TermOneClass termOneClass) {
         termOneClass.struct = termOneClass.getFactor().struct;
+        if (termOneClass.getFactor().struct.getKind()==3) {
+            termOneClass.struct = termOneClass.getFactor().struct.getElemType();
+        }
     }
 
 
@@ -162,6 +186,10 @@ public class SemanticPass extends VisitorAdaptor {
             rightType = rightType.getElemType();
         }
 
+       else if (leftType.getKind() == Struct.Array) {
+            leftType = leftType.getElemType();
+        }
+
 
         if (leftType != rightType) {
             return false;
@@ -186,8 +214,15 @@ public class SemanticPass extends VisitorAdaptor {
 
     public void visit(StatementReadClass statementReadClass) {
         Designator designator = statementReadClass.getDesignator();
+        Struct tempType = Tab.noType;
         if (checkDesignType(designator))
-            if (designator.obj.getType() == MyTab.intType || designator.obj.getType() == MyTab.charType || designator.obj.getType() == MyTab.boolType) {
+            if (designator.obj.getType().getKind()==3) {
+                 tempType = designator.obj.getType().getElemType();
+            }
+            else {
+                tempType = designator.obj.getType();
+            }
+            if (tempType == MyTab.intType || tempType == MyTab.charType || tempType == MyTab.boolType) {
                 report_info("read()", statementReadClass);
                 return;
             }
@@ -202,6 +237,9 @@ public class SemanticPass extends VisitorAdaptor {
 
     public void visit(FactorParenParsClass factorParenParsClass) {
         factorParenParsClass.struct = factorParenParsClass.getDesignator().obj.getType();
+        if (factorParenParsClass.struct.getKind()==3) {
+            factorParenParsClass.struct = factorParenParsClass.struct.getElemType();
+        }
         if (factorParenParsClass.getOptFactorParenPars() instanceof OptFactorEmptyClass)
             return;
         if (factorParenParsClass.getDesignator().obj.getKind() != Obj.Meth) {
@@ -334,8 +372,13 @@ public class SemanticPass extends VisitorAdaptor {
 
     public void visit(Designator design) {
         boolean isDesignatorEmpty = design.getOptDesignatorPart() instanceof OptDesignatorPartEmptyClass;
-        String designName = getDesignName(design);
-        design.obj = Tab.find(designName);
+        if (design.getOptNamespace() instanceof OptNamespaceClass) {
+            design.obj = design.getOptNamespace().obj;
+        }
+        else {
+            String designName = getDesignName(design);
+            design.obj = Tab.find(designName);
+        }
         if (isDesignatorEmpty) {
             try {
                 if (design.obj.getKind() == Obj.Con)
@@ -349,7 +392,6 @@ public class SemanticPass extends VisitorAdaptor {
                 return;
             }
         } else {
-            design.obj = design.getOptDesignatorPart().obj;
             report_info("Access to" + design.obj.getType().getKind(), design);
         }
     }
@@ -366,12 +408,7 @@ public class SemanticPass extends VisitorAdaptor {
             if (desigPart.getExpr().struct != Tab.intType)
                 report_error("Error: inside [] muse be an Int", desigPart);
 
-            if (firstLeft.getType().getKind() == Struct.Array)
-                desigPart.obj = new Obj(Obj.Elem, "elem", firstLeft.getType().getElemType());
-            else {
-                report_error("Error: " + firstLeft.getName() + " is not array ", desigPart);
-                desigPart.obj = Tab.noObj;
-            }
+            desigPart.obj = new Obj(Obj.Elem, "elem", firstLeft.getType());
         }
     }
 
@@ -472,7 +509,6 @@ public class SemanticPass extends VisitorAdaptor {
         isArray = true;
     }
 
-
     public void visit(VarDeclPart varDeclPart) {
         if (tryToDefine(varDeclPart.getName(), varDeclPart)) {
             if (isArray) {
@@ -506,20 +542,22 @@ public class SemanticPass extends VisitorAdaptor {
         return result;
     }
 
-    public void visit(Namespace namespace) {
-        String namespaceName = namespace.getNamespaceName();
-        Obj namespaceObj = findInCurrentScope(namespaceName);
+    public void visit(NamespaceName namespaceName) {
+        Obj namespaceObj = findInCurrentScope(namespaceName.getNamespaceName());
 
         if (namespaceObj == Tab.noObj) {
-            namespace.obj = currentNamespace = Tab.insert(Obj.Type, namespaceName, new Struct(Struct.None));
-            namespace.obj.setLevel(lastNamespaceLevel++);
+            namespaceName.obj = currentNamespace = Tab.insert(Obj.Type, namespaceName.getNamespaceName(), new Struct(Struct.None));
+            namespaceName.obj.setLevel(lastNamespaceLevel++);
         } else
-            report_error("Duplicate namespace", namespace);
+            report_error("Duplicate namespace", namespaceName);
         Tab.openScope();
+    }
+
+    public void visit(Namespace namespace) {
+        namespace.obj = namespace.getNamespaceName().obj;
         Tab.chainLocalSymbols(namespace.obj);
         Tab.closeScope();
         currentNamespace = null;
-
     }
 
     public void visit(StatementForClass statementForClass) {
