@@ -1,4 +1,2 @@
-
--- exception at address 8: null reference used
-
-Completion took 2 ms
+-6
+Completion took 0 ms

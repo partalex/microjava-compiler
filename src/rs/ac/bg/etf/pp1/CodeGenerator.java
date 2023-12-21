@@ -48,6 +48,14 @@ public class CodeGenerator extends VisitorAdaptor {
         Code.store(statementReadClass.getDesignator().obj);
     }
 
+    public void visit(StatementIfClass statementIfClass) {
+        Code.fixup(ifStack.pop());
+    }
+
+    public void visit(StatementIfElseClass statementIfElseClass) {
+        Code.fixup(elseStack.pop());
+    }
+
     public void visit(If i) {
         whereAmI.push(inIfCond);
     }
@@ -58,7 +66,7 @@ public class CodeGenerator extends VisitorAdaptor {
         Code.put2(0);
         elseStack.push(Code.pc - 2);
 
-    //    Code.fixup(ifStack.pop());
+        Code.fixup(ifStack.pop());
     }
 
     private int constValue(SyntaxNode type) {
@@ -81,12 +89,12 @@ public class CodeGenerator extends VisitorAdaptor {
 
     public void visit(StatementBreakClass statementBreakClass) {
         Code.putJump(0);
-        breakStack.peek().add(Code.pc - 2);
+    //    breakStack.peek().add(Code.pc - 2);
     }
 
     public void visit(StatementContinueClass statementContinueClass) {
         Code.putJump(0);
-        continueStack.peek().add(Code.pc - 2);
+    //    continueStack.peek().add(Code.pc - 2);
     }
 
     private final List<Integer> andList = new ArrayList<>();
@@ -103,6 +111,12 @@ public class CodeGenerator extends VisitorAdaptor {
 
         andList.forEach(Code::fixup);
         andList.clear();
+    }
+
+    public void visit(ConditionStatement conditionStatement) {
+        condition(0);
+        if(whereAmI.peek() == inIfCond)
+            whereAmI.pop();
     }
 
     private void and() {
@@ -135,6 +149,20 @@ public class CodeGenerator extends VisitorAdaptor {
                 Code.put(Code.astore);
         else
             Code.store(designatorStatementAssignClass.getDesignator().obj);
+    }
+    private void condition(int adr) {
+        if(whereAmI.peek() == inIfCond) {
+            Code.put(Code.jmp);
+            Code.put2(0);
+
+            ifStack.push(Code.pc - 2);
+
+            orList.forEach(o->{
+                Code.fixup(o); // postavlja then
+            });
+        }
+
+        orList.clear();
     }
 
     public void visit(ConditionOneClass conditionOneClass) {
@@ -264,6 +292,10 @@ public class CodeGenerator extends VisitorAdaptor {
 
     public void visit(MethodTypeName methodTypeName) {
 
+        if (methodTypeName.getMethodName().equals("main")) {
+            mainPc = Code.pc;
+        }
+
         methodTypeName.obj.setAdr(Code.pc);
 
         int formalParamCnt = methodTypeName.obj.getLevel();
@@ -314,7 +346,6 @@ public class CodeGenerator extends VisitorAdaptor {
                 Code.put(Code.load_n);
             }
         }
-
         // da li je poslednji?
         if(((Designator)optNamespaceClass.getParent()).getOptDesignatorPart() instanceof OptDesignatorPartEmptyClass) {
             SyntaxNode parent = optNamespaceClass.getParent().getParent();

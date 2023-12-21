@@ -92,7 +92,7 @@ nonterminal Addop;
 nonterminal Mulop;
 nonterminal VarDeclList;
 nonterminal FormParsList;
-
+nonterminal ConditionStatement;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Term;
@@ -208,15 +208,17 @@ OptExpr				::= (OptExprOneClass) Expr
 					| 	(OptExprEmptyClass);
 
 Statement           ::= (StatementDesignatorClass) DesignatorStatement SEMI
-                    |   (StatementIfClass) If LPAREN Condition RPAREN Statement
-                    |   (StatementIfElseClass) If LPAREN Condition RPAREN Statement Else Statement
+                    |   (StatementIfClass) If ConditionStatement Statement
+                    |   (StatementIfElseClass) If ConditionStatement Statement Else Statement
                     |   (StatementBreakClass) BREAK SEMI // Done
                     |   (StatementContinueClass) CONTINUE SEMI // Done
                     |   (StatementReturnClass) RETURN OptExpr SEMI // Done
                     |   (StatementReadClass) READ LPAREN Designator RPAREN SEMI
                     |   (StatementPrintClass) PRINT LPAREN Expr OptPrint RPAREN SEMI // Done
-                    |   (StatementForClass) FOR LPAREN DesignatorStatementOpt SEMI CondFactOptional SEMI DesignatorStatementOpt RPAREN // Done
+                    |   (StatementForClass) FOR LPAREN DesignatorStatementOpt SEMI CondFactOptional SEMI DesignatorStatementOpt RPAREN Statement// Done
                     |   (StatementManyClass) LBRACE StatementMany RBRACE; // Done
+
+ConditionStatement          ::= (ConditionStatement) LPAREN Condition RPAREN;
 
 DesignatorStatementOpt      ::= (DesignatorStatementOptManyClass) DesignatorStatementOpt COMMA DesignatorStatement
                             |	  (DesignatorStatementOptOneClass) DesignatorStatement

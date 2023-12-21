@@ -91,8 +91,9 @@ public class SemanticPass extends VisitorAdaptor {
                 }
                 currentType = temp.getType();
                 optNamespaceClass.obj = temp;
+                optNamespaceClass.obj.setLevel(0);
             } else {
-                report_error("Error: Name " + optNamespaceClass.getNamespace() + " is not namespace!", null);
+                report_error("Error: Name " + optNamespaceClass.getNamespace()+ " is not namespace!", null);
                 optNamespaceClass.obj = typeNode;;
             }
         }
