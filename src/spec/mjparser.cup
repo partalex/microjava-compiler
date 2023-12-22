@@ -93,6 +93,10 @@ nonterminal Mulop;
 nonterminal VarDeclList;
 nonterminal FormParsList;
 nonterminal ConditionStatement;
+nonterminal For;
+nonterminal StartOfCondition;
+nonterminal EndOfCondition;
+nonterminal EndFor;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Term;
@@ -215,10 +219,14 @@ Statement           ::= (StatementDesignatorClass) DesignatorStatement SEMI
                     |   (StatementReturnClass) RETURN OptExpr SEMI // Done
                     |   (StatementReadClass) READ LPAREN Designator RPAREN SEMI
                     |   (StatementPrintClass) PRINT LPAREN Expr OptPrint RPAREN SEMI // Done
-                    |   (StatementForClass) FOR LPAREN DesignatorStatementOpt SEMI CondFactOptional SEMI DesignatorStatementOpt RPAREN Statement// Done
+                    |   (StatementForClass) For LPAREN DesignatorStatementOpt StartOfCondition CondFactOptional SEMI DesignatorStatementOpt EndOfCondition Statement EndFor // Done
                     |   (StatementManyClass) LBRACE StatementMany RBRACE; // Done
 
+EndFor                      ::= (EndFor) /* epsilon */;
+
 ConditionStatement          ::= (ConditionStatement) LPAREN Condition RPAREN;
+
+EndOfCondition              ::= (EndOfCondition) RPAREN;
 
 DesignatorStatementOpt      ::= (DesignatorStatementOptManyClass) DesignatorStatementOpt COMMA DesignatorStatement
                             |	  (DesignatorStatementOptOneClass) DesignatorStatement
@@ -226,6 +234,9 @@ DesignatorStatementOpt      ::= (DesignatorStatementOptManyClass) DesignatorStat
 
 If					::= (If) IF;
 Else 				::= (Else) ELSE;
+For 				::= (For) FOR;
+
+StartOfCondition 	::= (StartOfCondition) SEMI;
 
 CondFactOptional    ::= (CondFactOptionalOneClass) CondFact
                     |	(CondFactOptionalEmptyClass) /* epsilon */;

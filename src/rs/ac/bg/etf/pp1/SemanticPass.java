@@ -91,7 +91,10 @@ public class SemanticPass extends VisitorAdaptor {
                 }
                 currentType = temp.getType();
                 optNamespaceClass.obj = temp;
-                optNamespaceClass.obj.setLevel(0);
+                if (optNamespaceClass.obj.getKind()!=Obj.Meth) {
+                    optNamespaceClass.obj.setLevel(0);
+                }
+
             } else {
                 report_error("Error: Name " + optNamespaceClass.getNamespace()+ " is not namespace!", null);
                 optNamespaceClass.obj = typeNode;;
@@ -166,17 +169,6 @@ public class SemanticPass extends VisitorAdaptor {
         constValBooCllass.struct = MyTab.boolType;
     }
 
-    public void visit(StatementBreakClass statementBreakClass) {
-        if (breakCount > 0) report_info("Break is correct", statementBreakClass);
-        else report_error("Break is bad", statementBreakClass);
-    }
-
-    public void visit(StatementContinueClass statementContinueClass) {
-        if (continueCount > 0)
-            report_info("Continue is correct", statementContinueClass);
-        else
-            report_error("Continue is bad", statementContinueClass.getParent());
-    }
 
     private boolean checkTypes(Struct leftType, Struct rightType) {
         if (leftType == Tab.noType && rightType.getKind() == Struct.Array)
@@ -452,7 +444,7 @@ public class SemanticPass extends VisitorAdaptor {
 
     private boolean badParams() {
 
-        if (actPartsPassed.size() == actPartsRequired.size()) {
+        if (actPartsPassed!=null && actPartsRequired!=null && actPartsPassed.size() == actPartsRequired.size()) {
             int i = 0;
             for (Obj required : actPartsRequired) {
                 if (required.getType() != actPartsPassed.get(i))

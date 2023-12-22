@@ -12,12 +12,14 @@ public class CodeGenerator extends VisitorAdaptor {
 
     private int mainPc;
     private final Stack<Integer> whereAmI = new Stack<>();
+    private boolean isInfor = false;
+    private final Stack<List<Integer>> breakStack = new Stack<>();
+    private final Stack<List<Integer>> continueStack = new Stack<>();
 
-    private Stack<List<Integer>> breakStack = new Stack<>();
-    private Stack<List<Integer>> continueStack = new Stack<>();
-
+    private final Stack<List<Integer>> jumpStack = new Stack<>();
+    private final Stack<Integer> forStack = new Stack<>();
     private final Integer inNowhere = 0;
-    private boolean globalMethDeclaration;
+    private boolean globalMethDeclaration = false;
 
     {
         whereAmI.push(inNowhere);
@@ -29,11 +31,14 @@ public class CodeGenerator extends VisitorAdaptor {
 
     private static final int inIfCond = 1;
 
+    private static final int inForLoop = 2;
+
     public int getMainPc() {
         return mainPc;
     }
 
     public void visit(StatementPrintClass statementPrintClass) {
+        int pc = Code.pc;
         Code.load(new Obj(Obj.Con, "width", Tab.intType, 1, 0));
         if (statementPrintClass.getExpr().struct == Tab.intType
                 || statementPrintClass.getExpr().struct == MyTab.boolType) {
@@ -89,12 +94,12 @@ public class CodeGenerator extends VisitorAdaptor {
 
     public void visit(StatementBreakClass statementBreakClass) {
         Code.putJump(0);
-    //    breakStack.peek().add(Code.pc - 2);
+        breakStack.peek().add(Code.pc - 2);
     }
 
     public void visit(StatementContinueClass statementContinueClass) {
         Code.putJump(0);
-    //    continueStack.peek().add(Code.pc - 2);
+        continueStack.peek().add(Code.pc - 2);
     }
 
     private final List<Integer> andList = new ArrayList<>();
@@ -102,12 +107,12 @@ public class CodeGenerator extends VisitorAdaptor {
 
     private void or() {
         Code.put(Code.jmp);
-//        if (whereAmI.peek() == inDoWhileBlock) // TODO - ako bude pucalo ovo ce Milena da sredi
-//            Code.put2(doWhileStack.peek() - Code.pc + 1);
-//        else {
-        Code.put2(0);
-        orList.add(Code.pc - 2);
-//        }
+        if (whereAmI.peek() == inForLoop) // TODO - ako bude pucalo ovo ce Milena da sredi
+            Code.put2(forStack.peek() - Code.pc + 1);
+        else {
+            Code.put2(0);
+            orList.add(Code.pc - 2);
+        }
 
         andList.forEach(Code::fixup);
         andList.clear();
@@ -124,6 +129,7 @@ public class CodeGenerator extends VisitorAdaptor {
     }
 
     public void visit(DesignatorStatementPlusClass designatorStatementPlusClass) {
+        if (isInfor) return;
         Code.load(designatorStatementPlusClass.getDesignator().obj);
         Code.put(Code.const_1);
         Code.put(Code.add);
@@ -131,6 +137,7 @@ public class CodeGenerator extends VisitorAdaptor {
     }
 
     public void visit(DesignatorStatementMinusClass designatorStatementMinusClass) {
+        if (isInfor) return;
         Code.put(Code.const_1);
         Code.put(Code.sub);
         Code.store(designatorStatementMinusClass.getDesignator().obj);
@@ -141,6 +148,7 @@ public class CodeGenerator extends VisitorAdaptor {
     }
 
     public void visit(DesignatorStatementAssignClass designatorStatementAssignClass) {
+        if (isInfor) return;
         // ono sto je u akumulatoru smesta se na trazenu lokaciju
         if (designatorStatementAssignClass.getDesignator().obj.getType().getKind() == 3 && designatorStatementAssignClass.getDesignator().getOptDesignatorPart() instanceof OptDesignatorPartManyClass )
             if (designatorStatementAssignClass.getDesignator().obj.getType() == Tab.charType)
@@ -150,6 +158,7 @@ public class CodeGenerator extends VisitorAdaptor {
         else
             Code.store(designatorStatementAssignClass.getDesignator().obj);
     }
+
     private void condition(int adr) {
         if(whereAmI.peek() == inIfCond) {
             Code.put(Code.jmp);
@@ -262,15 +271,6 @@ public class CodeGenerator extends VisitorAdaptor {
                 Code.load(MyTab.tempHelp);
             else
                 Code.load(secondToLast);
-
-            Code.put(Code.getfield);
-            Code.put2(0);
-
-            Code.put(Code.invokevirtual);
-            String name = designator.obj.getName();
-            for (int i = 0; i < name.length(); i++)
-                Code.put4(name.charAt(i));
-            Code.put4(-1);
         }
     }
 
@@ -280,7 +280,6 @@ public class CodeGenerator extends VisitorAdaptor {
         else
             return ((OptDesignatorPartManyClass) designator.getOptDesignatorPart()).getOptDesignatorPart().obj;
     }
-
 
     public void visit(OptDesignatorPartManyClass optDesignatorPartManyClass) {
         Obj o;
@@ -307,6 +306,7 @@ public class CodeGenerator extends VisitorAdaptor {
     }
 
     public void visit(DesignatorStatementParamsClass designatorStatementParamsClass) {
+        if (isInfor) return;
         setFunCall(designatorStatementParamsClass.getDesignator());
 
         if (designatorStatementParamsClass.getDesignator().obj.getType() != Tab.noType)
@@ -380,5 +380,42 @@ public class CodeGenerator extends VisitorAdaptor {
 
         }
     }
+
+    // TODO - #############################################################
+    // StatementForClass
+    public void visit(StartOfCondition startOfCondition) {
+        forStack.push(Code.pc);
+        isInfor = true;
+    }
+
+    public void visit(EndOfCondition endOfCondition) {
+        isInfor = false;
+    }
+
+    public void visit(For forTerm) {
+        whereAmI.push(inForLoop);
+        breakStack.push(new ArrayList<Integer>());
+        continueStack.push(new ArrayList<Integer>());
+        jumpStack.push(new ArrayList<Integer>());
+    }
+
+    @Override
+    public void visit(CondFactOptionalOneClass condFactOptionalOneClass) {
+        jumpStack.peek().add(Code.pc - 2);
+    }
+
+    public void visit(StatementForClass statementForClass) {
+        continueStack.pop().forEach(Code::fixup);
+        statementForClass.getDesignatorStatementOpt1().traverseBottomUp(this);
+        Code.put(Code.jmp);
+        Code.put2(forStack.pop() - Code.pc + 1);
+        jumpStack.pop().forEach(Code::fixup);
+        breakStack.pop().forEach(Code::fixup);
+        whereAmI.pop();
+    }
+
+
+
+    // TODO - #############################################################
 }
 
