@@ -97,6 +97,7 @@ nonterminal For;
 nonterminal StartOfCondition;
 nonterminal EndOfCondition;
 nonterminal EndFor;
+nonterminal EndOfGlobal;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Term;
@@ -133,7 +134,9 @@ precedence left ELSE;
 //precedence left IF;
 
 // Done
-Program 		    ::= (Program) PROG ProgramName NamespaceMany ConstDeclOptMany VarDeclOpt LBRACE MethodDeclOptMany RBRACE;
+Program 		    ::= (Program) PROG ProgramName NamespaceMany ConstDeclOptMany VarDeclOpt EndOfGlobal MethodDeclOptMany RBRACE;
+
+EndOfGlobal		    ::= (EndOfGlobal) LBRACE;
 
 ProgramName		    ::= (ProgramName) IDENT:programName;
 

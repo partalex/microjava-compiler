@@ -4,13 +4,14 @@ import rs.ac.bg.etf.pp1.ast.*;
 import rs.etf.pp1.mj.runtime.Code;
 import rs.etf.pp1.symboltable.Tab;
 import rs.etf.pp1.symboltable.concepts.Obj;
-import rs.etf.pp1.symboltable.concepts.Struct;
 
 import java.util.*;
 
 public class CodeGenerator extends VisitorAdaptor {
 
     private int mainPc;
+    private int pc = Code.pc;
+
     private final Stack<Integer> whereAmI = new Stack<>();
     private boolean isInfor = false;
     private final Stack<List<Integer>> breakStack = new Stack<>();
@@ -19,7 +20,7 @@ public class CodeGenerator extends VisitorAdaptor {
     private final Stack<List<Integer>> jumpStack = new Stack<>();
     private final Stack<Integer> forStack = new Stack<>();
     private final Integer inNowhere = 0;
-    private boolean globalMethDeclaration = false;
+    private boolean isInGlobalDeclartaion = false;
 
     {
         whereAmI.push(inNowhere);
@@ -38,7 +39,6 @@ public class CodeGenerator extends VisitorAdaptor {
     }
 
     public void visit(StatementPrintClass statementPrintClass) {
-        int pc = Code.pc;
         Code.load(new Obj(Obj.Con, "width", Tab.intType, 1, 0));
         if (statementPrintClass.getExpr().struct == Tab.intType
                 || statementPrintClass.getExpr().struct == MyTab.boolType) {
@@ -50,7 +50,13 @@ public class CodeGenerator extends VisitorAdaptor {
 
     public void visit(StatementReadClass statementReadClass) {
         Code.put(Code.read);
-        Code.store(statementReadClass.getDesignator().obj);
+        if (statementReadClass.getDesignator().obj.getType().getKind() == 3) {
+            Code.put(Code.astore);
+        } else {
+            Code.store(statementReadClass.getDesignator().getOptNamespace().obj);
+        }
+
+
     }
 
     public void visit(StatementIfClass statementIfClass) {
@@ -120,7 +126,7 @@ public class CodeGenerator extends VisitorAdaptor {
 
     public void visit(ConditionStatement conditionStatement) {
         condition(0);
-        if(whereAmI.peek() == inIfCond)
+        if (whereAmI.peek() == inIfCond)
             whereAmI.pop();
     }
 
@@ -129,8 +135,9 @@ public class CodeGenerator extends VisitorAdaptor {
     }
 
     public void visit(DesignatorStatementPlusClass designatorStatementPlusClass) {
-        if (isInfor) return;
-        Code.load(designatorStatementPlusClass.getDesignator().obj);
+        if (isInfor)
+            return;
+        //Code.load(designatorStatementPlusClass.getDesignator().obj);
         Code.put(Code.const_1);
         Code.put(Code.add);
         Code.store(designatorStatementPlusClass.getDesignator().obj);
@@ -150,7 +157,7 @@ public class CodeGenerator extends VisitorAdaptor {
     public void visit(DesignatorStatementAssignClass designatorStatementAssignClass) {
         if (isInfor) return;
         // ono sto je u akumulatoru smesta se na trazenu lokaciju
-        if (designatorStatementAssignClass.getDesignator().obj.getType().getKind() == 3 && designatorStatementAssignClass.getDesignator().getOptDesignatorPart() instanceof OptDesignatorPartManyClass )
+        if (designatorStatementAssignClass.getDesignator().obj.getType().getKind() == 3 && designatorStatementAssignClass.getDesignator().getOptDesignatorPart() instanceof OptDesignatorPartManyClass)
             if (designatorStatementAssignClass.getDesignator().obj.getType() == Tab.charType)
                 Code.put(Code.bastore);
             else
@@ -160,13 +167,13 @@ public class CodeGenerator extends VisitorAdaptor {
     }
 
     private void condition(int adr) {
-        if(whereAmI.peek() == inIfCond) {
+        if (whereAmI.peek() == inIfCond) {
             Code.put(Code.jmp);
             Code.put2(0);
 
             ifStack.push(Code.pc - 2);
 
-            orList.forEach(o->{
+            orList.forEach(o -> {
                 Code.fixup(o); // postavlja then
             });
         }
@@ -322,41 +329,48 @@ public class CodeGenerator extends VisitorAdaptor {
             syntaxNode = syntaxNode.getParent();
     }
 
+    public void visit(EndOfGlobal endOfGlobal) {
+        isInGlobalDeclartaion = true;
+    }
+
     public void visit(OptNamespaceEmptyClass optNamespaceEmptyClass) {
-        if(!globalMethDeclaration) {
-            if(optNamespaceEmptyClass.obj.getKind() == Obj.Meth) {
+        if (!isInGlobalDeclartaion) {
+            if (optNamespaceEmptyClass.obj.getKind() == Obj.Meth) {
                 Code.put(Code.load_n);
             }
         }
         // da li je poslednji?
-        if(((Designator)optNamespaceEmptyClass.getParent()).getOptDesignatorPart() instanceof OptDesignatorPartEmptyClass) {
+        if (((Designator) optNamespaceEmptyClass.getParent()).getOptDesignatorPart() instanceof OptDesignatorPartEmptyClass) {
             SyntaxNode parent = optNamespaceEmptyClass.getParent().getParent();
-            if(!(parent instanceof DesignatorStatementAssignClass) // ako je dodela vrednosti nije mi potrebno da dohvatam vrednost, ali ako ima delove, onda jeste
+            if (!(parent.getParent() instanceof DesignatorStatementOpt && isInfor)
+                    && !(parent instanceof DesignatorStatementAssignClass) // ako je dodela vrednosti nije mi potrebno da dohvatam vrednost, ali ako ima delove, onda jeste
                     && !(parent instanceof DesignatorStatementParamsClass)
-                    && !(parent instanceof FactorParenParsClass && ((FactorParenParsClass)parent).getOptFactorParenPars() instanceof OptFactorParenParsClass) // poziv funkcije u izrazu
+                    && !(parent instanceof FactorParenParsClass && ((FactorParenParsClass) parent).getOptFactorParenPars() instanceof OptFactorParenParsClass) // poziv funkcije u izrazu
                     && !(parent instanceof StatementReadClass))
                 Code.load(optNamespaceEmptyClass.obj);
         } else
-        Code.load(optNamespaceEmptyClass.obj);
+            Code.load(optNamespaceEmptyClass.obj);
     }
 
     public void visit(OptNamespaceClass optNamespaceClass) {
-        if(!globalMethDeclaration) {
-            if(optNamespaceClass.obj.getKind() == Obj.Meth) {
+        if (!isInGlobalDeclartaion) {
+            if (optNamespaceClass.obj.getKind() == Obj.Meth) {
                 Code.put(Code.load_n);
             }
         }
-        // da li je poslednji?
-        if(((Designator)optNamespaceClass.getParent()).getOptDesignatorPart() instanceof OptDesignatorPartEmptyClass) {
-            SyntaxNode parent = optNamespaceClass.getParent().getParent();
-            if(!(parent instanceof DesignatorStatementAssignClass) // ako je dodela vrednosti nije mi potrebno da dohvatam vrednost, ali ako ima delove, onda jeste
-                    && !(parent instanceof DesignatorStatementParamsClass)
-                    && !(parent instanceof FactorParenParsClass && ((FactorParenParsClass)parent).getOptFactorParenPars() instanceof OptFactorParenParsClass) // poziv funkcije u izrazu
-                    && !(parent instanceof StatementReadClass));
-            Code.load(optNamespaceClass.obj);
-        } else{
-            Code.load(optNamespaceClass.obj);
+        if (optNamespaceClass.obj.getKind() == Obj.Meth) {
+            return;
         }
+        // da li je poslednji?
+        if (((Designator) optNamespaceClass.getParent()).getOptDesignatorPart() instanceof OptDesignatorPartEmptyClass) {
+            SyntaxNode parent = optNamespaceClass.getParent().getParent();
+            if (!(parent instanceof DesignatorStatementAssignClass) // ako je dodela vrednosti nije mi potrebno da dohvatam vrednost, ali ako ima delove, onda jeste
+                    && !(parent instanceof DesignatorStatementParamsClass)
+                    && !(parent instanceof FactorParenParsClass && ((FactorParenParsClass) parent).getOptFactorParenPars() instanceof OptFactorParenParsClass) // poziv funkcije u izrazu
+                    && !(parent instanceof StatementReadClass)) ;
+            Code.load(optNamespaceClass.obj);
+        } else
+            Code.load(optNamespaceClass.obj);
 
     }
 
@@ -413,7 +427,6 @@ public class CodeGenerator extends VisitorAdaptor {
         breakStack.pop().forEach(Code::fixup);
         whereAmI.pop();
     }
-
 
 
     // TODO - #############################################################

@@ -6,8 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="37548433-4df9-4744-8550-e2d30ad3cbd3" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MJCompiler.iml" beforeDir="false" afterPath="$PROJECT_DIR$/MJCompiler.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/rs/ac/bg/etf/pp1/SemanticPass.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/rs/ac/bg/etf/pp1/SemanticPass.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.xml" beforeDir="false" afterPath="$PROJECT_DIR$/build.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/output.txt" beforeDir="false" afterPath="$PROJECT_DIR$/output.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/rs/ac/bg/etf/pp1/CodeGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/rs/ac/bg/etf/pp1/CodeGenerator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/spec/mjparser.cup" beforeDir="false" afterPath="$PROJECT_DIR$/src/spec/mjparser.cup" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/rs/ac/bg/etf/pp1/MJParserTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/test/rs/ac/bg/etf/pp1/MJParserTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -24,7 +27,7 @@
     <option name="stateVersion" value="1" />
   </component>
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="ProjectErrors" />
+    <option name="selectedTabId" value="QODANA_PROBLEMS_VIEW_TAB" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 8
@@ -40,17 +43,20 @@
     "Ant Target.2. lexerGen.executor": "Run",
     "Ant Target.3. parserGen.executor": "Run",
     "Ant Target.4. repackage.executor": "Run",
+    "Ant Target.6. debug.executor": "Run",
+    "Ant Target.7. runObj.executor": "Run",
     "Ant Target.delete.executor": "Run",
     "Ant Target.lexerGen.executor": "Run",
     "Ant Target.parserGen.executor": "Run",
     "Ant Target.repackage.executor": "Run",
+    "Application.MJParserTest.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "2023-kraj-trece-faze",
+    "git-widget-placeholder": "video-recorder=milena",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/kaoko/Documents/PP1/MJCompiler/lib/symboltable-1-1.jar",
+    "last_opened_file_path": "C:/Users/kaoko/Documents/PP1/MJCompiler/test/2023",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -63,7 +69,17 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
-  <component name="RunManager" selected="Ant Target.1. delete">
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\kaoko\Documents\PP1\MJCompiler\test\2023" />
+    </key>
+  </component>
+  <component name="RunAnythingCache">
+    <option name="myCommands">
+      <command value="7. runObj" />
+    </option>
+  </component>
+  <component name="RunManager" selected="Ant Target.7. runObj">
     <configuration name="1. delete" type="AntRunConfiguration">
       <antsettings antfile="file://$PROJECT_DIR$/build.xml" target="delete" />
       <method v="2" />
@@ -84,21 +100,39 @@
       <antsettings antfile="file://$PROJECT_DIR$/build.xml" target="compile" />
       <method v="2" />
     </configuration>
+    <configuration name="6. debug" type="AntRunConfiguration">
+      <antsettings antfile="file://$PROJECT_DIR$/build.xml" target="debug" />
+      <method v="2" />
+    </configuration>
+    <configuration name="7. runObj" type="AntRunConfiguration">
+      <antsettings antfile="file://$PROJECT_DIR$/build.xml" target="runObj" />
+      <method v="2">
+        <option name="RunConfigurationTask" enabled="true" run_configuration_name="MJParserTest" run_configuration_type="Application" />
+      </method>
+    </configuration>
+    <configuration name="MJParserTest" type="Application" factoryName="Application" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="rs.ac.bg.etf.pp1.MJParserTest" />
+      <module name="MJCompiler" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="rs.ac.bg.etf.pp1.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <list>
       <item itemvalue="Ant Target.1. delete" />
       <item itemvalue="Ant Target.2. lexerGen" />
       <item itemvalue="Ant Target.3. parserGen" />
       <item itemvalue="Ant Target.4. repackage" />
       <item itemvalue="Ant Target.5. compile" />
+      <item itemvalue="Ant Target.6. debug" />
+      <item itemvalue="Ant Target.7. runObj" />
+      <item itemvalue="Application.MJParserTest" />
     </list>
-  </component>
-  <component name="SharedIndexes">
-    <attachedChunks>
-      <set>
-        <option value="jdk-1.8.0_392-corretto-1.8.0_392-3183f394aec4-cb300fc7" />
-        <option value="jdk-17.0.9-corretto-17.0.9-3183f394aec4-8f899f12" />
-      </set>
-    </attachedChunks>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -114,5 +148,36 @@
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/rs/ac/bg/etf/pp1/CodeGenerator.java</url>
+          <line>101</line>
+          <option name="timeStamp" value="5" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/rs/ac/bg/etf/pp1/CodeGenerator.java</url>
+          <line>139</line>
+          <option name="timeStamp" value="10" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/rs/ac/bg/etf/pp1/CodeGenerator.java</url>
+          <line>275</line>
+          <option name="timeStamp" value="25" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/rs/ac/bg/etf/pp1/CodeGenerator.java</url>
+          <line>272</line>
+          <option name="timeStamp" value="27" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+    <pin-to-top-manager>
+      <pinned-members>
+        <PinnedItemInfo parentTag="rs.etf.pp1.symboltable.concepts.Scope" memberName="locals" />
+      </pinned-members>
+    </pin-to-top-manager>
   </component>
 </project>
