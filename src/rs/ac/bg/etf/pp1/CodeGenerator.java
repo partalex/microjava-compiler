@@ -4,13 +4,16 @@ import rs.ac.bg.etf.pp1.ast.*;
 import rs.etf.pp1.mj.runtime.Code;
 import rs.etf.pp1.symboltable.Tab;
 import rs.etf.pp1.symboltable.concepts.Obj;
+import rs.etf.pp1.symboltable.concepts.Struct;
 
 import java.util.*;
 
 public class CodeGenerator extends VisitorAdaptor {
 
     private int mainPc;
-    private int pc = Code.pc;
+    private int counterUnpacking = 0;
+
+    private boolean isFirstTime = false;
 
     private final Stack<Integer> whereAmI = new Stack<>();
     private boolean isInfor = false;
@@ -20,7 +23,6 @@ public class CodeGenerator extends VisitorAdaptor {
     private final Stack<List<Integer>> jumpStack = new Stack<>();
     private final Stack<Integer> forStack = new Stack<>();
     private final Integer inNowhere = 0;
-    private boolean isInGlobalDeclartaion = false;
 
     {
         whereAmI.push(inNowhere);
@@ -56,6 +58,85 @@ public class CodeGenerator extends VisitorAdaptor {
             Code.store(statementReadClass.getDesignator().getOptNamespace().obj);
         }
 
+
+    }
+
+    @Override
+    public void visit(DesignatorStatementManyClassStart designatorStatementManyClassStart) {
+        counterUnpacking = 0;
+    }
+
+    @Override
+    public void visit(DesignatorStatePartOneClass designatorStatePartOneClass) {
+        counterUnpacking++;
+    }
+
+    @Override
+    public void visit(DesignatorStatePartManyClass designatorStatePartManyClass) {
+        isFirstTime = false;
+        if (designatorStatePartManyClass.getDesignator().getOptDesignatorPart() instanceof OptDesignatorPartManyClass) {
+            Code.load(designatorStatePartManyClass.getDesignator().obj);
+            designatorStatePartManyClass.getDesignator().getOptDesignatorPart().traverseBottomUp(this);
+        }
+        SyntaxNode parent = designatorStatePartManyClass.getParent();
+        while (!(parent instanceof DesignatorStatementManyClass)) {
+            parent = parent.getParent();
+        }
+        Code.load(((DesignatorStatementManyClass)parent).getDesignator1().obj);
+        Code.loadConst(counterUnpacking++);
+        Code.put(Code.aload);
+        if (designatorStatePartManyClass.getDesignator().getOptDesignatorPart() instanceof OptDesignatorPartManyClass) {
+            Code.put(Code.astore);
+        }else Code.store(designatorStatePartManyClass.getDesignator().obj);
+    }
+
+    @Override
+    public void visit(DesignatorStatementManyClass designatorStatementManyClass) {
+        isFirstTime = false;
+        int cntArray = 0;
+
+        Obj cntArrayObj = Tab.insert(Obj.Var, "&cntArrayhelp", new Struct(Struct.Int));
+        Code.loadConst(cntArray);
+        Code.store(cntArrayObj);
+
+        Obj unpackingObj = Tab.insert(Obj.Var, "&unpackingHelp", new Struct(Struct.Int));
+        Code.loadConst(counterUnpacking);
+        Code.store(unpackingObj);
+
+        Code.load(designatorStatementManyClass.getDesignator().obj);
+        Code.load(cntArrayObj);
+        Code.load(designatorStatementManyClass.getDesignator1().obj);
+        Code.load(unpackingObj);
+
+        int pc = Code.pc;
+        Code.put(Code.aload);
+        Code.put(Code.astore);
+
+        Code.load(designatorStatementManyClass.getDesignator().obj);
+
+        Code.load(cntArrayObj);
+        Code.loadConst(1);
+        Code.put(Code.add);
+        Code.store(cntArrayObj);
+        Code.load(cntArrayObj);
+
+        Code.load(designatorStatementManyClass.getDesignator1().obj);
+
+        Code.load(unpackingObj);
+        Code.loadConst(1);
+        Code.put(Code.add);
+        Code.store(unpackingObj);
+        Code.load(unpackingObj);
+
+        Code.load(designatorStatementManyClass.getDesignator().obj);
+        Code.put(Code.arraylength);
+        Code.load(cntArrayObj);
+        Code.putFalseJump(Code.le, pc);
+
+        Code.put(Code.pop);
+        Code.put(Code.pop);
+        Code.put(Code.pop);
+        Code.put(Code.pop);
 
     }
 
@@ -113,7 +194,7 @@ public class CodeGenerator extends VisitorAdaptor {
 
     private void or() {
         Code.put(Code.jmp);
-        if (whereAmI.peek() == inForLoop) // TODO - ako bude pucalo ovo ce Milena da sredi
+        if (whereAmI.peek() == inForLoop)
             Code.put2(forStack.peek() - Code.pc + 1);
         else {
             Code.put2(0);
@@ -219,7 +300,8 @@ public class CodeGenerator extends VisitorAdaptor {
         Code.putFalseJump(Code.eq, 0);
     }
 
-    public void visit(FactorConstValClass factorConstValClass) { // za bezimene konstante 5 'a' false
+    public void visit(FactorConstValClass factorConstValClass) {
+        if (isFirstTime) return;
         Obj con = Tab.insert(Obj.Con, "$", factorConstValClass.struct);
         con.setAdr(constValue(factorConstValClass.getConstVal()));
         Code.load(con);
@@ -329,19 +411,28 @@ public class CodeGenerator extends VisitorAdaptor {
             syntaxNode = syntaxNode.getParent();
     }
 
-    public void visit(EndOfGlobal endOfGlobal) {
-        isInGlobalDeclartaion = true;
-    }
+
 
     public void visit(OptNamespaceEmptyClass optNamespaceEmptyClass) {
-        if (!isInGlobalDeclartaion) {
-            if (optNamespaceEmptyClass.obj.getKind() == Obj.Meth) {
-                Code.put(Code.load_n);
+        if (Tab.currentScope().findSymbol(optNamespaceEmptyClass.obj.getName())!=null) {
+            if (optNamespaceEmptyClass.obj.getKind()==Obj.Meth) {
+                Code.loadConst(0);
             }
         }
         // da li je poslednji?
+        if (optNamespaceEmptyClass.obj.getKind() == Obj.Meth) {
+            return;
+        }
+        if (optNamespaceEmptyClass.obj.getType().getKind()==3 && ((Designator)optNamespaceEmptyClass.getParent()).getOptDesignatorPart() instanceof OptDesignatorPartEmptyClass ) {
+            return;
+        }
+
+        SyntaxNode parent = optNamespaceEmptyClass.getParent().getParent();
+        if (parent instanceof DesignatorStatePartManyClass || parent instanceof DesignatorStatementManyClass) {
+            return;
+        }
+
         if (((Designator) optNamespaceEmptyClass.getParent()).getOptDesignatorPart() instanceof OptDesignatorPartEmptyClass) {
-            SyntaxNode parent = optNamespaceEmptyClass.getParent().getParent();
             if (!(parent.getParent() instanceof DesignatorStatementOpt && isInfor)
                     && !(parent instanceof DesignatorStatementAssignClass) // ako je dodela vrednosti nije mi potrebno da dohvatam vrednost, ali ako ima delove, onda jeste
                     && !(parent instanceof DesignatorStatementParamsClass)
@@ -353,17 +444,20 @@ public class CodeGenerator extends VisitorAdaptor {
     }
 
     public void visit(OptNamespaceClass optNamespaceClass) {
-        if (!isInGlobalDeclartaion) {
-            if (optNamespaceClass.obj.getKind() == Obj.Meth) {
-                Code.put(Code.load_n);
-            }
-        }
         if (optNamespaceClass.obj.getKind() == Obj.Meth) {
             return;
         }
         // da li je poslednji?
+        if (optNamespaceClass.obj.getType().getKind()==3 && ((Designator)optNamespaceClass.getParent()).getOptDesignatorPart() instanceof OptDesignatorPartEmptyClass ) {
+            return;
+        }
+        SyntaxNode parent = optNamespaceClass.getParent().getParent();
+
+        if (parent instanceof DesignatorStatePartManyClass || parent instanceof DesignatorStatementManyClass) {
+
+            return;
+        }
         if (((Designator) optNamespaceClass.getParent()).getOptDesignatorPart() instanceof OptDesignatorPartEmptyClass) {
-            SyntaxNode parent = optNamespaceClass.getParent().getParent();
             if (!(parent instanceof DesignatorStatementAssignClass) // ako je dodela vrednosti nije mi potrebno da dohvatam vrednost, ali ako ima delove, onda jeste
                     && !(parent instanceof DesignatorStatementParamsClass)
                     && !(parent instanceof FactorParenParsClass && ((FactorParenParsClass) parent).getOptFactorParenPars() instanceof OptFactorParenParsClass) // poziv funkcije u izrazu
@@ -371,11 +465,11 @@ public class CodeGenerator extends VisitorAdaptor {
             Code.load(optNamespaceClass.obj);
         } else
             Code.load(optNamespaceClass.obj);
-
     }
 
+
     public void visit(DesigPart desigPart) {
-        if (desigPart.getParent().getParent() instanceof Designator) {
+        if (desigPart.getParent().getParent() instanceof Designator && !(desigPart.getParent().getParent().getParent() instanceof DesignatorStatePartManyClass)) {
             SyntaxNode desig = desigPart.getParent().getParent();
             SyntaxNode parent = desig.getParent();
             if (!(parent instanceof DesignatorStatementAssignClass) // ako je dodela vrednosti nije mi potrebno da dohvatam vrednost, ali ako ima delove, onda jeste
@@ -386,7 +480,7 @@ public class CodeGenerator extends VisitorAdaptor {
                     Code.put(Code.baload);
                 else
                     Code.put(Code.aload);
-        } else {
+        } else if (!(desigPart.getParent().getParent().getParent() instanceof DesignatorStatePartManyClass)){
             if (desigPart.obj.getType() == Tab.charType)
                 Code.put(Code.baload);
             else

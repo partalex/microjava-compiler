@@ -6,10 +6,12 @@ import rs.ac.bg.etf.pp1.ast.*;
 
 import rs.etf.pp1.symboltable.Tab;
 import rs.etf.pp1.symboltable.concepts.Obj;
+import rs.etf.pp1.symboltable.concepts.Scope;
 import rs.etf.pp1.symboltable.concepts.Struct;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 
 public class SemanticPass extends VisitorAdaptor {
     private boolean errorDetected = false;
@@ -104,6 +106,9 @@ public class SemanticPass extends VisitorAdaptor {
 
     public void visit(OptNamespaceEmptyClass optNamespaceEmptyClass) {
         optNamespaceEmptyClass.obj = Tab.find(optNamespaceEmptyClass.getDesignatorName().getDesignatorName());
+        int currentAdress = 0;
+        Scope scope = Tab.currentScope().getOuter();
+
     }
 
 
@@ -221,6 +226,7 @@ public class SemanticPass extends VisitorAdaptor {
             }
         report_error("Error: read has no good parameters", statementReadClass);
     }
+
 
     public void visit(StatementPrintClass statementPrintClass) {
         Struct kind = statementPrintClass.getExpr().struct;
@@ -508,6 +514,20 @@ public class SemanticPass extends VisitorAdaptor {
                 varDeclPart.obj = Tab.insert(Obj.Var, varDeclPart.getName(), new Struct(Struct.Array, currentType));
                 isArray = false;
             } else varDeclPart.obj = Tab.insert(Obj.Var, varDeclPart.getName(), currentType);
+        }
+    }
+
+    @Override
+    public void visit(NamespaceFinished namespaceFinished) {
+        Iterator<Obj> iterator = Tab.currentScope().getLocals().symbols().iterator();
+        int sum = 0;
+        while (iterator.hasNext()) {
+            Obj next = iterator.next();
+            sum+=next.getLocalSymbols().size();
+        }
+        for (int i = 0; i < sum; i++) {
+            Tab.insert(Obj.Var, "#"+i, Tab.noType);
+
         }
     }
 

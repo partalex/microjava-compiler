@@ -96,8 +96,10 @@ nonterminal ConditionStatement;
 nonterminal For;
 nonterminal StartOfCondition;
 nonterminal EndOfCondition;
-nonterminal EndFor;
-nonterminal EndOfGlobal;
+nonterminal EndFor; //ovo ne treba
+nonterminal EndOfGlobal; //ovo ne treba
+nonterminal DesignatorStatementManyClassStart;
+nonterminal NamespaceFinished;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Term;
@@ -134,7 +136,9 @@ precedence left ELSE;
 //precedence left IF;
 
 // Done
-Program 		    ::= (Program) PROG ProgramName NamespaceMany ConstDeclOptMany VarDeclOpt EndOfGlobal MethodDeclOptMany RBRACE;
+Program 		    ::= (Program) PROG ProgramName NamespaceMany NamespaceFinished ConstDeclOptMany VarDeclOpt EndOfGlobal MethodDeclOptMany RBRACE;
+
+NamespaceFinished   ::= (NamespaceFinished) /* epsilon */;
 
 EndOfGlobal		    ::= (EndOfGlobal) LBRACE;
 
@@ -257,7 +261,9 @@ DesignatorStatement ::= (DesignatorStatementAssignClass) Designator Assignop Exp
                     |   (DesignatorStatementParamsClass) Designator LPAREN ActPartsOptional RPAREN //
                     |   (DesignatorStatementPlusClass) Designator PLUSPLUS // Done
                     |   (DesignatorStatementMinusClass) Designator MINUSMINUS // Done
-                    |   (DesignatorStatementManyClass) LSQBRACE DesignatorStatePart MUL Designator RSQBRACE Assignop Designator;
+                    |   (DesignatorStatementManyClass) DesignatorStatementManyClassStart DesignatorStatePart MUL Designator RSQBRACE Assignop Designator;//Moze da se proveri da li je Designator array
+
+DesignatorStatementManyClassStart        ::= (DesignatorStatementManyClassStart) LSQBRACE;
 
 // Done
 ActPartsOptional	::= (ActPartsOptionalOneClass) ActPars
