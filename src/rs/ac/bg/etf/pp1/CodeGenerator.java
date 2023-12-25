@@ -94,7 +94,6 @@ public class CodeGenerator extends VisitorAdaptor {
     public void visit(DesignatorStatementManyClass designatorStatementManyClass) {
         isFirstTime = false;
         int cntArray = 0;
-
         Obj cntArrayObj = Tab.insert(Obj.Var, "&cntArrayhelp", new Struct(Struct.Int));
         Code.loadConst(cntArray);
         Code.store(cntArrayObj);
@@ -107,6 +106,16 @@ public class CodeGenerator extends VisitorAdaptor {
         Code.load(cntArrayObj);
         Code.load(designatorStatementManyClass.getDesignator1().obj);
         Code.load(unpackingObj);
+
+        Code.load(designatorStatementManyClass.getDesignator1().obj);
+        Code.put(Code.arraylength);
+        Code.load(unpackingObj);
+        Code.putFalseJump(Code.le, 0);
+
+        int adr1 = Code.pc - 2;
+        Code.put(Code.trap);
+        Code.put(1);
+        Code.fixup(adr1);
 
         int pc = Code.pc;
         Code.put(Code.aload);
@@ -128,16 +137,26 @@ public class CodeGenerator extends VisitorAdaptor {
         Code.store(unpackingObj);
         Code.load(unpackingObj);
 
+        Code.load(designatorStatementManyClass.getDesignator1().obj);
+        Code.put(Code.arraylength);
+        Code.load(unpackingObj);
+        Code.putFalseJump(Code.lt, 0);
+
+        int adr2 = Code.pc - 2;
+        Code.put(Code.trap);
+        Code.put(1);
+        Code.fixup(adr2);
+
         Code.load(designatorStatementManyClass.getDesignator().obj);
         Code.put(Code.arraylength);
         Code.load(cntArrayObj);
         Code.putFalseJump(Code.le, pc);
 
-        Code.put(Code.pop);
-        Code.put(Code.pop);
-        Code.put(Code.pop);
-        Code.put(Code.pop);
 
+        Code.put(Code.pop);
+        Code.put(Code.pop);
+        Code.put(Code.pop);
+        Code.put(Code.pop);
     }
 
     public void visit(StatementIfClass statementIfClass) {
@@ -419,16 +438,17 @@ public class CodeGenerator extends VisitorAdaptor {
                 Code.loadConst(0);
             }
         }
-        // da li je poslednji?
         if (optNamespaceEmptyClass.obj.getKind() == Obj.Meth) {
             return;
         }
+        if (isFirstTime) return;
         if (optNamespaceEmptyClass.obj.getType().getKind()==3 && ((Designator)optNamespaceEmptyClass.getParent()).getOptDesignatorPart() instanceof OptDesignatorPartEmptyClass ) {
             return;
         }
 
         SyntaxNode parent = optNamespaceEmptyClass.getParent().getParent();
         if (parent instanceof DesignatorStatePartManyClass || parent instanceof DesignatorStatementManyClass) {
+            isFirstTime = true;
             return;
         }
 
@@ -447,6 +467,7 @@ public class CodeGenerator extends VisitorAdaptor {
         if (optNamespaceClass.obj.getKind() == Obj.Meth) {
             return;
         }
+        if (isFirstTime) return;
         // da li je poslednji?
         if (optNamespaceClass.obj.getType().getKind()==3 && ((Designator)optNamespaceClass.getParent()).getOptDesignatorPart() instanceof OptDesignatorPartEmptyClass ) {
             return;
@@ -454,7 +475,7 @@ public class CodeGenerator extends VisitorAdaptor {
         SyntaxNode parent = optNamespaceClass.getParent().getParent();
 
         if (parent instanceof DesignatorStatePartManyClass || parent instanceof DesignatorStatementManyClass) {
-
+            isFirstTime = true;
             return;
         }
         if (((Designator) optNamespaceClass.getParent()).getOptDesignatorPart() instanceof OptDesignatorPartEmptyClass) {
@@ -469,6 +490,7 @@ public class CodeGenerator extends VisitorAdaptor {
 
 
     public void visit(DesigPart desigPart) {
+        if (isFirstTime) return;
         if (desigPart.getParent().getParent() instanceof Designator && !(desigPart.getParent().getParent().getParent() instanceof DesignatorStatePartManyClass)) {
             SyntaxNode desig = desigPart.getParent().getParent();
             SyntaxNode parent = desig.getParent();

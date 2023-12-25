@@ -96,8 +96,10 @@ nonterminal ConditionStatement ConditionStatement;
 nonterminal For For;
 nonterminal StartOfCondition StartOfCondition;
 nonterminal EndOfCondition EndOfCondition;
-nonterminal EndFor EndFor;
-nonterminal EndOfGlobal EndOfGlobal;
+nonterminal EndFor EndFor; //ovo ne treba
+nonterminal EndOfGlobal EndOfGlobal; //ovo ne treba
+nonterminal DesignatorStatementManyClassStart DesignatorStatementManyClassStart;
+nonterminal NamespaceFinished NamespaceFinished;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Term;
@@ -134,7 +136,9 @@ precedence left ELSE;
 //precedence left IF;
 
 // Done
-Program 		    ::= (Program) PROG ProgramName:P1 NamespaceMany:N2 ConstDeclOptMany:C3 VarDeclOpt:V4 EndOfGlobal:E5 MethodDeclOptMany:M6 RBRACE {: RESULT=new Program(P1, N2, C3, V4, E5, M6); RESULT.setLine(P1left); :};
+Program 		    ::= (Program) PROG ProgramName:P1 NamespaceMany:N2 NamespaceFinished:N3 ConstDeclOptMany:C4 VarDeclOpt:V5 EndOfGlobal:E6 MethodDeclOptMany:M7 RBRACE {: RESULT=new Program(P1, N2, N3, C4, V5, E6, M7); RESULT.setLine(P1left); :};
+
+NamespaceFinished   ::= (NamespaceFinished) {: RESULT=new NamespaceFinished(); :} /* epsilon */;
 
 EndOfGlobal		    ::= (EndOfGlobal) LBRACE {: RESULT=new EndOfGlobal(); :};
 
@@ -257,7 +261,9 @@ DesignatorStatement ::= (DesignatorStatementAssignClass) Designator:D1 Assignop:
                     |   (DesignatorStatementParamsClass) Designator:D1 LPAREN ActPartsOptional:A2 RPAREN {: RESULT=new DesignatorStatementParamsClass(D1, A2); RESULT.setLine(D1left); :} //
                     |   (DesignatorStatementPlusClass) Designator:D1 PLUSPLUS {: RESULT=new DesignatorStatementPlusClass(D1); RESULT.setLine(D1left); :} // Done
                     |   (DesignatorStatementMinusClass) Designator:D1 MINUSMINUS {: RESULT=new DesignatorStatementMinusClass(D1); RESULT.setLine(D1left); :} // Done
-                    |   (DesignatorStatementManyClass) LSQBRACE DesignatorStatePart:D1 MUL Designator:D2 RSQBRACE Assignop:A3 Designator:D4 {: RESULT=new DesignatorStatementManyClass(D1, D2, A3, D4); RESULT.setLine(D1left); :};
+                    |   (DesignatorStatementManyClass) DesignatorStatementManyClassStart:D1 DesignatorStatePart:D2 MUL Designator:D3 RSQBRACE Assignop:A4 Designator:D5 {: RESULT=new DesignatorStatementManyClass(D1, D2, D3, A4, D5); RESULT.setLine(D1left); :};//Moze da se proveri da li je Designator array
+
+DesignatorStatementManyClassStart        ::= (DesignatorStatementManyClassStart) LSQBRACE {: RESULT=new DesignatorStatementManyClassStart(); :};
 
 // Done
 ActPartsOptional	::= (ActPartsOptionalOneClass) ActPars:A1 {: RESULT=new ActPartsOptionalOneClass(A1); RESULT.setLine(A1left); :}

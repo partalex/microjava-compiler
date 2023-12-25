@@ -114,22 +114,10 @@ public class MyDumpSymbolTableVisitor extends SymbolTableVisitor {
             case Struct.None:
                 output.append("void");
                 break;
-//		case Struct.Int:
-//			output.append("int");
-//			break;
-//		case Struct.Char:
-//			output.append("char");
-//			break;
-//		case Struct.Bool:
-//			output.append("bool");
-//			break;
             case Struct.Array:
                 getStructName(structToVisit.getElemType());
                 output.append("[]");
                 break;
-//		case Struct.Class:
-//			output.append("class");
-//			break;
             default:
                 output.append(typeNameMap.get(structToVisit));
                 break;
