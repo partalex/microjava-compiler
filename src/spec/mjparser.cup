@@ -147,6 +147,7 @@ NamespaceName 		::= (NamespaceName) IDENT:namespaceName;
 
 NamespaceMany       ::= (NamespaceManyClass) NamespaceMany Namespace
                     |   (NamespaceManyEmptyClass) /* epsilon */;
+                    
 MethodDeclOptMany	::= (MethodDeclOptManyClass) MethodDeclOptMany MethodDecl
 					|	(MethodDeclOptEmptyClass) /* epsilon */;
 
@@ -178,16 +179,16 @@ ConstDeclPart       ::= (ConstDeclPart) IDENT:name EQUAL ConstVal:value;
 // Done
 VarDecl             ::= (VarDecl) Type VarDeclList SEMI;
 
-VarDeclOpt          ::= (VarDeclOptManyClass) VarDeclOpt VarDecl
-                    |   (VarDeclOptEmptyClass) /* epsilon */;
+// Done
+VarDeclOpt          ::= (VarDeclOptMany) VarDeclOpt VarDecl
+                    |   (VarDeclOptZero) /* epsilon */;
 
 // Done
 MethodType			::= (MethodTypeVoid) VOID
 					|	(MethodTypeType) Type;
 
-MethodTypeName		::= (MethodTypeName) MethodType IDENT:methodName;
-
-MethodDecl          ::= (MethodDecl) MethodTypeName LPAREN FormParsOptOne RPAREN VarDeclOpt LBRACE StatementMany RBRACE;
+// Done
+MethodDecl          ::= (MethodDecl) MethodType IDENT:name LPAREN FormParsOptOne RPAREN VarDeclOpt LBRACE StatementMany RBRACE;
 
 // Done
 FormParsOptOne      ::= (FormParsOptOne) FormParsList
