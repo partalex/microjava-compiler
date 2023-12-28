@@ -225,7 +225,7 @@ Statement           ::= (StatementDesignator) DesignatorStm SEMI
 StatementCondition  ::= (StatementCondition) LPAREN Condition RPAREN;
 
 // Done
-DesignStmOpt        ::= (DesignStmMany) DesignStmOpt COMMA DesignatorStm
+DesignStmOpt        ::= (DesignStmOptMany) DesignStmOpt COMMA DesignatorStm
                     |	(DesignStmOne) DesignatorStm
                     |	(DesignStmZero) /* epsilon */;
 
@@ -248,7 +248,7 @@ CondStart 	        ::= (CondStart) SEMI;
 CondEnd             ::= (CondEnd) RPAREN;
 
 // Done
-CondFactOpt         ::= (CondFactOne) CondFact
+CondFactOpt         ::= (CondFactOptOne) CondFact
                     |	(CondFactZero) /* epsilon */;
 
 // Done
@@ -321,7 +321,7 @@ FactorParenParsOpt  ::= (ParenPars) LPAREN ActParsOpt RPAREN
                     |   (ParenParsZero) /* epsilon */;
 
 // Done
-ActParsOpt          ::= (ActParsOne) ActPars
+ActParsOpt          ::= (ActParsOptOne) ActPars
                     |   (ActParsZero) /* epsilon */;
 
 // Done
