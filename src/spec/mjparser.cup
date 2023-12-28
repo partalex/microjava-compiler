@@ -95,7 +95,6 @@ nonterminal For;
 nonterminal CondStart;
 nonterminal CondEnd;
 nonterminal ForEnd;
-nonterminal GlobalEnd;
 nonterminal DesignStmManyStart;
 nonterminal NamespaceEnd;
 
@@ -114,6 +113,7 @@ nonterminal rs.etf.pp1.symboltable.concepts.Struct CondFactOpt;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj Program;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj Namespace;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj NamespaceName;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj NamespaceOpt;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj MethodDecl;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj Designator;
@@ -128,15 +128,15 @@ nonterminal Else;
 
 precedence left ELSE;
 
-Program 		    ::= (Program) PROG ProgName NamespaceOpt NamespaceEnd ConstDeclOpt VarDeclOpt GlobalEnd MethodDeclOpt RBRACE;
+Program 		    ::= (Program) PROG ProgName NamespaceOpt NamespaceEnd ConstDeclOpt VarDeclOpt LBRACE MethodDeclOpt RBRACE;
 
 ProgName 			::= (ProgName) IDENT:name;
 
 NamespaceEnd        ::= (NamespaceEnd) /* epsilon */;
 
-GlobalEnd		    ::= (GlobalEnd) LBRACE;
+Namespace 		    ::= (Namespace) NAMESPACE NamespaceName LBRACE ConstDeclOpt VarDeclOpt LBRACE MethodDeclOpt RBRACE RBRACE;
 
-Namespace 		    ::= (Namespace) NAMESPACE IDENT:name LBRACE ConstDeclOpt VarDeclOpt LBRACE MethodDeclOpt RBRACE RBRACE;
+NamespaceName      ::= (NamespaceName) IDENT:name;
 
 NamespaceOpt        ::= (NamespaceMany) NamespaceOpt Namespace
                     |   (NamespaceZero) /* epsilon */;
