@@ -165,7 +165,7 @@ VarDeclList         ::= (VarDeclListMany) VarDeclList COMMA VarDeclPart
                     |   error SEMI:l {: parser.report_error("Sintaksa greska deklaracije globalne promenljive na liniji " + lleft, null); :};
 
 // Done
-ConstDeclOpt        ::= (ConstDeclMany) ConstDeclOpt ConstDecl // TODO
+ConstDeclOpt        ::= (ConstDeclMany) ConstDeclOpt ConstDecl
 					|	(ConstDeclZero) /* epsilon */;
 
 // Done
