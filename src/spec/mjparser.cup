@@ -62,28 +62,28 @@ terminal String CHAR;
 terminal Integer NUMBER;
 terminal String IDENT;
 
-nonterminal NamespaceMany;
+nonterminal NamespaceOpt;
 nonterminal ConstDeclOpt;
-nonterminal MethodDeclOptMany;
+nonterminal MethodDeclOpt;
 nonterminal ConstDecl;
 nonterminal ConstList;
 nonterminal VarDecl;
 nonterminal VarDeclOpt;
 nonterminal FormParsOpt;
 nonterminal FormPars;
-nonterminal OptMinus;
+nonterminal MinusOpt;
 nonterminal ActParsOpt;
-nonterminal DesignStatementOpt;
+nonterminal DesignStmOpt;
 nonterminal OptPrint;
 nonterminal Statement;
 nonterminal StatementOpt;
-nonterminal DesignatorStatePart;
-nonterminal DesignatorStatement;
+nonterminal DesignStmPart;
+nonterminal DesignatorStm;
 nonterminal ActPars;
 nonterminal ActPartsOpt;
 nonterminal ArrayOpt;
 nonterminal ExprOpt;
-nonterminal OptFactorParenPars;
+nonterminal FactorParenParsOpt;
 nonterminal Assignop;
 nonterminal Relop;
 nonterminal Addop;
@@ -92,12 +92,12 @@ nonterminal VarDeclList;
 nonterminal FormParsList;
 nonterminal StatementCondition;
 nonterminal For;
-nonterminal ConditionStart;
-nonterminal ConditionEnd;
-nonterminal EndFor; //ovo ne treba
-nonterminal GlobalEnd; //ovo ne treba
-nonterminal DesignatorStatementManyClassStart;
-nonterminal NamespaceFinished;
+nonterminal CondStart;
+nonterminal CondEnd;
+nonterminal ForEnd;
+nonterminal GlobalEnd;
+nonterminal DesignStmManyStart;
+nonterminal NamespaceEnd;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Term;
@@ -128,20 +128,24 @@ nonterminal Else;
 precedence left ELSE;
 
 // Done
-Program 		    ::= (Program) PROG IDENT:name NamespaceMany NamespaceFinished ConstDeclOpt VarDeclOpt GlobalEnd MethodDeclOptMany RBRACE;
+Program 		    ::= (Program) PROG IDENT:name NamespaceOpt NamespaceEnd ConstDeclOpt VarDeclOpt GlobalEnd MethodDeclOpt RBRACE;
 
-NamespaceFinished   ::= (NamespaceFinished) /* epsilon */;
+// Done
+NamespaceEnd        ::= (NamespaceEnd) /* epsilon */;
 
 // Done
 GlobalEnd		    ::= (GlobalEnd) LBRACE;
 
-Namespace 		    ::= (Namespace) NAMESPACE IDENT:name LBRACE ConstDeclOpt VarDeclOpt LBRACE MethodDeclOptMany RBRACE RBRACE;
+// Done
+Namespace 		    ::= (Namespace) NAMESPACE IDENT:name LBRACE ConstDeclOpt VarDeclOpt LBRACE MethodDeclOpt RBRACE RBRACE;  // TODO
 
-NamespaceMany       ::= (NamespaceManyClass) NamespaceMany Namespace
-                    |   (NamespaceManyEmptyClass) /* epsilon */;
+// Done
+NamespaceOpt        ::= (NamespaceMany) NamespaceOpt Namespace
+                    |   (NamespaceZero) /* epsilon */;
 
-MethodDeclOptMany	::= (MethodDeclOptManyClass) MethodDeclOptMany MethodDecl
-					|	(MethodDeclOptEmptyClass) /* epsilon */;
+// Done
+MethodDeclOpt	    ::= (MethodDeclMany) MethodDeclOpt MethodDecl
+					|	(MethodDeclZero) /* epsilon */;
 
 // Done
 ArrayOpt		    ::= (ArrayOne) LSQBRACE RSQBRACE
@@ -205,24 +209,25 @@ StatementOpt        ::= (StatementMany) StatementOpt Statement
 ExprOpt				::= (ExprOne) Expr
 					| 	(ExprZero) /* epsilon */;
 
-Statement           ::= (StatementDesignator) DesignatorStatement SEMI
+// Done
+Statement           ::= (StatementDesignator) DesignatorStm SEMI
                     |   (StatementIf) If StatementCondition Statement
                     |   (StatementIfElse) If StatementCondition Statement Else Statement
-                    |   (StatementBreak) BREAK SEMI // Done
-                    |   (StatementContinue) CONTINUE SEMI // Done
-                    |   (StatementReturn) RETURN ExprOpt SEMI // Done
+                    |   (StatementBreak) BREAK SEMI
+                    |   (StatementContinue) CONTINUE SEMI
+                    |   (StatementReturn) RETURN ExprOpt SEMI
                     |   (StatementRead) READ LPAREN Designator RPAREN SEMI
-                    |   (StatementPrint) PRINT LPAREN Expr OptPrint RPAREN SEMI // Done
-                    |   (StatementFor) For LPAREN DesignStatementOpt ConditionStart CondFactOpt SEMI DesignStatementOpt ConditionEnd Statement EndFor // Done
-                    |   (StatementMany) LBRACE StatementOpt RBRACE; // Done
+                    |   (StatementPrint) PRINT LPAREN Expr OptPrint RPAREN SEMI
+                    |   (StatementFor) For LPAREN DesignStmOpt CondStart CondFactOpt SEMI DesignStmOpt CondEnd Statement ForEnd
+                    |   (StatementMany) LBRACE StatementOpt RBRACE;
 
 // Done
 StatementCondition  ::= (StatementCondition) LPAREN Condition RPAREN;
 
 // Done
-DesignStatementOpt  ::= (DesignStatementMany) DesignStatementOpt COMMA DesignatorStatement
-                    |	(DesignStatementOne) DesignatorStatement
-                    |	(DesignStatementZero) /* epsilon */;
+DesignStmOpt        ::= (DesignStmMany) DesignStmOpt COMMA DesignatorStm
+                    |	(DesignStmOne) DesignatorStm
+                    |	(DesignStmZero) /* epsilon */;
 
 // Done
 If					::= (If) IF;
@@ -234,13 +239,13 @@ Else 				::= (Else) ELSE;
 For 				::= (For) FOR;
 
 // Done
-EndFor              ::= (EndFor) /* epsilon */;
+ForEnd              ::= (ForEnd) /* epsilon */;
 
 // Done
-ConditionStart 	    ::= (ConditionStart) SEMI;
+CondStart 	        ::= (CondStart) SEMI;
 
 // Done
-ConditionEnd        ::= (ConditionEnd) RPAREN;
+CondEnd             ::= (CondEnd) RPAREN;
 
 // Done
 CondFactOpt         ::= (CondFactOne) CondFact
@@ -250,17 +255,20 @@ CondFactOpt         ::= (CondFactOne) CondFact
 OptPrint	        ::= (PrintOne) COMMA NUMBER
 					|	(PrintZero) /* epsilon */;
 
-DesignatorStatePart ::= (DesignatorStatePartManyClass) DesignatorStatePart Designator COMMA
-                    |   (DesignatorStatePartOneClass) DesignatorStatePart COMMA
-                    |   (DesignatorStatePartEmptyClass) /* epsilon */;
+// Done
+DesignStmPart       ::= (DesignStmPartMany) DesignStmPart Designator COMMA
+                    |   (DesignStmPartOne) DesignStmPart COMMA
+                    |   (DesignStmPartZero) /* epsilon */;
 
-DesignatorStatement ::= (DesignatorStatementAssignClass) Designator Assignop Expr
-                    |   (DesignatorStatementParamsClass) Designator LPAREN ActPartsOpt RPAREN
-                    |   (DesignatorStatementPlusClass) Designator PLUSPLUS
-                    |   (DesignatorStatementMinusClass) Designator MINUSMINUS
-                    |   (DesignatorStatementManyClass) DesignatorStatementManyClassStart DesignatorStatePart MUL Designator RSQBRACE Assignop Designator;
+// Done
+DesignatorStm       ::= (DesignStmAssign) Designator Assignop Expr
+                    |   (DesignStmParamslass) Designator LPAREN ActPartsOpt RPAREN
+                    |   (DesignStmPlus) Designator PLUSPLUS
+                    |   (DesignStmMinus) Designator MINUSMINUS
+                    |   (DesignStmMany) DesignStmManyStart DesignStmPart MUL Designator RSQBRACE Assignop Designator;
 
-DesignatorStatementManyClassStart        ::= (DesignatorStatementManyClassStart) LSQBRACE;
+// Done
+DesignStmManyStart  ::= (DesignStmManyStart) LSQBRACE;
 
 // Done
 ActPartsOpt	        ::= (ActPartsOne) ActPars
@@ -287,10 +295,10 @@ AddTerm				::= (AddTermMany) AddTerm Addop Term
 					|	(AddTermZero) /* epsilon */;
 
 // Done
-Expr                ::= (Expr) OptMinus Term AddTerm;
+Expr                ::= (Expr) MinusOpt Term AddTerm;
 
 // Done
-OptMinus 			::= (Minus) MINUS
+MinusOpt 			::= (Minus) MINUS
 					|	(NoMinus) /* epsilon */;
 
 // Done
@@ -303,13 +311,13 @@ ConstVal 			::= (ConstValNum) NUMBER
 					|	(ConstValBoo) BOOL;
 
 // Done
-Factor              ::= (FactorParenPars) Designator OptFactorParenPars
+Factor              ::= (FactorParenPars) Designator FactorParenParsOpt
                     |   (FactorConstVal) ConstVal
                     |   (FactorNewTypeExpr) NEW Type LSQBRACE Expr RSQBRACE
                     |   (FactorParenExpr) LPAREN Expr RPAREN;
 
 // Done
-OptFactorParenPars  ::= (ParenPars) LPAREN ActParsOpt RPAREN
+FactorParenParsOpt  ::= (ParenPars) LPAREN ActParsOpt RPAREN
                     |   (ParenParsZero) /* epsilon */;
 
 // Done
