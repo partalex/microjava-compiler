@@ -137,6 +137,7 @@ Program 		    ::= (Program) PROG ProgramName NamespaceMany NamespaceFinished Con
 
 NamespaceFinished   ::= (NamespaceFinished) /* epsilon */;
 
+// Done
 GlobalEnd		    ::= (GlobalEnd) LBRACE;
 
 ProgramName		    ::= (ProgramName) IDENT:programName;
@@ -227,7 +228,7 @@ Statement           ::= (StatementDesignatorClass) DesignatorStatement SEMI
 StatementCondition  ::= (StatementCondition) LPAREN Condition RPAREN;
 
 // Done
-DesignStatementOpt  ::= (DesignStatementOptMany) DesignStatementOpt COMMA DesignatorStatement
+DesignStatementOpt  ::= (DesignStatementMany) DesignStatementOpt COMMA DesignatorStatement
                     |	(DesignStatementOne) DesignatorStatement
                     |	(DesignStatementZero) /* epsilon */;
 
@@ -250,12 +251,12 @@ ConditionStart 	    ::= (ConditionStart) SEMI;
 ConditionEnd        ::= (ConditionEnd) RPAREN;
 
 // Done
-CondFactOpt         ::= (CondFactOptOne) CondFact
-                    |	(CondFactOptZero) /* epsilon */;
+CondFactOpt         ::= (CondFactOne) CondFact
+                    |	(CondFactZero) /* epsilon */;
 
 // Done
-OptPrint	        ::= (OptPrintOne) COMMA NUMBER
-					|	(OptPrintZero) /* epsilon */;
+OptPrint	        ::= (PrintOne) COMMA NUMBER
+					|	(PrintZero) /* epsilon */;
 
 DesignatorStatePart ::= (DesignatorStatePartManyClass) DesignatorStatePart Designator COMMA
                     |   (DesignatorStatePartOneClass) DesignatorStatePart COMMA
@@ -270,8 +271,8 @@ DesignatorStatement ::= (DesignatorStatementAssignClass) Designator Assignop Exp
 DesignatorStatementManyClassStart        ::= (DesignatorStatementManyClassStart) LSQBRACE;
 
 // Done
-ActPartsOpt	        ::= (ActPartsOptOne) ActPars
-					|	(ActPartsOptZero) /* epsilon */;
+ActPartsOpt	        ::= (ActPartsOne) ActPars
+					|	(ActPartsZero) /* epsilon */;
 
 // Done
 ActPars             ::= (ActParsMany) ActPars COMMA Expr
