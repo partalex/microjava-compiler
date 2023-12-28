@@ -63,7 +63,7 @@ terminal Integer NUMBER;
 terminal String IDENT;
 
 nonterminal NamespaceMany;
-nonterminal ConstDeclOptMany;
+nonterminal ConstDeclOpt;
 nonterminal VarDeclOptMany;
 nonterminal MethodDeclOptMany;
 nonterminal ConstDecl;
@@ -133,7 +133,7 @@ nonterminal Else;
 precedence left ELSE;
 
 // Done
-Program 		    ::= (Program) PROG ProgramName NamespaceMany NamespaceFinished ConstDeclOptMany VarDeclOpt GlobalEnd MethodDeclOptMany RBRACE;
+Program 		    ::= (Program) PROG ProgramName NamespaceMany NamespaceFinished ConstDeclOpt VarDeclOpt GlobalEnd MethodDeclOptMany RBRACE;
 
 NamespaceFinished   ::= (NamespaceFinished) /* epsilon */;
 
@@ -142,7 +142,7 @@ GlobalEnd		    ::= (GlobalEnd) LBRACE;
 
 ProgramName		    ::= (ProgramName) IDENT:programName;
 
-Namespace 		    ::= (Namespace) NAMESPACE NamespaceName LBRACE ConstDeclOptMany VarDeclOpt LBRACE MethodDeclOptMany RBRACE RBRACE;
+Namespace 		    ::= (Namespace) NAMESPACE NamespaceName LBRACE ConstDeclOpt VarDeclOpt LBRACE MethodDeclOptMany RBRACE RBRACE;
 
 NamespaceName 		::= (NamespaceName) IDENT:namespaceName;
 
@@ -164,8 +164,9 @@ VarDeclList         ::= (VarDeclListMany) VarDeclList COMMA VarDeclPart
                     |	(VarDeclListOne) VarDeclPart
                     |   error SEMI:l {: parser.report_error("Sintaksa greska deklaracije globalne promenljive na liniji " + lleft, null); :};
 
-ConstDeclOptMany    ::= (ConstDeclOptManyClass) ConstDeclOptMany ConstDecl // TODO
-					|	(ConstDeclOptZero) /* epsilon */;
+// Done
+ConstDeclOpt        ::= (ConstDeclMany) ConstDeclOpt ConstDecl // TODO
+					|	(ConstDeclZero) /* epsilon */;
 
 // Done
 ConstDecl           ::= (ConstDecl) CONST Type ConstDeclPart SEMI;
