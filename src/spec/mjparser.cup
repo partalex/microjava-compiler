@@ -96,7 +96,6 @@ nonterminal CondStart;
 nonterminal CondEnd;
 nonterminal ForEnd;
 nonterminal DesignStmManyStart;
-nonterminal NamespaceEnd;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Term;
@@ -128,7 +127,7 @@ nonterminal Else;
 
 precedence left ELSE;
 
-Program 		    ::= (Program) PROG ProgName NamespaceOpt NamespaceEnd ConstDeclOpt VarDeclOpt LBRACE MethodDeclOpt RBRACE;
+Program 		    ::= (Program) PROG ProgName NamespaceOpt ConstDeclOpt VarDeclOpt LBRACE MethodDeclOpt RBRACE;
 
 // Done
 ProgName 			::= (ProgName) IDENT:name;
@@ -154,8 +153,6 @@ ConstList           ::= (ConstListMany) ConstList COMMA ConstDef
 
 // Done
 ConstDef            ::= (ConstDef) IDENT:name EQUAL ConstVal:value;
-
-NamespaceEnd        ::= (NamespaceEnd) /* epsilon */;
 
 MethodDeclOpt	    ::= (MethodDeclMany) MethodDeclOpt MethodDecl
 					|	(MethodDeclZero) /* epsilon */;
