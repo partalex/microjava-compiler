@@ -82,7 +82,7 @@ nonterminal DesignatorStatePart;
 nonterminal DesignatorStatement;
 nonterminal ActPars;
 nonterminal ActPartsOpt;
-nonterminal OptionalArray;
+nonterminal OptArray;
 nonterminal OptExpr;
 nonterminal OptFactorParenPars;
 nonterminal Assignop;
@@ -93,10 +93,10 @@ nonterminal VarDeclList;
 nonterminal FormParsList;
 nonterminal ConditionStatement;
 nonterminal For;
-nonterminal StartOfCondition;
-nonterminal EndOfCondition;
+nonterminal ConditionStart;
+nonterminal ConditionEnd;
 nonterminal EndFor; //ovo ne treba
-nonterminal EndOfGlobal; //ovo ne treba
+nonterminal GlobalEnd; //ovo ne treba
 nonterminal DesignatorStatementManyClassStart;
 nonterminal NamespaceFinished;
 
@@ -133,11 +133,11 @@ nonterminal Else;
 precedence left ELSE;
 
 // Done
-Program 		    ::= (Program) PROG ProgramName NamespaceMany NamespaceFinished ConstDeclOptMany VarDeclOpt EndOfGlobal MethodDeclOptMany RBRACE;
+Program 		    ::= (Program) PROG ProgramName NamespaceMany NamespaceFinished ConstDeclOptMany VarDeclOpt GlobalEnd MethodDeclOptMany RBRACE;
 
 NamespaceFinished   ::= (NamespaceFinished) /* epsilon */;
 
-EndOfGlobal		    ::= (EndOfGlobal) LBRACE;
+GlobalEnd		    ::= (GlobalEnd) LBRACE;
 
 ProgramName		    ::= (ProgramName) IDENT:programName;
 
@@ -149,10 +149,10 @@ NamespaceMany       ::= (NamespaceManyClass) NamespaceMany Namespace
                     |   (NamespaceManyEmptyClass) /* epsilon */;
 MethodDeclOptMany	::= (MethodDeclOptManyClass) MethodDeclOptMany MethodDecl
 					|	(MethodDeclOptEmptyClass) /* epsilon */;
-OptionalArray		::= (OptionalArrayClass) LSQBRACE RSQBRACE
+OptArray		::= (OptionalArrayClass) LSQBRACE RSQBRACE
 					|	(OptionalArrayEmptyClass) /* epsilon */;
 
-VarDeclPart         ::= (VarDeclPart) IDENT:name OptionalArray;
+VarDeclPart         ::= (VarDeclPart) IDENT:name OptArray;
 
 VarDeclList         ::= (VarDeclListManyClass) VarDeclList COMMA VarDeclPart
                     |	(VarDeclListOneClass) VarDeclPart
@@ -179,21 +179,26 @@ MethodTypeName		::= (MethodTypeName) MethodType IDENT:methodName;
 
 MethodDecl          ::= (MethodDecl) MethodTypeName LPAREN FormParsOptOne RPAREN VarDeclOpt LBRACE StatementMany RBRACE;
 
-FormParsOptOne      ::= (FormParsOptOneClass) FormParsList
-                    |   (FormParsOptOneEmptyClass) /* epsilon */;
+// Done
+FormParsOptOne      ::= (FormParsOptOne) FormParsList
+                    |   (FormParsOptOneZero) /* epsilon */;
 
-FormParsList        ::= (FormParsListManyClass) FormParsList COMMA FormPars
-                    |   (FormParsListOneClass) FormPars;
+// Done
+FormParsList        ::= (FormParsListMany) FormParsList COMMA FormPars
+                    |   (FormParsListOne) FormPars;
 
-FormPars            ::= (FormPars) Type IDENT:name OptionalArray;
+// Done
+FormPars            ::= (FormPars) Type IDENT:name OptArray;
 
+// Done
 Type                ::= (Type) IDENT:name;
 
-StatementMany       ::= (StatementManyManyClass) StatementMany Statement
-                    |   (StatementEmptyClass) /* epsilon */;
+StatementMany       ::= (StatementMany) StatementMany Statement
+                    |   (StatementZero) /* epsilon */;
 
-OptExpr				::= (OptExprOneClass) Expr
-					| 	(OptExprEmptyClass);
+// Done
+OptExpr				::= (OptExprOne) Expr
+					| 	(OptExprZero) /* epsilon */;
 
 Statement           ::= (StatementDesignatorClass) DesignatorStatement SEMI
                     |   (StatementIfClass) If ConditionStatement Statement
@@ -203,14 +208,12 @@ Statement           ::= (StatementDesignatorClass) DesignatorStatement SEMI
                     |   (StatementReturnClass) RETURN OptExpr SEMI // Done
                     |   (StatementReadClass) READ LPAREN Designator RPAREN SEMI
                     |   (StatementPrintClass) PRINT LPAREN Expr OptPrint RPAREN SEMI // Done
-                    |   (StatementForClass) For LPAREN DesignatorStatementOpt StartOfCondition CondFactOpt SEMI DesignatorStatementOpt EndOfCondition Statement EndFor // Done
+                    |   (StatementForClass) For LPAREN DesignatorStatementOpt ConditionStart CondFactOpt SEMI DesignatorStatementOpt ConditionEnd Statement EndFor // Done
                     |   (StatementManyClass) LBRACE StatementMany RBRACE; // Done
 
-EndFor                      ::= (EndFor) /* epsilon */;
 
 ConditionStatement          ::= (ConditionStatement) LPAREN Condition RPAREN;
 
-EndOfCondition              ::= (EndOfCondition) RPAREN;
 
 DesignatorStatementOpt      ::= (DesignatorStatementOptManyClass) DesignatorStatementOpt COMMA DesignatorStatement
                             |	  (DesignatorStatementOptOneClass) DesignatorStatement
@@ -225,8 +228,16 @@ Else 				::= (Else) ELSE;
 // Done
 For 				::= (For) FOR;
 
-StartOfCondition 	::= (StartOfCondition) SEMI;
+// Done
+EndFor              ::= (EndFor) /* epsilon */;
 
+// Done
+ConditionStart 	    ::= (ConditionStart) SEMI;
+
+// Done
+ConditionEnd        ::= (ConditionEnd) RPAREN;
+
+// Done
 CondFactOpt         ::= (CondFactOptOne) CondFact
                     |	(CondFactOptZero) /* epsilon */;
 
