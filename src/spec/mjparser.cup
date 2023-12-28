@@ -149,32 +149,41 @@ NamespaceMany       ::= (NamespaceManyClass) NamespaceMany Namespace
                     |   (NamespaceManyEmptyClass) /* epsilon */;
 MethodDeclOptMany	::= (MethodDeclOptManyClass) MethodDeclOptMany MethodDecl
 					|	(MethodDeclOptEmptyClass) /* epsilon */;
-OptArray		::= (OptionalArrayClass) LSQBRACE RSQBRACE
-					|	(OptionalArrayEmptyClass) /* epsilon */;
 
+// Done
+OptArray		    ::= (OptArrayOne) LSQBRACE RSQBRACE
+					|	(OptArrayZero) /* epsilon */;
+
+// Done
 VarDeclPart         ::= (VarDeclPart) IDENT:name OptArray;
 
-VarDeclList         ::= (VarDeclListManyClass) VarDeclList COMMA VarDeclPart
-                    |	(VarDeclListOneClass) VarDeclPart
+// Done
+VarDeclList         ::= (VarDeclListMany) VarDeclList COMMA VarDeclPart
+                    |	(VarDeclListOne) VarDeclPart
                     |   error SEMI:l {: parser.report_error("Sintaksa greska deklaracije globalne promenljive na liniji " + lleft, null); :};
 
-ConstDeclOptMany    ::= (ConstDeclOptManyClass) ConstDeclOptMany ConstDecl
-					|	(ConstDeclOptNoClass) /* epsilon */;
+ConstDeclOptMany    ::= (ConstDeclOptManyClass) ConstDeclOptMany ConstDecl // TODO
+					|	(ConstDeclOptZero) /* epsilon */;
 
+// Done
 ConstDecl           ::= (ConstDecl) CONST Type ConstDeclPart SEMI;
 
-ConstList           ::= (ConstListManyClass) ConstList COMMA ConstDeclPart
-                    |   (ConstListOneClass) ConstDeclPart;
+// Done
+ConstList           ::= (ConstListMany) ConstList COMMA ConstDeclPart
+                    |   (ConstListOne) ConstDeclPart;
 
+// Done
 ConstDeclPart       ::= (ConstDeclPart) IDENT:name EQUAL ConstVal:value;
 
+// Done
 VarDecl             ::= (VarDecl) Type VarDeclList SEMI;
 
 VarDeclOpt          ::= (VarDeclOptManyClass) VarDeclOpt VarDecl
                     |   (VarDeclOptEmptyClass) /* epsilon */;
 
-MethodType			::= (MethodTypeVoidClass) VOID
-					|	(MethodTypeVoidClassType) Type;
+// Done
+MethodType			::= (MethodTypeVoid) VOID
+					|	(MethodTypeType) Type;
 
 MethodTypeName		::= (MethodTypeName) MethodType IDENT:methodName;
 
