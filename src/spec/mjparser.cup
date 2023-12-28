@@ -202,7 +202,7 @@ FormPars            ::= (FormPars) Type IDENT:name ArrayOpt;
 Type                ::= (Type) IDENT:name;
 
 // Done
-StatementOpt        ::= (StatementMany) StatementOpt Statement
+StatementOpt        ::= (StatementOptMany) StatementOpt Statement
                     |   (StatementZero) /* epsilon */;
 
 // Done
