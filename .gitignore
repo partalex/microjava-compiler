@@ -8,3 +8,4 @@
 test/program.obj
 spec/my-mjparser_astbuild.cup
 /.idea/*
+src/spec/mjparser_astbuild.cup
