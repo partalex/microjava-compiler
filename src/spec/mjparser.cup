@@ -62,7 +62,7 @@ terminal String CHAR;
 terminal Integer NUMBER;
 terminal String IDENT;
 
-nonterminal NamespaceOpt;
+nonterminal Scope;
 nonterminal ConstDeclOpt;
 nonterminal MethodDeclOpt;
 nonterminal ConstDecl;
@@ -157,7 +157,7 @@ VarDeclPart         ::= (VarDeclPart) IDENT:name ArrayOpt;
 // Done
 VarDeclList         ::= (VarDeclListMany) VarDeclList COMMA VarDeclPart
                     |	(VarDeclListOne) VarDeclPart
-                    |   error SEMI:l {: parser.report_error("Sintaksa greska deklaracije globalne promenljive na liniji " + lleft, null); :};
+                    |   error SEMI:l {: parser.report_error("Global variable declaration syntax error on line " + lleft, null); :};
 
 // Done
 ConstDeclOpt        ::= (ConstDeclMany) ConstDeclOpt ConstDecl
@@ -181,8 +181,8 @@ VarDeclOpt          ::= (VarDeclMany) VarDeclOpt VarDecl
                     |   (VarDeclZero) /* epsilon */;
 
 // Done
-MethodType			::= (MethodTypeVoid) VOID
-					|	(MethodTypeType) Type;
+MethodType			::= (MethodVoid) VOID
+					|	(MethodTType) Type;
 
 // Done
 MethodDecl          ::= (MethodDecl) MethodType IDENT:name LPAREN FormParsOpt RPAREN VarDeclOpt LBRACE StatementOpt RBRACE;
@@ -325,11 +325,11 @@ ActParsOpt          ::= (ActParsOne) ActPars
                     |   (ActParsZero) /* epsilon */;
 
 // Done
-NamespaceOpt        ::= (WithNamespace) IDENT:namespace DOUBLECOLON IDENT:name
-                    |   (NoNamespace) IDENT:name;
+Scope               ::= (ScopeNamespace) IDENT:namespace DOUBLECOLON IDENT:name
+                    |   (ScopeLocal) IDENT:name;
 
 // Done
-Designator          ::= (Designator) NamespaceOpt MatrixOpt;
+Designator          ::= (Designator) Scope MatrixOpt;
 
 // Done
 MatrixOpt           ::= (MatrixMany) MatrixOpt ArraySize
