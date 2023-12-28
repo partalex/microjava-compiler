@@ -281,13 +281,15 @@ ConstVal 			::= (ConstValNum) NUMBER
 					|	(ConstValChar) CHAR
 					|	(ConstValBoo) BOOL;
 
-Factor              ::= (FactorParenParsClass) Designator OptFactorParenPars // koka, koka(), koka(1,2,3)
-                    |   (FactorConstValClass) ConstVal
-                    |   (FactorNewTypeExprClass) NEW Type LSQBRACE Expr RSQBRACE
-                    |   (FactorParenExprClass) LPAREN Expr RPAREN;
+// Done
+Factor              ::= (FactorParenPars) Designator OptFactorParenPars
+                    |   (FactorConstVal) ConstVal
+                    |   (FactorNewTypeExpr) NEW Type LSQBRACE Expr RSQBRACE
+                    |   (FactorParenExpr) LPAREN Expr RPAREN;
 
-OptFactorParenPars  ::= (OptFactorParenParsClass) LPAREN OptActPars RPAREN
-                    |   (OptFactorEmptyClass) /* epsilon */;
+// Done
+OptFactorParenPars  ::= (ParenPars) LPAREN OptActPars RPAREN
+                    |   (OptFactorZero) /* epsilon */;
 
 // Done
 OptActPars          ::= (ActParsOne) ActPars
