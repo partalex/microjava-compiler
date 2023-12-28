@@ -73,7 +73,7 @@ nonterminal VarDeclOpt;
 nonterminal FormParsOptOne;
 nonterminal FormPars;
 nonterminal OptMinus;
-nonterminal OptActPars;
+nonterminal ActParsOpt;
 nonterminal DesignStatementOpt;
 nonterminal OptPrint;
 nonterminal Statement;
@@ -82,8 +82,8 @@ nonterminal DesignatorStatePart;
 nonterminal DesignatorStatement;
 nonterminal ActPars;
 nonterminal ActPartsOpt;
-nonterminal OptArray;
-nonterminal OptExpr;
+nonterminal ArrayOpt;
+nonterminal ExprOpt;
 nonterminal OptFactorParenPars;
 nonterminal Assignop;
 nonterminal Relop;
@@ -116,12 +116,12 @@ nonterminal rs.etf.pp1.symboltable.concepts.Obj Program;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgramName;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj Namespace;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj NamespaceName;
-nonterminal rs.etf.pp1.symboltable.concepts.Obj OptNamespace;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj NamespaceOpt;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj MethodTypeName;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj MethodDecl;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj Designator;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj DesignatorName;
-nonterminal rs.etf.pp1.symboltable.concepts.Obj OptMatrix;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj MatrixOpt;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj ArraySize;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj ConstDeclPart;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj VarDeclPart;
@@ -153,11 +153,11 @@ MethodDeclOptMany	::= (MethodDeclOptManyClass) MethodDeclOptMany MethodDecl
 					|	(MethodDeclOptEmptyClass) /* epsilon */;
 
 // Done
-OptArray		    ::= (OptArrayOne) LSQBRACE RSQBRACE
-					|	(OptArrayZero) /* epsilon */;
+ArrayOpt		    ::= (ArrayOne) LSQBRACE RSQBRACE
+					|	(ArrayZero) /* epsilon */;
 
 // Done
-VarDeclPart         ::= (VarDeclPart) IDENT:name OptArray;
+VarDeclPart         ::= (VarDeclPart) IDENT:name ArrayOpt;
 
 // Done
 VarDeclList         ::= (VarDeclListMany) VarDeclList COMMA VarDeclPart
@@ -201,7 +201,7 @@ FormParsList        ::= (FormParsListMany) FormParsList COMMA FormPars
                     |   (FormParsListOne) FormPars;
 
 // Done
-FormPars            ::= (FormPars) Type IDENT:name OptArray;
+FormPars            ::= (FormPars) Type IDENT:name ArrayOpt;
 
 // Done
 Type                ::= (Type) IDENT:name;
@@ -211,7 +211,7 @@ StatementOpt        ::= (StatementMany) StatementOpt Statement
                     |   (StatementZero) /* epsilon */;
 
 // Done
-OptExpr				::= (ExprOne) Expr
+ExprOpt				::= (ExprOne) Expr
 					| 	(ExprZero) /* epsilon */;
 
 Statement           ::= (StatementDesignatorClass) DesignatorStatement SEMI
@@ -219,7 +219,7 @@ Statement           ::= (StatementDesignatorClass) DesignatorStatement SEMI
                     |   (StatementIfElseClass) If StatementCondition Statement Else Statement
                     |   (StatementBreakClass) BREAK SEMI // Done
                     |   (StatementContinueClass) CONTINUE SEMI // Done
-                    |   (StatementReturnClass) RETURN OptExpr SEMI // Done
+                    |   (StatementReturnClass) RETURN ExprOpt SEMI // Done
                     |   (StatementReadClass) READ LPAREN Designator RPAREN SEMI
                     |   (StatementPrintClass) PRINT LPAREN Expr OptPrint RPAREN SEMI // Done
                     |   (StatementForClass) For LPAREN DesignStatementOpt ConditionStart CondFactOpt SEMI DesignStatementOpt ConditionEnd Statement EndFor // Done
@@ -318,22 +318,22 @@ Factor              ::= (FactorParenPars) Designator OptFactorParenPars
                     |   (FactorParenExpr) LPAREN Expr RPAREN;
 
 // Done
-OptFactorParenPars  ::= (ParenPars) LPAREN OptActPars RPAREN
+OptFactorParenPars  ::= (ParenPars) LPAREN ActParsOpt RPAREN
                     |   (ParenParsZero) /* epsilon */;
 
 // Done
-OptActPars          ::= (ActParsOne) ActPars
+ActParsOpt          ::= (ActParsOne) ActPars
                     |   (ActParsZero) /* epsilon */;
 
 // Done
-OptNamespace        ::= (WithNamespace) IDENT:namespace DOUBLECOLON IDENT:name
+NamespaceOpt        ::= (WithNamespace) IDENT:namespace DOUBLECOLON IDENT:name
                     |   (NoNamespace) IDENT:name;
 
 // Done
-Designator          ::= (Designator) OptNamespace OptMatrix;
+Designator          ::= (Designator) NamespaceOpt MatrixOpt;
 
 // Done
-OptMatrix           ::= (MatrixMany) OptMatrix ArraySize
+MatrixOpt           ::= (MatrixMany) MatrixOpt ArraySize
                     |   (MatrixZero) /* epsilon */;
 
 // Done
