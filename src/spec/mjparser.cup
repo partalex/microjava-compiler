@@ -77,7 +77,7 @@ nonterminal OptActPars;
 nonterminal DesignStatementOpt;
 nonterminal OptPrint;
 nonterminal Statement;
-nonterminal StatementMany;
+nonterminal StatementOpt;
 nonterminal DesignatorStatePart;
 nonterminal DesignatorStatement;
 nonterminal ActPars;
@@ -91,7 +91,7 @@ nonterminal Addop;
 nonterminal Mulop;
 nonterminal VarDeclList;
 nonterminal FormParsList;
-nonterminal ConditionStatement;
+nonterminal StatementCondition;
 nonterminal For;
 nonterminal ConditionStart;
 nonterminal ConditionEnd;
@@ -147,7 +147,7 @@ NamespaceName 		::= (NamespaceName) IDENT:namespaceName;
 
 NamespaceMany       ::= (NamespaceManyClass) NamespaceMany Namespace
                     |   (NamespaceManyEmptyClass) /* epsilon */;
-                    
+
 MethodDeclOptMany	::= (MethodDeclOptManyClass) MethodDeclOptMany MethodDecl
 					|	(MethodDeclOptEmptyClass) /* epsilon */;
 
@@ -188,7 +188,7 @@ MethodType			::= (MethodTypeVoid) VOID
 					|	(MethodTypeType) Type;
 
 // Done
-MethodDecl          ::= (MethodDecl) MethodType IDENT:name LPAREN FormParsOptOne RPAREN VarDeclOpt LBRACE StatementMany RBRACE;
+MethodDecl          ::= (MethodDecl) MethodType IDENT:name LPAREN FormParsOptOne RPAREN VarDeclOpt LBRACE StatementOpt RBRACE;
 
 // Done
 FormParsOptOne      ::= (FormParsOptOne) FormParsList
@@ -204,32 +204,32 @@ FormPars            ::= (FormPars) Type IDENT:name OptArray;
 // Done
 Type                ::= (Type) IDENT:name;
 
-// TODO
-StatementMany       ::= (StatementMany) StatementMany Statement
+// Done
+StatementOpt        ::= (StatementMany) StatementOpt Statement
                     |   (StatementZero) /* epsilon */;
 
 // Done
-OptExpr				::= (OptExprOne) Expr
-					| 	(OptExprZero) /* epsilon */;
+OptExpr				::= (ExprOne) Expr
+					| 	(ExprZero) /* epsilon */;
 
 Statement           ::= (StatementDesignatorClass) DesignatorStatement SEMI
-                    |   (StatementIfClass) If ConditionStatement Statement
-                    |   (StatementIfElseClass) If ConditionStatement Statement Else Statement
+                    |   (StatementIfClass) If StatementCondition Statement
+                    |   (StatementIfElseClass) If StatementCondition Statement Else Statement
                     |   (StatementBreakClass) BREAK SEMI // Done
                     |   (StatementContinueClass) CONTINUE SEMI // Done
                     |   (StatementReturnClass) RETURN OptExpr SEMI // Done
                     |   (StatementReadClass) READ LPAREN Designator RPAREN SEMI
                     |   (StatementPrintClass) PRINT LPAREN Expr OptPrint RPAREN SEMI // Done
                     |   (StatementForClass) For LPAREN DesignStatementOpt ConditionStart CondFactOpt SEMI DesignStatementOpt ConditionEnd Statement EndFor // Done
-                    |   (StatementManyClass) LBRACE StatementMany RBRACE; // Done
+                    |   (StatementManyClass) LBRACE StatementOpt RBRACE; // Done
 
 // Done
-ConditionStatement  ::= (ConditionStatement) LPAREN Condition RPAREN;
+StatementCondition  ::= (StatementCondition) LPAREN Condition RPAREN;
 
 // Done
 DesignStatementOpt  ::= (DesignStatementOptMany) DesignStatementOpt COMMA DesignatorStatement
-                    |	  (DesignStatementOptOne) DesignatorStatement
-                    |	  (DesignStatementOptZero) /* epsilon */;
+                    |	(DesignStatementOne) DesignatorStatement
+                    |	(DesignStatementZero) /* epsilon */;
 
 // Done
 If					::= (If) IF;
@@ -317,7 +317,7 @@ Factor              ::= (FactorParenPars) Designator OptFactorParenPars
 
 // Done
 OptFactorParenPars  ::= (ParenPars) LPAREN OptActPars RPAREN
-                    |   (OptFactorZero) /* epsilon */;
+                    |   (ParenParsZero) /* epsilon */;
 
 // Done
 OptActPars          ::= (ActParsOne) ActPars
