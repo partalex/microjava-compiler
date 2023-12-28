@@ -133,7 +133,7 @@ NamespaceEnd        ::= (NamespaceEnd) /* epsilon */;
 
 GlobalEnd		    ::= (GlobalEnd) LBRACE;
 
-Namespace 		    ::= (Namespace) NAMESPACE IDENT:name LBRACE ConstDeclOpt VarDeclOpt LBRACE MethodDeclOpt RBRACE RBRACE;  // TODO
+Namespace 		    ::= (Namespace) NAMESPACE IDENT:name LBRACE ConstDeclOpt VarDeclOpt LBRACE MethodDeclOpt RBRACE RBRACE;
 
 NamespaceOpt        ::= (NamespaceMany) NamespaceOpt Namespace
                     |   (NamespaceZero) /* epsilon */;
@@ -285,7 +285,7 @@ MatrixOpt           ::= (MatrixMany) MatrixOpt ArraySize
 ArraySize			::= (ArraySize) LSQBRACE Expr RSQBRACE;
 
 Assignop		    ::= (Assignop) EQUAL
-                    |	error SEMI:l {: parser.report_error("Sintaksa greska dodele na liniji " + lleft, null); :};
+                    |	error SEMI:l {: parser.report_error("Syntax assignment error on line " + lleft, null); :};
 
 Relop				::= (RelopEqualsto) EQUALSTO
 					|	(RelopDifferent) DIFFERENT
