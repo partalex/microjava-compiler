@@ -112,6 +112,7 @@ nonterminal rs.etf.pp1.symboltable.concepts.Struct AddTerm;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct CondFactOpt;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Obj Program;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgName;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj Namespace;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj NamespaceOpt;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj MethodDecl;
@@ -127,7 +128,9 @@ nonterminal Else;
 
 precedence left ELSE;
 
-Program 		    ::= (Program) PROG IDENT:name NamespaceOpt NamespaceEnd ConstDeclOpt VarDeclOpt GlobalEnd MethodDeclOpt RBRACE;
+Program 		    ::= (Program) PROG ProgName NamespaceOpt NamespaceEnd ConstDeclOpt VarDeclOpt GlobalEnd MethodDeclOpt RBRACE;
+
+ProgName 			::= (ProgName) IDENT:name;
 
 NamespaceEnd        ::= (NamespaceEnd) /* epsilon */;
 
