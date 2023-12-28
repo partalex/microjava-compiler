@@ -74,7 +74,7 @@ nonterminal FormParsOptOne;
 nonterminal FormPars;
 nonterminal OptMinus;
 nonterminal OptActPars;
-nonterminal DesignatorStatementOpt;
+nonterminal DesignStatementOpt;
 nonterminal OptPrint;
 nonterminal Statement;
 nonterminal StatementMany;
@@ -160,12 +160,13 @@ VarDeclList         ::= (VarDeclListManyClass) VarDeclList COMMA VarDeclPart
 
 ConstDeclOptMany    ::= (ConstDeclOptManyClass) ConstDeclOptMany ConstDecl
 					|	(ConstDeclOptNoClass) /* epsilon */;
-ConstDecl           ::= (ConstDecl) CONST Type ConstDeclPart SEMI;
 
-ConstDeclPart       ::= (ConstDeclPart) IDENT:name EQUAL ConstVal:value;
+ConstDecl           ::= (ConstDecl) CONST Type ConstDeclPart SEMI;
 
 ConstList           ::= (ConstListManyClass) ConstList COMMA ConstDeclPart
                     |   (ConstListOneClass) ConstDeclPart;
+
+ConstDeclPart       ::= (ConstDeclPart) IDENT:name EQUAL ConstVal:value;
 
 VarDecl             ::= (VarDecl) Type VarDeclList SEMI;
 
@@ -193,6 +194,7 @@ FormPars            ::= (FormPars) Type IDENT:name OptArray;
 // Done
 Type                ::= (Type) IDENT:name;
 
+// TODO
 StatementMany       ::= (StatementMany) StatementMany Statement
                     |   (StatementZero) /* epsilon */;
 
@@ -208,16 +210,16 @@ Statement           ::= (StatementDesignatorClass) DesignatorStatement SEMI
                     |   (StatementReturnClass) RETURN OptExpr SEMI // Done
                     |   (StatementReadClass) READ LPAREN Designator RPAREN SEMI
                     |   (StatementPrintClass) PRINT LPAREN Expr OptPrint RPAREN SEMI // Done
-                    |   (StatementForClass) For LPAREN DesignatorStatementOpt ConditionStart CondFactOpt SEMI DesignatorStatementOpt ConditionEnd Statement EndFor // Done
+                    |   (StatementForClass) For LPAREN DesignStatementOpt ConditionStart CondFactOpt SEMI DesignStatementOpt ConditionEnd Statement EndFor // Done
                     |   (StatementManyClass) LBRACE StatementMany RBRACE; // Done
 
+// Done
+ConditionStatement  ::= (ConditionStatement) LPAREN Condition RPAREN;
 
-ConditionStatement          ::= (ConditionStatement) LPAREN Condition RPAREN;
-
-
-DesignatorStatementOpt      ::= (DesignatorStatementOptManyClass) DesignatorStatementOpt COMMA DesignatorStatement
-                            |	  (DesignatorStatementOptOneClass) DesignatorStatement
-                            |	  (DesignatorStatementOptEmptyClass) /* epsilon */;
+// Done
+DesignStatementOpt  ::= (DesignStatementOptMany) DesignStatementOpt COMMA DesignatorStatement
+                    |	  (DesignStatementOptOne) DesignatorStatement
+                    |	  (DesignStatementOptZero) /* epsilon */;
 
 // Done
 If					::= (If) IF;
