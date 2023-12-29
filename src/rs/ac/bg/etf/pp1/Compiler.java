@@ -60,10 +60,10 @@ public class Compiler {
                     if (objFile.exists()) objFile.delete();
 
                     CodeGenerator codeGenerator = new CodeGenerator();
-                    Code.dataSize = semanticPass.numberOfVars;
+                    Code.dataSize = semanticPass.nVars;
                     prog.traverseBottomUp(codeGenerator);
 
-                    Code.mainPc = codeGenerator.getMainPc();
+//                    Code.mainPc = codeGenerator.getMainPc();
                     Code.write(new FileOutputStream(objFile));
 
                     log.info("Parsiranje uspesno zavrseno!");
