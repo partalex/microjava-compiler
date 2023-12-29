@@ -10,3 +10,4 @@ spec/my-mjparser_astbuild.cup
 /.idea/*
 src/spec/mjparser_astbuild.cup
 test/2023/test.obj
+test/2023/test.mj
