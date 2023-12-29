@@ -51,8 +51,8 @@ public class MJParserTest {
 
 
                 // print of the program structures
-                SemanticPass v = new SemanticPass();
-                program.traverseBottomUp(v);
+                SemanticPass semanticPass = new SemanticPass();
+                program.traverseBottomUp(semanticPass);
 
 //                 log.info(" Print count calls = " + v.printCallCount);
 
@@ -61,15 +61,15 @@ public class MJParserTest {
                 log.info("===================================");
                 // Tab.dump();
 
-                if (!p.errorDetected && v.passed()) {
+                if (!p.errorDetected && semanticPass.passed()) {
                     File objFile = new File("test/2023/" + testName + ".obj");
                     if (objFile.exists()) objFile.delete();
 
                     CodeGenerator codeGenerator = new CodeGenerator();
-                    Code.dataSize = v.numberOfVars;
+                    Code.dataSize = semanticPass.nVars;
                     program.traverseBottomUp(codeGenerator);
 
-                    Code.mainPc = codeGenerator.getMainPc();
+//                    Code.mainPc = codeGenerator.getMainPc();
                     Code.write(Files.newOutputStream(objFile.toPath()));
 
                     log.info("Successfully compiled program!");
