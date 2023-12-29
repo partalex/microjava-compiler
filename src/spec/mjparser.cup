@@ -140,7 +140,7 @@ NamespaceOpt        ::= (NamespaceMany) NamespaceOpt Namespace
 Namespace 		    ::= (Namespace) NAMESPACE NamespaceName LBRACE ConstDeclOpt VarDeclOpt LBRACE MethodDeclOpt RBRACE RBRACE;
 
 // Done
-NamespaceName      ::= (NamespaceName) IDENT:name;
+NamespaceName       ::= (NamespaceName) IDENT:name;
 
 // Done
 ConstDeclOpt        ::= (ConstDeclMany) ConstDeclOpt ConstDecl
