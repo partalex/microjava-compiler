@@ -85,8 +85,8 @@ nonterminal ExprOpt;
 nonterminal FactorParenParsOpt;
 nonterminal Assignop;
 nonterminal RelOp;
-nonterminal Addop;
-nonterminal Mulop;
+nonterminal AddOp;
+nonterminal MulOp;
 nonterminal VarDeclList;
 nonterminal FormParsList;
 nonterminal StatementCondition;
@@ -129,88 +129,65 @@ precedence left ELSE;
 
 Program 		    ::= (Program) PROG ProgName NamespaceOpt ConstDeclOpt VarDeclOpt LBRACE MethodDeclOpt RBRACE;
 
-// Done
 ProgName 			::= (ProgName) IDENT:name;
 
-// Done
 NamespaceOpt        ::= (NamespaceMany) NamespaceOpt Namespace
                     |   (NamespaceZero) /* epsilon */;
 
-// Done
 Namespace 		    ::= (Namespace) NAMESPACE NamespaceName LBRACE ConstDeclOpt VarDeclOpt LBRACE MethodDeclOpt RBRACE RBRACE;
 
-// Done
 NamespaceName       ::= (NamespaceName) IDENT:name;
 
-// Done
 ConstDeclOpt        ::= (ConstDeclMany) ConstDeclOpt ConstDecl
 					|	(ConstDeclZero) /* epsilon */;
 
-// Done
 ConstDecl           ::= (ConstDecl) CONST Type ConstDef SEMI;
 
-// Done
 ConstList           ::= (ConstListMany) ConstList COMMA ConstDef
                     |   (ConstListOne) ConstDef;
 
-// Done
 ConstDef            ::= (ConstDef) IDENT:name EQUAL ConstVal:value;
 
-// Done
 VarDecl             ::= (VarDecl) Type VarDeclList SEMI;
 
-// Done
 VarDeclList         ::= (VarDeclListMany) VarDeclList COMMA VarDeclPart
                     |	(VarDeclListOne) VarDeclPart
                     |   error SEMI:l {: parser.report_error("Global variable declaration syntax error on line " + lleft, null); :};
 
-// Done
 VarDeclPart         ::= (VarDeclPart) IDENT:name ArrayOpt;
 
-// Done
 ArrayOpt		    ::= (ArrayOne) LSQBRACE RSQBRACE
 					|	(ArrayZero) /* epsilon */;
 
-// Done
 VarDeclOpt          ::= (VarDeclMany) VarDeclOpt VarDecl
                     |   (VarDeclZero) /* epsilon */;
 
-// Done
 MethodDeclOpt	    ::= (MethodDeclMany) MethodDeclOpt MethodDecl
 					|	(MethodDeclZero) /* epsilon */;
 
-// Done
 MethodType			::= (MethodVoid) VOID
 					|	(MethodTType) Type;
 
-// Done
 MethodDecl          ::= (MethodDecl) MethodType MethodName LPAREN FormParsOpt RPAREN VarDeclOpt LBRACE StatementOpt RBRACE;
 
-// Done
 MethodName          ::= (MethodName) IDENT:name;
 
-// Done
 FormParsOpt         ::= (FormParsOne) FormParsList
                     |   (FormParsZero) /* epsilon */;
 
-// Done
 FormParsList        ::= (FormParsListMany) FormParsList COMMA FormPars
                     |   (FormParsListOne) FormPars;
 
 FormPars            ::= (FormPars) Type IDENT:name ArrayOpt;
 
-// Done
 Type                ::= (Type) IDENT:name;
 
-// Done
 StatementOpt        ::= (StatementOptMany) StatementOpt Statement
                     |   (StatementZero) /* epsilon */;
 
-// Done
 ExprOpt				::= (ExprOne) Expr
 					| 	(ExprZero) /* epsilon */;
 
-// Done
 Statement           ::= (StatementDesignator) DesignatorStm SEMI
                     |   (StatementIf) If StatementCondition Statement
                     |   (StatementIfElse) If StatementCondition Statement Else Statement
@@ -222,76 +199,58 @@ Statement           ::= (StatementDesignator) DesignatorStm SEMI
                     |   (StatementFor) For LPAREN DesignStmOpt CondStart CondFactOpt SEMI DesignStmOpt CondEnd Statement ForEnd
                     |   (StatementMany) LBRACE StatementOpt RBRACE;
 
-// Done
 StatementCondition  ::= (StatementCondition) LPAREN Condition RPAREN;
 
-// Done
 DesignStmOpt        ::= (DesignStmOptMany) DesignStmOpt COMMA DesignatorStm
                     |	(DesignStmOne) DesignatorStm
                     |	(DesignStmZero) /* epsilon */;
-// Done
+
 If					::= (If) IF;
 
-// Done
 Else 				::= (Else) ELSE;
 
-// Done
 For 				::= (For) FOR;
 
-// Done
 ForEnd              ::= (ForEnd) /* epsilon */;
 
-// Done
 CondStart 	        ::= (CondStart) SEMI;
 
-// Done
 CondEnd             ::= (CondEnd) RPAREN;
 
-// Done
 CondFactOpt         ::= (CondFactOptOne) CondFact
                     |	(CondFactZero) /* epsilon */;
 
-// Done
 PrintOpt	        ::= (PrintOne) COMMA NUMBER
 					|	(PrintZero) /* epsilon */;
 
-// Done
 DesignStmPart       ::= (DesignStmPartMany) DesignStmPart Designator COMMA
                     |   (DesignStmPartOne) DesignStmPart COMMA
                     |   (DesignStmPartZero) /* epsilon */;
 
-// Done
 DesignatorStm       ::= (DesignStmAssign) Designator Assignop Expr
                     |   (DesignStmParen) Designator LPAREN ActPartsOpt RPAREN
                     |   (DesignStmPlus) Designator PLUSPLUS
                     |   (DesignStmMinus) Designator MINUSMINUS
                     |   (DesignStmMany) DesignStmManyStart DesignStmPart MUL Designator RSQBRACE Assignop Designator;
 
-// Done
 DesignStmManyStart  ::= (DesignStmManyStart) LSQBRACE;
 
-// Done
 ActPartsOpt	        ::= (ActPartsOne) ActPars
 					|	(ActPartsZero) /* epsilon */;
 
-// Done
 ActPars             ::= (ActParsMany) ActPars COMMA Expr
                     |   (ActParsOne) Expr;
 
-// Done
 Condition           ::= (ConditionMany) Condition OR CondTerm
                     |   (ConditionOne) CondTerm;
 
-// Done
 CondTerm            ::= (CondTermMany) CondTerm AND CondFact
                     |   (CondTermOne) CondFact;
 
-// Done
 CondFact            ::= (CondFactMany) Expr RelOp Expr
                     |   (CondFactOne) Expr;
 
-// Done
-AddTerm				::= (AddTermMany) AddTerm Addop Term
+AddTerm				::= (AddTermMany) AddTerm AddOp Term
 					|	(AddTermZero) /* epsilon */;
 
 // Done
@@ -301,59 +260,47 @@ Expr                ::= (Expr) MinusOpt Term AddTerm;
 MinusOpt 			::= (Minus) MINUS
 					|	(NoMinus) /* epsilon */;
 
-// Done
-Term                ::= (TermMany) Term Mulop Factor
+Term                ::= (TermMany) Term MulOp Factor
                     |   (TermOne) Factor;
 
-// Done
 ConstVal 			::= (ConstNum) NUMBER
 					|	(ConstChar) CHAR
 					|	(ConstBool) BOOL;
 
-// Done
 Factor              ::= (FactorParenPars) Designator FactorParenParsOpt
                     |   (FactorConstVal) ConstVal
                     |   (FactorNewArray) NEW Type LSQBRACE Expr RSQBRACE
                     |   (FactorParenExpr) LPAREN Expr RPAREN;
 
-// Done
 FactorParenParsOpt  ::= (ParenPars) LPAREN ActParsOpt RPAREN
                     |   (ParenParsZero) /* epsilon */;
 
-// Done
 ActParsOpt          ::= (ActParsOptOne) ActPars
                     |   (ActParsZero) /* epsilon */;
 
-// Done
 Scope               ::= (ScopeNamespace) IDENT:namespace DOUBLECOLON IDENT:name
                     |   (ScopeLocal) IDENT:name;
 
-// Done
 Designator          ::= (Designator) Scope MatrixOpt;
 
-// Done
 MatrixOpt           ::= (MatrixMany) MatrixOpt ArraySize
                     |   (MatrixZero) /* epsilon */;
 
-// Done
 ArraySize			::= (ArraySize) LSQBRACE Expr RSQBRACE;
 
-// Done
 Assignop		    ::= (Assignop) EQUAL
                     |	error SEMI:l {: parser.report_error("Syntax assignment error on line " + lleft, null); :};
 
-// Done
-RelOp				::= (RelOpEqualsto) EQUALSTO
+RelOp				::= (RelOpEqualsTo) EQUALSTO
 					|	(RelOpDifferent) DIFFERENT
 					|	(RelOpLess) LESS
 					|	(RelOpEless) ELESS
 					|	(RelOpGreater) GREATER
 					|	(RelOpEgreater) EGREATER;
 
-// Done
-Addop				::= (AddopPlus) PLUS
-					|	(AddopMinus) MINUS;
-// Done
-Mulop				::= (MulopMul) MUL
-					| 	(MulopDiv) DIV
-					|	(MulopMod) MOD;
+AddOp				::= (AddOpPlus) PLUS
+					|	(AddOpMinus) MINUS;
+
+MulOp				::= (MulOpMul) MUL
+					| 	(MulOpDiv) DIV
+					|	(MulOpMod) MOD;
