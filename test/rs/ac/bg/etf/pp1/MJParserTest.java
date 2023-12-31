@@ -69,7 +69,7 @@ public class MJParserTest {
                     Code.dataSize = semanticPass.nVars;
                     program.traverseBottomUp(codeGenerator);
 
-//                    Code.mainPc = codeGenerator.getMainPc();
+                    Code.mainPc = codeGenerator.getMainPc();
                     Code.write(Files.newOutputStream(objFile.toPath()));
 
                     log.info("Successfully compiled program!");
