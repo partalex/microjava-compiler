@@ -450,7 +450,7 @@ public class SemanticPass extends VisitorAdaptor {
     public void visit(CondFactMany visitor) {
         if (checkTypes(visitor.getExpr().struct, visitor.getExpr1().struct))
             if ((visitor.getExpr().struct.getKind() == Struct.Array)
-                    && !(visitor.getRelOp() instanceof RelOpEqualsto || visitor.getRelOp() instanceof RelOpDifferent)) {
+                    && !(visitor.getRelOp() instanceof RelOpEqualsTo || visitor.getRelOp() instanceof RelOpDifferent)) {
                 report_error("Error: can not compare array", visitor);
                 visitor.struct = Tab.noType;
             } else
