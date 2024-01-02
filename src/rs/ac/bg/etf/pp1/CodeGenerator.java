@@ -14,6 +14,7 @@ public class CodeGenerator extends VisitorAdaptor {
     private final List<Integer> orList = new ArrayList<>();
     private int staticSizeCnt;
 
+    private String currentNamespace;
     private Stack<Integer> ifStack = new Stack<>();
 
     private Stack<Integer> elseStack = new Stack<>();
@@ -23,6 +24,16 @@ public class CodeGenerator extends VisitorAdaptor {
 
     public int getMainPc() {
         return mainPc;
+    }
+
+    @Override
+    public void visit(NamespaceName visitor) {
+        currentNamespace = visitor.getName();
+    }
+
+    @Override
+    public void visit(Namespace visitor) {
+        currentNamespace = "";
     }
 
     @Override
@@ -126,6 +137,7 @@ public class CodeGenerator extends VisitorAdaptor {
 
     @Override
     public void visit(ConstDef visitor) {
+        visitor.obj = MyTab.myFind(SemanticPass.prepareSymbol(visitor.getName(), currentNamespace));
         visitor.obj.setAdr(constValue(visitor.getConstVal()));
         Code.load(visitor.obj);
     }
@@ -160,6 +172,8 @@ public class CodeGenerator extends VisitorAdaptor {
         else
             Code.store(visitor.getDesignator().obj);
     }
+
+    @Override
 
     public void visit(ScopeLocal visitor) {
         if (Tab.currentScope().findSymbol(visitor.obj.getName()) != null)
@@ -203,7 +217,7 @@ public class CodeGenerator extends VisitorAdaptor {
             Code.load(visitor.obj);
     }
 
-// TODO ################################################ Start of Dumb code
+    @Override
 
     public void visit(ScopeNamespace visitor) {
         if (visitor.obj.getKind() == Obj.Meth)
@@ -216,6 +230,7 @@ public class CodeGenerator extends VisitorAdaptor {
             return;
 
         SyntaxNode parent = visitor.getParent().getParent();
+
 //        if (parent instanceof DesignatorStatePartManyClass || parent instanceof DesignatorStatementManyClass) {
 //            isUnpackingStart = true;
 //            return;
@@ -228,15 +243,15 @@ public class CodeGenerator extends VisitorAdaptor {
                 && !(parent instanceof StatementRead) // 3
         )
             Code.load(visitor.obj);
+        else
+            Code.load(visitor.obj);
 
     }
-
-// TODO ################################################ End of Dumb code
 
     @Override
     public void visit(StatementPrint stmPrint) {
         if (stmPrint.getExpr().struct == Tab.intType || stmPrint.getExpr().struct == MyTab.boolType) {
-            Code.loadConst(5);
+            Code.loadConst(1);
             Code.put(Code.print);
         } else {
             Code.loadConst(1);

@@ -2,6 +2,9 @@ package rs.ac.bg.etf.pp1;
 
 import rs.etf.pp1.symboltable.*;
 import rs.etf.pp1.symboltable.concepts.*;
+import rs.etf.pp1.symboltable.structure.SymbolDataStructure;
+
+import java.util.Collection;
 
 public class MyTab extends Tab {
     public static final Struct boolType = new Struct(Struct.Bool);
@@ -21,4 +24,31 @@ public class MyTab extends Tab {
         }
         System.out.println(stv.getOutput());
     }
+
+    public static Obj myFind(String name) {
+        Obj resultObj = null;
+        for (Scope s = currentScope; s != null; s = s.getOuter()) {
+            SymbolDataStructure locals = s.getLocals();
+            if (locals != null) {
+                for (Obj obj : locals.symbols()) {
+                    if (obj.getName().equals(name)) {
+                        resultObj = obj;
+                        break;
+                    } else {
+                        Collection<Obj> localsOfObj = obj.getLocalSymbols();
+                        if (localsOfObj != null) {
+                            for (Obj objOfObj : localsOfObj) {
+                                if (objOfObj.getName().equals(name)) {
+                                    resultObj = objOfObj;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return (resultObj != null) ? resultObj : noObj;
+    }
+
 }

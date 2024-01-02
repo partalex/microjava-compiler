@@ -122,7 +122,7 @@ public class SemanticPass extends VisitorAdaptor {
         }
     }
 
-    private String prepareSymbol(String name, String prefix) {
+    static public String prepareSymbol(String name, String prefix) {
         return !Objects.equals(prefix, "") ?
                 prefix + "#" + name : name;
     }
