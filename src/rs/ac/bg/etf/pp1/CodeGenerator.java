@@ -4,6 +4,7 @@ import rs.ac.bg.etf.pp1.ast.*;
 import rs.etf.pp1.mj.runtime.Code;
 import rs.etf.pp1.symboltable.Tab;
 import rs.etf.pp1.symboltable.concepts.Obj;
+import rs.etf.pp1.symboltable.concepts.Struct;
 
 import java.util.*;
 
@@ -12,18 +13,175 @@ public class CodeGenerator extends VisitorAdaptor {
     private int mainPc;
     private final List<Integer> andList = new ArrayList<>();
     private final List<Integer> orList = new ArrayList<>();
-    private int staticSizeCnt;
 
+    private final Stack<WhereAmI> whereAmI = new Stack<>();
+
+    private enum WhereAmI {inNowhere, inFor, inIf}
+
+    private int unpackingCnt = 0;
+
+    {
+        whereAmI.push(WhereAmI.inNowhere);
+    }
+
+    private final Stack<List<Integer>> breakStack = new Stack<>();
+    private final Stack<List<Integer>> continueStack = new Stack<>();
     private String currentNamespace;
-    private Stack<Integer> ifStack = new Stack<>();
+    private final Stack<Integer> ifStack = new Stack<>();
 
-    private Stack<Integer> elseStack = new Stack<>();
+    static class ForInfo {
+        int forEnd;
+        int condition;
+        int forBody;
+        int increment;
+    }
+
+    private final Stack<ForInfo> forStack = new Stack<>();
+
+    private final Stack<Integer> elseStack = new Stack<>();
     private boolean isInIf;
-    private boolean isInFor;
-    private boolean isUnpackingStart;
+
 
     public int getMainPc() {
         return mainPc;
+    }
+
+    @Override
+    public void visit(DesignStmManyStart visitor) {
+        unpackingCnt = 0;
+    }
+
+    @Override
+    public void visit(DesignStmPartOne visitor) {
+        ++unpackingCnt;
+    }
+
+    @Override
+    public void visit(DesignStmPartMany visitor) {
+
+        SyntaxNode designStmMany = visitor.getParent();
+        while (designStmMany instanceof DesignStmPartMany)
+            designStmMany = designStmMany.getParent();
+        Designator designator = ((DesignStmMany) designStmMany).getDesignator1();
+        Code.load(designator.obj);
+        Code.loadConst(unpackingCnt++);
+        Code.put(Code.aload);
+
+        if (visitor.getDesignator().obj.getKind() == Obj.Elem)
+            Code.put(Code.astore);
+        else
+            Code.store(visitor.getDesignator().obj);
+    }
+
+    @Override
+    public void visit(DesignStmMany visitor) {
+
+        Obj objIndexStore = Tab.insert(Obj.Var, "indexStore", new Struct(Struct.Int));
+        Code.loadConst(0);
+        Code.store(objIndexStore);
+
+        Obj objUnpackingCnt = Tab.insert(Obj.Var, "unpackingCnt", new Struct(Struct.Int));
+        Code.loadConst(unpackingCnt);
+        Code.store(objUnpackingCnt);
+
+        Obj objLeftDesignSize = Tab.insert(Obj.Var, "leftDesignSize", new Struct(Struct.Int));
+        Code.load(visitor.getDesignator().obj);
+        Code.put(Code.arraylength);
+        Code.store(objLeftDesignSize);
+
+        Obj objRightDesignSize = Tab.insert(Obj.Var, "rightDesignSize", new Struct(Struct.Int));
+        Code.load(visitor.getDesignator1().obj);
+        Code.put(Code.arraylength);
+        Code.store(objRightDesignSize);
+
+        int testRuntime = Code.pc;
+        Code.load(objUnpackingCnt);
+        Code.load(objRightDesignSize);
+        Code.putFalseJump(Code.ge, 0); // fix up testLimit
+        int testLimit = Code.pc - 2;
+
+        Code.load(objUnpackingCnt);
+        Code.load(objLeftDesignSize);
+        Code.putFalseJump(Code.ge, 0);// fix up endCorrect
+        int endCorrect = Code.pc - 2;
+
+        // endRuntime
+        Code.put(Code.trap);
+        Code.put(1);
+
+        Code.fixup(testLimit);
+        Code.load(objUnpackingCnt);
+        Code.load(objLeftDesignSize);
+        Code.putFalseJump(Code.lt, 0); // fix up endCorrect
+        int endCorrect2 = Code.pc - 2;
+
+//        testRuntime:
+//            unpackingCnt >= objRightDesignSize
+//            jmpF testLimit
+//            unpackingCnt >= objLeftDesignSize
+//            jmpF endCorrect
+//        endRuntime:
+//            ...code...
+//        testLimit:
+//            unpackingCnt < objLeftDesignSize
+//            jmpF endCorrect
+//        loop:
+
+        // load 0                       -> OK
+        // store indexStore             -> OK
+        // load unpackingCnt            -> OK
+        // store unpackingCnt           -> OK
+        // load designator1.size        -> OK
+        // testRuntime:                 -> OK
+            // load unpackingCnt        -> OK
+            // load objRightDesignSize  -> OK
+            // >=                       -> OK
+            // jmpF testLimit           -> OK
+            // load unpackingCnt        -> OK
+            // load objLeftDesignSize   -> OK
+            // >=                       -> OK
+            // jmpF endCorrect          -> OK
+        // endRuntime:                  -> OK
+            // put trap                 -> OK
+            // put 1                    -> OK
+        // testLimit:                   -> OK
+            // load unpackingCnt        -> OK
+            // load objLeftDesignSize   -> OK
+            // >=                       -> OK
+            // jmpF endCorrect          -> OK
+        // loop:                        -> OK
+            // load designator          -> OK
+            // load indexStore          -> OK
+            // load designator1         -> OK
+            // load unpackingCnt        -> OK
+            // aload                    -> OK
+            // astore                   -> OK
+            // load indexStore          -> OK
+            // inc                      -> OK
+            // store indexStore         -> OK
+            // load unpackingCnt        -> OK
+            // inc                      -> OK
+            // store unpackingCnt       -> OK
+            // jmp testRuntime
+        // endCorrect
+
+        Code.load(visitor.getDesignator().obj);
+        Code.load(objIndexStore);
+        Code.load(visitor.getDesignator1().obj);
+        Code.load(objUnpackingCnt);
+        Code.put(Code.aload);
+        Code.put(Code.astore);
+        Code.load(objIndexStore);
+        Code.put(Code.inc);
+        Code.store(objIndexStore);
+        Code.load(objUnpackingCnt);
+        Code.put(Code.inc);
+        Code.store(objUnpackingCnt);
+        Code.put(Code.jmp);
+        Code.put2(testRuntime - Code.pc + 1);
+        Code.fixup(endCorrect);
+        Code.fixup(endCorrect2);
+
     }
 
     @Override
@@ -73,6 +231,19 @@ public class CodeGenerator extends VisitorAdaptor {
             Code.putFalseJump(Code.gt, 0);
         if (type instanceof RelOpEgreater)
             Code.putFalseJump(Code.ge, 0);
+//        if (!forStack.empty()) {
+//            forStack.peek().forEnd = Code.pc - 2;
+//        }
+        if (whereAmI.peek() == WhereAmI.inFor)
+            forStack.peek().forEnd = Code.pc - 2;
+    }
+
+    @Override
+    public void visit(CondFactOne visitor) {
+        Code.put(Code.const_1);
+        Code.putFalseJump(Code.eq, 0);
+        if (whereAmI.peek() == WhereAmI.inFor)
+            forStack.peek().forEnd = Code.pc - 2;
     }
 
     @Override
@@ -183,37 +354,21 @@ public class CodeGenerator extends VisitorAdaptor {
         if (visitor.obj.getKind() == Obj.Meth)
             return;
 
-//        if (isUnpackingStart)
-//            return;
-
         if (visitor.obj.getType().getKind() == 3 && ((Designator) visitor.getParent()).getMatrixOpt() instanceof MatrixZero)
             return;
 
-        SyntaxNode parent = visitor.getParent().getParent();
-
-//        if (parent instanceof DesignatorStatePartManyClass || parent instanceof DesignatorStatementManyClass) {
-//            isUnpackingStart = true;
-//            return;
-//        }
-
-//        if (((Designator) visitor.getParent()).getOptDesignatorPart() instanceof OptDesignatorPartEmptyClass) {
-//            if (!(parent.getParent() instanceof DesignatorStatementOpt && isInfor)
-//                    && !(parent instanceof DesignatorStatementAssignClass) // 2
-//                    && !(parent instanceof DesignatorStatementParamsClass) // 1
-//                    && !(parent instanceof FactorParenParsClass // 4
-//                    && ((FactorParenParsClass) parent).getOptFactorParenPars() instanceof OptFactorParenParsClass) // 5
-//                    && !(parent instanceof StatementReadClass)) // 3
-//                Code.load(visitor.obj);
-
-        if (!(parent instanceof DesignStmAssign) // 2
-                && !(parent instanceof DesignStmParen) // 1
-                && !(parent instanceof FactorParenPars // 4
-                && ((FactorParenPars) parent).getFactorParenParsOpt() instanceof ParenPars) // 5
-                && !(parent instanceof StatementRead) // 3
-        )
-            Code.load(visitor.obj);
-
-        else
+        SyntaxNode grandFather = visitor.getParent().getParent();
+        if (grandFather instanceof DesignStmPartMany || grandFather instanceof DesignStmMany)
+            return;
+        if (((Designator) visitor.getParent()).getMatrixOpt() instanceof MatrixZero) {
+            if (!(grandFather instanceof DesignStmAssign)
+                    && !(grandFather instanceof DesignStmParen)
+                    && !(grandFather instanceof FactorParenPars
+                    && ((FactorParenPars) grandFather).getFactorParenParsOpt() instanceof ParenPars)
+                    && !(grandFather instanceof StatementRead)
+            )
+                Code.load(visitor.obj);
+        } else
             Code.load(visitor.obj);
     }
 
@@ -223,24 +378,20 @@ public class CodeGenerator extends VisitorAdaptor {
         if (visitor.obj.getKind() == Obj.Meth)
             return;
 
-//        if (isUnpackingStart)
-//            return;
-
         if (visitor.obj.getType().getKind() == 3 && ((Designator) visitor.getParent()).getMatrixOpt() instanceof MatrixZero)
             return;
 
-        SyntaxNode parent = visitor.getParent().getParent();
 
-//        if (parent instanceof DesignatorStatePartManyClass || parent instanceof DesignatorStatementManyClass) {
-//            isUnpackingStart = true;
-//            return;
-//        }
+        SyntaxNode grandFather = visitor.getParent().getParent();
 
-        if (!(parent instanceof DesignStmAssign) // 2
-                && !(parent instanceof DesignStmParen) // 1
-                && !(parent instanceof FactorParenPars // 4
-                && ((FactorParenPars) parent).getFactorParenParsOpt() instanceof ParenPars) // 5
-                && !(parent instanceof StatementRead) // 3
+        if ((grandFather instanceof DesignStmPartMany || grandFather instanceof DesignStmMany) && visitor.obj.getType().getKind() != Struct.Array)
+            return;
+
+        if (!(grandFather instanceof DesignStmAssign)
+                && !(grandFather instanceof DesignStmParen)
+                && !(grandFather instanceof FactorParenPars
+                && ((FactorParenPars) grandFather).getFactorParenParsOpt() instanceof ParenPars)
+                && !(grandFather instanceof StatementRead)
         )
             Code.load(visitor.obj);
         else
@@ -267,7 +418,7 @@ public class CodeGenerator extends VisitorAdaptor {
 
     @Override
     public void visit(If visitor) {
-        isInIf = true;
+        whereAmI.push(WhereAmI.inIf);
     }
 
     @Override
@@ -278,6 +429,62 @@ public class CodeGenerator extends VisitorAdaptor {
         elseStack.push(Code.pc - 2);
 
         Code.fixup(ifStack.pop());
+    }
+
+    @Override
+    public void visit(For visitor) {
+        forStack.push(new ForInfo());
+        breakStack.push(new ArrayList<>());
+        continueStack.push(new ArrayList<>());
+        whereAmI.push(WhereAmI.inFor);
+    }
+
+    @Override
+    public void visit(ForCondStart visitor) {
+        forStack.peek().condition = Code.pc;
+    }
+
+    @Override
+    public void visit(CondFactOptOne visitor) {
+        Code.putJump(0);
+        forStack.peek().forBody = Code.pc - 2;
+        forStack.peek().increment = Code.pc;
+    }
+
+    @Override
+    public void visit(ForCondEnd visitor) {
+
+        Code.put(Code.jmp);
+        Code.put2(forStack.peek().condition - Code.pc + 1);
+        Code.fixup(forStack.peek().forBody);
+
+        // for :
+        // StatementFor
+        // condition: <- save in local
+        // test CondFactOpt
+        // jump forEnd <- call fixup
+        // jump forBody <- call fixup
+        // increment: <- save in local
+        // i++
+        // jump condition <- read from local
+        // forBody:
+        // ...code...
+        // StatementFor:
+        // jump increment <- read from local
+        // forEnd:
+        //
+
+    }
+
+    @Override
+    public void visit(StatementFor visitor) {
+        continueStack.pop().forEach(Code::fixup);
+        Code.put(Code.jmp);
+        Code.put2(forStack.peek().increment - Code.pc + 1);
+        Code.fixup(forStack.peek().forEnd);
+        forStack.pop();
+        breakStack.pop().forEach(Code::fixup);
+        whereAmI.pop();
     }
 
     @Override
@@ -316,7 +523,9 @@ public class CodeGenerator extends VisitorAdaptor {
             if (!(parent instanceof DesignStmAssign)
                     && !(parent instanceof DesignStmParen)
                     && !(parent instanceof FactorParenPars && ((FactorParenPars) parent).getFactorParenParsOpt() instanceof ParenPars)
-                    && !(parent instanceof StatementRead))
+                    && !(parent instanceof StatementRead)
+                    && !(parent instanceof DesignStmPartMany)
+            )
                 if (visitor.obj.getType() == Tab.charType)
                     Code.put(Code.baload);
                 else
@@ -327,7 +536,6 @@ public class CodeGenerator extends VisitorAdaptor {
             else
                 Code.put(Code.aload);
         }
-
     }
 
     private Obj oneBeforeLast(Designator visitor) {
@@ -335,6 +543,18 @@ public class CodeGenerator extends VisitorAdaptor {
             return visitor.getScope().obj;
         else
             return ((MatrixMany) visitor.getMatrixOpt()).getMatrixOpt().obj;
+    }
+
+    @Override
+    public void visit(StatementBreak visitor) {
+        Code.putJump(0);
+        breakStack.peek().add(Code.pc - 2);
+    }
+
+    @Override
+    public void visit(StatementContinue visitor) {
+        Code.putJump(0);
+        continueStack.peek().add(Code.pc - 2);
     }
 
     private void setFunCall(Designator designator) {
@@ -381,16 +601,14 @@ public class CodeGenerator extends VisitorAdaptor {
 
     @Override
     public void visit(StatementCondition visitor) {
-        if (isInIf) {
-            Code.put(Code.jmp);
-            Code.put2(0);
-            ifStack.push(Code.pc - 2);
-            for (Integer o : orList)
-                Code.fixup(o);
-        }
+        Code.put(Code.jmp);
+        Code.put2(0);
+        ifStack.push(Code.pc - 2);
+        for (Integer o : orList)
+            Code.fixup(o);
         orList.clear();
+        whereAmI.pop();
     }
-
 
 }
 

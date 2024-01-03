@@ -91,9 +91,8 @@ nonterminal VarDeclList;
 nonterminal FormParsList;
 nonterminal StatementCondition;
 nonterminal For;
-nonterminal CondStart;
-nonterminal CondEnd;
-nonterminal ForEnd;
+nonterminal ForCondStart;
+nonterminal ForCondEnd;
 nonterminal DesignStmManyStart;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type;
@@ -196,7 +195,7 @@ Statement           ::= (StatementDesignator) DesignatorStm SEMI
                     |   (StatementReturn) RETURN ExprOpt SEMI
                     |   (StatementRead) READ LPAREN Designator RPAREN SEMI
                     |   (StatementPrint) PRINT LPAREN Expr PrintOpt RPAREN SEMI
-                    |   (StatementFor) For LPAREN DesignStmOpt CondStart CondFactOpt SEMI DesignStmOpt CondEnd Statement ForEnd
+                    |   (StatementFor) For LPAREN DesignStmOpt ForCondStart CondFactOpt SEMI DesignStmOpt ForCondEnd Statement
                     |   (StatementMany) LBRACE StatementOpt RBRACE;
 
 StatementCondition  ::= (StatementCondition) LPAREN Condition RPAREN;
@@ -211,11 +210,9 @@ Else 				::= (Else) ELSE;
 
 For 				::= (For) FOR;
 
-ForEnd              ::= (ForEnd) /* epsilon */;
+ForCondStart 	    ::= (ForCondStart) SEMI;
 
-CondStart 	        ::= (CondStart) SEMI;
-
-CondEnd             ::= (CondEnd) RPAREN;
+ForCondEnd          ::= (ForCondEnd) RPAREN;
 
 CondFactOpt         ::= (CondFactOptOne) CondFact
                     |	(CondFactZero) /* epsilon */;

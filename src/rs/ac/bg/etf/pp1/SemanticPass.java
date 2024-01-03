@@ -204,7 +204,7 @@ public class SemanticPass extends VisitorAdaptor {
     }
 
     @Override
-    public void visit(ForEnd visitor) {
+    public void visit(StatementFor visitor) {
         --controlStructure;
     }
 
