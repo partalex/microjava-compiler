@@ -60,7 +60,7 @@ public class CodeGenerator extends VisitorAdaptor {
     public void visit(DesignStmPartMany visitor) {
 
         SyntaxNode designStmMany = visitor.getParent();
-        while (designStmMany instanceof DesignStmPartMany)
+        while (designStmMany instanceof DesignStmPartMany || designStmMany instanceof DesignStmPartOne)
             designStmMany = designStmMany.getParent();
         Designator designator = ((DesignStmMany) designStmMany).getDesignator1();
         Code.load(designator.obj);
@@ -100,9 +100,9 @@ public class CodeGenerator extends VisitorAdaptor {
         Code.putFalseJump(Code.ge, 0); // fix up testLimit
         int testLimit = Code.pc - 2;
 
-        Code.load(objUnpackingCnt);
+        Code.load(objIndexStore);
         Code.load(objLeftDesignSize);
-        Code.putFalseJump(Code.ge, 0);// fix up endCorrect
+        Code.putFalseJump(Code.lt, 0);// fix up endCorrect
         int endCorrect = Code.pc - 2;
 
         // endRuntime
@@ -110,7 +110,7 @@ public class CodeGenerator extends VisitorAdaptor {
         Code.put(1);
 
         Code.fixup(testLimit);
-        Code.load(objUnpackingCnt);
+        Code.load(objIndexStore);
         Code.load(objLeftDesignSize);
         Code.putFalseJump(Code.lt, 0); // fix up endCorrect
         int endCorrect2 = Code.pc - 2;
@@ -172,10 +172,12 @@ public class CodeGenerator extends VisitorAdaptor {
         Code.put(Code.aload);
         Code.put(Code.astore);
         Code.load(objIndexStore);
-        Code.put(Code.inc);
+        Code.loadConst(1);
+        Code.put(Code.add);
         Code.store(objIndexStore);
         Code.load(objUnpackingCnt);
-        Code.put(Code.inc);
+        Code.loadConst(1);
+        Code.put(Code.add);
         Code.store(objUnpackingCnt);
         Code.put(Code.jmp);
         Code.put2(testRuntime - Code.pc + 1);
