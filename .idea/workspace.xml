@@ -6,8 +6,12 @@
   <component name="ChangeListManager">
     <list default="true" id="37548433-4df9-4744-8550-e2d30ad3cbd3" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/rs/ac/bg/etf/pp1/SemanticPass.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/rs/ac/bg/etf/pp1/SemanticPass.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/spec/mjparser.cup" beforeDir="false" afterPath="$PROJECT_DIR$/src/spec/mjparser.cup" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/2023/test.mj" beforeDir="false" afterPath="$PROJECT_DIR$/test/2023/test.mj" afterDir="false" />
+    </list>
+    <list id="6e014b95-72f5-45c6-874c-e490c04c3833" name="Changes by Milena" comment="">
+      <change beforePath="$PROJECT_DIR$/build.xml" beforeDir="false" afterPath="$PROJECT_DIR$/build.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/rs/ac/bg/etf/pp1/CodeGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/rs/ac/bg/etf/pp1/CodeGenerator.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -24,7 +28,7 @@
     <option name="stateVersion" value="1" />
   </component>
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="QODANA_PROBLEMS_VIEW_TAB" />
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 8
@@ -50,10 +54,10 @@
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;aleksandar&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;aleskandar-4ta-faza&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/kaoko/Documents/PP1/MJCompiler/test/2023&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/kaoko/Documents/PP1/MJCompiler/test&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
@@ -64,10 +68,19 @@
     &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  },
+  &quot;keyToStringList&quot;: {
+    &quot;com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File&quot;: [
+      &quot;JAVA&quot;
+    ]
   }
 }</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\kaoko\Documents\PP1\MJCompiler\test" />
+      <recent name="C:\Users\kaoko\Documents\PP1\MJCompiler\test\2023" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\kaoko\Documents\PP1\MJCompiler\test\2023" />
     </key>
   </component>
@@ -76,7 +89,7 @@
       <command value="7. runObj" />
     </option>
   </component>
-  <component name="RunManager" selected="Ant Target.4. repackage">
+  <component name="RunManager" selected="Ant Target.7. runObj">
     <configuration name="1. delete" type="AntRunConfiguration">
       <antsettings antfile="file://$PROJECT_DIR$/build.xml" target="delete" />
       <method v="2" />
@@ -147,8 +160,26 @@
     <option name="version" value="3" />
   </component>
   <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/rs/ac/bg/etf/pp1/CodeGenerator.java</url>
+          <line>341</line>
+          <option name="timeStamp" value="46" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/rs/ac/bg/etf/pp1/CodeGenerator.java</url>
+          <line>389</line>
+          <option name="timeStamp" value="50" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
     <pin-to-top-manager>
       <pinned-members>
+        <PinnedItemInfo parentTag="rs.ac.bg.etf.pp1.ast.AddTermZero" memberName="struct" />
+        <PinnedItemInfo parentTag="rs.ac.bg.etf.pp1.ast.TermOne" memberName="struct" />
+        <PinnedItemInfo parentTag="rs.etf.pp1.symboltable.concepts.Scope" memberName="outer" />
+        <PinnedItemInfo parentTag="rs.etf.pp1.symboltable.concepts.Obj" memberName="locals" />
         <PinnedItemInfo parentTag="rs.etf.pp1.symboltable.concepts.Scope" memberName="locals" />
       </pinned-members>
     </pin-to-top-manager>
