@@ -6,13 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="37548433-4df9-4744-8550-e2d30ad3cbd3" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/2023/test.mj" beforeDir="false" afterPath="$PROJECT_DIR$/test/2023/test.mj" afterDir="false" />
-    </list>
-    <list id="6e014b95-72f5-45c6-874c-e490c04c3833" name="Changes by Milena" comment="">
       <change beforePath="$PROJECT_DIR$/build.xml" beforeDir="false" afterPath="$PROJECT_DIR$/build.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/rs/ac/bg/etf/pp1/CodeGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/rs/ac/bg/etf/pp1/CodeGenerator.java" afterDir="false" />
     </list>
+    <list id="6e014b95-72f5-45c6-874c-e490c04c3833" name="Changes by Milena" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -38,47 +34,47 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Ant Target.1. delete.executor&quot;: &quot;Run&quot;,
-    &quot;Ant Target.2. lexerGen.executor&quot;: &quot;Run&quot;,
-    &quot;Ant Target.3. parserGen.executor&quot;: &quot;Run&quot;,
-    &quot;Ant Target.4. repackage.executor&quot;: &quot;Run&quot;,
-    &quot;Ant Target.6. debug.executor&quot;: &quot;Run&quot;,
-    &quot;Ant Target.7. runObj.executor&quot;: &quot;Run&quot;,
-    &quot;Ant Target.delete.executor&quot;: &quot;Run&quot;,
-    &quot;Ant Target.lexerGen.executor&quot;: &quot;Run&quot;,
-    &quot;Ant Target.parserGen.executor&quot;: &quot;Run&quot;,
-    &quot;Ant Target.repackage.executor&quot;: &quot;Run&quot;,
-    &quot;Application.MJParserTest.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;aleskandar-4ta-faza&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/kaoko/Documents/PP1/MJCompiler/test&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Libraries&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Ant Target.1. delete.executor": "Run",
+    "Ant Target.2. lexerGen.executor": "Run",
+    "Ant Target.3. parserGen.executor": "Run",
+    "Ant Target.4. repackage.executor": "Run",
+    "Ant Target.6. debug.executor": "Run",
+    "Ant Target.7. runObj.executor": "Run",
+    "Ant Target.delete.executor": "Run",
+    "Ant Target.lexerGen.executor": "Run",
+    "Ant Target.parserGen.executor": "Run",
+    "Ant Target.repackage.executor": "Run",
+    "Application.MJParserTest.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "aleskandar-4ta-faza",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/kaoko/Documents/PP1/MJCompiler/test/2023",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Libraries",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File&quot;: [
-      &quot;JAVA&quot;
+  "keyToStringList": {
+    "com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File": [
+      "JAVA"
     ]
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\kaoko\Documents\PP1\MJCompiler\test" />
       <recent name="C:\Users\kaoko\Documents\PP1\MJCompiler\test\2023" />
+      <recent name="C:\Users\kaoko\Documents\PP1\MJCompiler\test" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\kaoko\Documents\PP1\MJCompiler\test\2023" />
