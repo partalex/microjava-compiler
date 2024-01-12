@@ -419,20 +419,23 @@ public class SemanticPass extends VisitorAdaptor {
     }
 
     @Override
-    public void visit(Expr visitor) {
+    public void visit(ExprMinus visitor) {
         visitor.struct = visitor.getTerm().struct;
-        if (visitor.struct != Tab.intType && visitor.getMinusOpt() instanceof Minus) {
+        if (visitor.struct != Tab.intType) {
             report_error("Error: expression must be an int type", visitor);
             visitor.struct = Tab.noType;
         }
-        if (visitor.getAddTerm() instanceof AddTermMany && visitor.getTerm().struct != Tab.intType)
-            report_error("Error: can not sum non Int value", visitor.getParent());
     }
 
     @Override
-    public void visit(AddTermMany visitor) {
+    public void visit(ExprTerm visitor) {
         visitor.struct = visitor.getTerm().struct;
-        if ((visitor.getAddTerm() instanceof AddTermMany && visitor.getAddTerm().struct != Tab.intType)
+    }
+
+    @Override
+    public void visit(ExprAddOp visitor) {
+        visitor.struct = visitor.getTerm().struct;
+        if ((visitor.getExpr() instanceof ExprAddOp && visitor.getExpr().struct != Tab.intType)
                 || visitor.getTerm().struct != Tab.intType) {
             report_error("Error: can not sum non Int value", visitor.getParent());
             visitor.struct = Tab.noType;

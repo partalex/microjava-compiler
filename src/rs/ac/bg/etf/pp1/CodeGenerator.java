@@ -13,7 +13,6 @@ public class CodeGenerator extends VisitorAdaptor {
     private int mainPc;
     private final List<Integer> andList = new ArrayList<>();
     private final List<Integer> orList = new ArrayList<>();
-
     private final Stack<WhereAmI> whereAmI = new Stack<>();
 
     private enum WhereAmI {inNowhere, inFor, inIf}
@@ -24,8 +23,8 @@ public class CodeGenerator extends VisitorAdaptor {
         whereAmI.push(WhereAmI.inNowhere);
     }
 
-    private final Stack<List<Integer>> breakStack = new Stack<>();
-    private final Stack<List<Integer>> continueStack = new Stack<>();
+    private final Stack<List<Integer>> breaks = new Stack<>();
+    private final Stack<List<Integer>> continues = new Stack<>();
     private String currentNamespace;
     private final Stack<Integer> ifStack = new Stack<>();
 
@@ -133,36 +132,36 @@ public class CodeGenerator extends VisitorAdaptor {
         // store unpackingCnt           -> OK
         // load designator1.size        -> OK
         // testRuntime:                 -> OK
-            // load unpackingCnt        -> OK
-            // load objRightDesignSize  -> OK
-            // >=                       -> OK
-            // jmpF testLimit           -> OK
-            // load unpackingCnt        -> OK
-            // load objLeftDesignSize   -> OK
-            // >=                       -> OK
-            // jmpF endCorrect          -> OK
+        // load unpackingCnt        -> OK
+        // load objRightDesignSize  -> OK
+        // >=                       -> OK
+        // jmpF testLimit           -> OK
+        // load unpackingCnt        -> OK
+        // load objLeftDesignSize   -> OK
+        // >=                       -> OK
+        // jmpF endCorrect          -> OK
         // endRuntime:                  -> OK
-            // put trap                 -> OK
-            // put 1                    -> OK
+        // put trap                 -> OK
+        // put 1                    -> OK
         // testLimit:                   -> OK
-            // load unpackingCnt        -> OK
-            // load objLeftDesignSize   -> OK
-            // >=                       -> OK
-            // jmpF endCorrect          -> OK
+        // load unpackingCnt        -> OK
+        // load objLeftDesignSize   -> OK
+        // >=                       -> OK
+        // jmpF endCorrect          -> OK
         // loop:                        -> OK
-            // load designator          -> OK
-            // load indexStore          -> OK
-            // load designator1         -> OK
-            // load unpackingCnt        -> OK
-            // aload                    -> OK
-            // astore                   -> OK
-            // load indexStore          -> OK
-            // inc                      -> OK
-            // store indexStore         -> OK
-            // load unpackingCnt        -> OK
-            // inc                      -> OK
-            // store unpackingCnt       -> OK
-            // jmp testRuntime
+        // load designator          -> OK
+        // load indexStore          -> OK
+        // load designator1         -> OK
+        // load unpackingCnt        -> OK
+        // aload                    -> OK
+        // astore                   -> OK
+        // load indexStore          -> OK
+        // inc                      -> OK
+        // store indexStore         -> OK
+        // load unpackingCnt        -> OK
+        // inc                      -> OK
+        // store unpackingCnt       -> OK
+        // jmp testRuntime
         // endCorrect
 
         Code.load(visitor.getDesignator().obj);
@@ -209,7 +208,7 @@ public class CodeGenerator extends VisitorAdaptor {
     }
 
     @Override
-    public void visit(AddTermMany visitor) {
+    public void visit(ExprAddOp visitor) {
         SyntaxNode op = visitor.getAddOp();
         if (op instanceof AddOpPlus)
             Code.put(Code.add);
@@ -249,9 +248,8 @@ public class CodeGenerator extends VisitorAdaptor {
     }
 
     @Override
-    public void visit(Expr visitor) {
-        if (visitor.getMinusOpt() instanceof Minus)
-            Code.put(Code.neg);
+    public void visit(ExprMinus visitor) {
+        Code.put(Code.neg);
     }
 
     @Override
@@ -436,8 +434,8 @@ public class CodeGenerator extends VisitorAdaptor {
     @Override
     public void visit(For visitor) {
         forStack.push(new ForInfo());
-        breakStack.push(new ArrayList<>());
-        continueStack.push(new ArrayList<>());
+        breaks.push(new ArrayList<>());
+        continues.push(new ArrayList<>());
         whereAmI.push(WhereAmI.inFor);
     }
 
@@ -480,12 +478,12 @@ public class CodeGenerator extends VisitorAdaptor {
 
     @Override
     public void visit(StatementFor visitor) {
-        continueStack.pop().forEach(Code::fixup);
+        continues.pop().forEach(Code::fixup);
         Code.put(Code.jmp);
         Code.put2(forStack.peek().increment - Code.pc + 1);
         Code.fixup(forStack.peek().forEnd);
         forStack.pop();
-        breakStack.pop().forEach(Code::fixup);
+        breaks.pop().forEach(Code::fixup);
         whereAmI.pop();
     }
 
@@ -550,13 +548,13 @@ public class CodeGenerator extends VisitorAdaptor {
     @Override
     public void visit(StatementBreak visitor) {
         Code.putJump(0);
-        breakStack.peek().add(Code.pc - 2);
+        breaks.peek().add(Code.pc - 2);
     }
 
     @Override
     public void visit(StatementContinue visitor) {
         Code.putJump(0);
-        continueStack.peek().add(Code.pc - 2);
+        continues.peek().add(Code.pc - 2);
     }
 
     private void setFunCall(Designator designator) {

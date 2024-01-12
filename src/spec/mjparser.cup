@@ -70,7 +70,6 @@ nonterminal VarDecl;
 nonterminal VarDeclOpt;
 nonterminal FormParsOpt;
 nonterminal FormPars;
-nonterminal MinusOpt;
 nonterminal ActParsOpt;
 nonterminal DesignStmOpt;
 nonterminal PrintOpt;
@@ -104,7 +103,6 @@ nonterminal rs.etf.pp1.symboltable.concepts.Struct Expr;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Condition;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct CondTerm;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct CondFact;
-nonterminal rs.etf.pp1.symboltable.concepts.Struct AddTerm;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct CondFactOpt;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Obj Program;
@@ -247,15 +245,9 @@ CondTerm            ::= (CondTermMany) CondTerm AND CondFact
 CondFact            ::= (CondFactMany) Expr RelOp Expr
                     |   (CondFactOne) Expr;
 
-AddTerm				::= (AddTermMany) AddTerm AddOp Term
-					|	(AddTermZero) /* epsilon */;
-
-// Done
-Expr                ::= (Expr) MinusOpt Term AddTerm;
-
-// Done
-MinusOpt 			::= (Minus) MINUS
-					|	(NoMinus) /* epsilon */;
+Expr                ::= (ExprAddOp) Expr AddOp Term
+         			|   (ExprMinus) MINUS Term
+         			|   (ExprTerm) Term;
 
 Term                ::= (TermMany) Term MulOp Factor
                     |   (TermOne) Factor;

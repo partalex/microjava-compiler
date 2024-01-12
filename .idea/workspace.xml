@@ -4,7 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="37548433-4df9-4744-8550-e2d30ad3cbd3" name="Changes" comment="" />
+    <list default="true" id="37548433-4df9-4744-8550-e2d30ad3cbd3" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/rs/ac/bg/etf/pp1/CodeGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/rs/ac/bg/etf/pp1/CodeGenerator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/rs/ac/bg/etf/pp1/SemanticPass.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/rs/ac/bg/etf/pp1/SemanticPass.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/spec/mjparser.cup" beforeDir="false" afterPath="$PROJECT_DIR$/src/spec/mjparser.cup" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/2023/input.txt" beforeDir="false" afterPath="$PROJECT_DIR$/test/2023/input.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/2023/output.txt" beforeDir="false" afterPath="$PROJECT_DIR$/test/2023/output.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/2023/test.mj" beforeDir="false" afterPath="$PROJECT_DIR$/test/2023/test.mj" afterDir="false" />
+    </list>
     <list id="6e014b95-72f5-45c6-874c-e490c04c3833" name="Changes by Milena" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -64,6 +72,7 @@
   },
   "keyToStringList": {
     "com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File": [
+      "C++",
       "JAVA"
     ]
   }
@@ -157,13 +166,23 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/rs/ac/bg/etf/pp1/CodeGenerator.java</url>
-          <line>341</line>
+          <line>339</line>
           <option name="timeStamp" value="46" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/rs/ac/bg/etf/pp1/CodeGenerator.java</url>
-          <line>389</line>
+          <line>387</line>
           <option name="timeStamp" value="50" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/rs/ac/bg/etf/pp1/SemanticPass.java</url>
+          <line>253</line>
+          <option name="timeStamp" value="51" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/rs/ac/bg/etf/pp1/SemanticPass.java</url>
+          <line>239</line>
+          <option name="timeStamp" value="52" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
