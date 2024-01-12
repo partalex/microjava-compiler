@@ -6,8 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="37548433-4df9-4744-8550-e2d30ad3cbd3" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.xml" beforeDir="false" afterPath="$PROJECT_DIR$/build.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/rs/ac/bg/etf/pp1/CodeGenerator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/rs/ac/bg/etf/pp1/CodeGenerator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/rs/ac/bg/etf/pp1/MyTab.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/rs/ac/bg/etf/pp1/MyTab.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/rs/ac/bg/etf/pp1/SemanticPass.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/rs/ac/bg/etf/pp1/SemanticPass.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/spec/mjlexer.flex" beforeDir="false" afterPath="$PROJECT_DIR$/src/spec/mjlexer.flex" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/spec/mjparser.cup" beforeDir="false" afterPath="$PROJECT_DIR$/src/spec/mjparser.cup" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test/2023/input.txt" beforeDir="false" afterPath="$PROJECT_DIR$/test/2023/input.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test/2023/output.txt" beforeDir="false" afterPath="$PROJECT_DIR$/test/2023/output.txt" afterDir="false" />
@@ -55,7 +58,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "aleskandar-4ta-faza",
+    "git-widget-placeholder": "modif-arrayMax",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/kaoko/Documents/PP1/MJCompiler/test/2023",
@@ -166,23 +169,18 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/rs/ac/bg/etf/pp1/CodeGenerator.java</url>
-          <line>339</line>
-          <option name="timeStamp" value="46" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/rs/ac/bg/etf/pp1/CodeGenerator.java</url>
-          <line>387</line>
+          <line>385</line>
           <option name="timeStamp" value="50" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/rs/ac/bg/etf/pp1/SemanticPass.java</url>
-          <line>253</line>
-          <option name="timeStamp" value="51" />
+          <line>309</line>
+          <option name="timeStamp" value="62" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/rs/ac/bg/etf/pp1/SemanticPass.java</url>
-          <line>239</line>
-          <option name="timeStamp" value="52" />
+          <line>294</line>
+          <option name="timeStamp" value="63" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

@@ -38,8 +38,6 @@ public class CodeGenerator extends VisitorAdaptor {
     private final Stack<ForInfo> forStack = new Stack<>();
 
     private final Stack<Integer> elseStack = new Stack<>();
-    private boolean isInIf;
-
 
     public int getMainPc() {
         return mainPc;
@@ -557,7 +555,7 @@ public class CodeGenerator extends VisitorAdaptor {
         continues.peek().add(Code.pc - 2);
     }
 
-    private void setFunCall(Designator designator) {
+    private void callFunction(Designator designator) {
         if (designator.getMatrixOpt() instanceof MatrixZero) {
             Code.put(Code.call);
             Code.put2(designator.obj.getAdr() - Code.pc + 1);
@@ -572,7 +570,7 @@ public class CodeGenerator extends VisitorAdaptor {
 
     @Override
     public void visit(DesignStmParen visitor) {
-        setFunCall(visitor.getDesignator());
+        callFunction(visitor.getDesignator());
 
         if (visitor.getDesignator().obj.getType() != Tab.noType)
             Code.put(Code.pop);
@@ -582,7 +580,7 @@ public class CodeGenerator extends VisitorAdaptor {
     @Override
     public void visit(FactorParenPars visitor) {
         if (visitor.getFactorParenParsOpt() instanceof ParenPars)
-            setFunCall(visitor.getDesignator());
+            callFunction(visitor.getDesignator());
     }
 
     @Override

@@ -18,7 +18,7 @@ public class SemanticPass extends VisitorAdaptor {
     private boolean errorDetected;
     private Struct lastVarConstType = Tab.noType;
     private Struct lastMethodType = null;
-    private String currentNamespace;
+    private String currentNamespace = "";
     private int formalParamCount;
     private int controlStructure = 0;
     private Collection<Obj> actPartsRequired;
@@ -515,7 +515,6 @@ public class SemanticPass extends VisitorAdaptor {
         visitor.struct = visitor.getDesignator().obj.getType();
         if (visitor.getFactorParenParsOpt() instanceof ParenParsZero)
             return;
-
 
         if (visitor.getDesignator().obj.getKind() != Obj.Meth) {
             report_error("Error: " + getDesignatorName(visitor.getDesignator()).getName() + " not a method", visitor);
