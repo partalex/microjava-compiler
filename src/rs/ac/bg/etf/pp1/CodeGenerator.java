@@ -11,22 +11,25 @@ import java.util.*;
 public class CodeGenerator extends VisitorAdaptor {
 
     private int mainPc;
-    private final List<Integer> andList = new ArrayList<>();
-    private final List<Integer> orList = new ArrayList<>();
-    private final Stack<WhereAmI> whereAmI = new Stack<>();
+    private final List<Integer> listOfAnds = new ArrayList<>();
+    private final List<Integer> listOfOrs = new ArrayList<>();
+    private final Stack<iAmInside> lastBlock = new Stack<>();
 
-    private enum WhereAmI {inNowhere, inFor, inIf}
+    private enum iAmInside {NOWHERE, FOR, IF}
 
-    private int unpackingCnt = 0;
+    // make hash map of string and list<int
+    private final Map<String, List<Integer>> labelsToFixUp = new HashMap<>();
+
+    private int counterOfUnpacking = 0;
 
     {
-        whereAmI.push(WhereAmI.inNowhere);
+        lastBlock.push(iAmInside.NOWHERE);
     }
 
     private final Stack<List<Integer>> breaks = new Stack<>();
     private final Stack<List<Integer>> continues = new Stack<>();
     private String currentNamespace;
-    private final Stack<Integer> ifStack = new Stack<>();
+    private final Stack<Integer> stackFofIf = new Stack<>();
 
     static class ForInfo {
         int forEnd;
@@ -35,9 +38,9 @@ public class CodeGenerator extends VisitorAdaptor {
         int increment;
     }
 
-    private final Stack<ForInfo> forStack = new Stack<>();
+    private final Stack<ForInfo> stackForFor = new Stack<>();
 
-    private final Stack<Integer> elseStack = new Stack<>();
+    private final Stack<Integer> stackForElse = new Stack<>();
 
     public int getMainPc() {
         return mainPc;
@@ -45,12 +48,12 @@ public class CodeGenerator extends VisitorAdaptor {
 
     @Override
     public void visit(DesignStmManyStart visitor) {
-        unpackingCnt = 0;
+        counterOfUnpacking = 0;
     }
 
     @Override
     public void visit(DesignStmPartOne visitor) {
-        ++unpackingCnt;
+        ++counterOfUnpacking;
     }
 
     @Override
@@ -61,7 +64,7 @@ public class CodeGenerator extends VisitorAdaptor {
             designStmMany = designStmMany.getParent();
         Designator designator = ((DesignStmMany) designStmMany).getDesignator1();
         Code.load(designator.obj);
-        Code.loadConst(unpackingCnt++);
+        Code.loadConst(counterOfUnpacking++);
         Code.put(Code.aload);
 
         if (visitor.getDesignator().obj.getKind() == Obj.Elem)
@@ -78,7 +81,7 @@ public class CodeGenerator extends VisitorAdaptor {
         Code.store(objIndexStore);
 
         Obj objUnpackingCnt = Tab.insert(Obj.Var, "unpackingCnt", new Struct(Struct.Int));
-        Code.loadConst(unpackingCnt);
+        Code.loadConst(counterOfUnpacking);
         Code.store(objUnpackingCnt);
 
         Obj objLeftDesignSize = Tab.insert(Obj.Var, "leftDesignSize", new Struct(Struct.Int));
@@ -233,16 +236,16 @@ public class CodeGenerator extends VisitorAdaptor {
 //        if (!forStack.empty()) {
 //            forStack.peek().forEnd = Code.pc - 2;
 //        }
-        if (whereAmI.peek() == WhereAmI.inFor)
-            forStack.peek().forEnd = Code.pc - 2;
+        if (lastBlock.peek() == iAmInside.FOR)
+            stackForFor.peek().forEnd = Code.pc - 2;
     }
 
     @Override
     public void visit(CondFactOne visitor) {
         Code.put(Code.const_1);
         Code.putFalseJump(Code.eq, 0);
-        if (whereAmI.peek() == WhereAmI.inFor)
-            forStack.peek().forEnd = Code.pc - 2;
+        if (lastBlock.peek() == iAmInside.FOR)
+            stackForFor.peek().forEnd = Code.pc - 2;
     }
 
     @Override
@@ -252,34 +255,34 @@ public class CodeGenerator extends VisitorAdaptor {
 
     @Override
     public void visit(ConditionOne visitor) {
-        or();
+        orTime();
     }
 
     @Override
     public void visit(ConditionMany visitor) {
-        or();
+        orTime();
     }
 
-    private void or() {
+    private void orTime() {
         Code.put(Code.jmp);
         Code.put2(0);
-        orList.add(Code.pc - 2);
-        andList.forEach(Code::fixup);
-        andList.clear();
+        listOfOrs.add(Code.pc - 2);
+        listOfAnds.forEach(Code::fixup);
+        listOfAnds.clear();
     }
 
-    private void and() {
-        andList.add(Code.pc - 2);
+    private void andTime() {
+        listOfAnds.add(Code.pc - 2);
     }
 
     @Override
     public void visit(CondTermMany visitor) {
-        and();
+        andTime();
     }
 
     @Override
     public void visit(CondTermOne visitor) {
-        and();
+        andTime();
     }
 
     @Override
@@ -416,7 +419,7 @@ public class CodeGenerator extends VisitorAdaptor {
 
     @Override
     public void visit(If visitor) {
-        whereAmI.push(WhereAmI.inIf);
+        lastBlock.push(iAmInside.IF);
     }
 
     @Override
@@ -424,37 +427,37 @@ public class CodeGenerator extends VisitorAdaptor {
 
         Code.put(Code.jmp);
         Code.put2(0);
-        elseStack.push(Code.pc - 2);
+        stackForElse.push(Code.pc - 2);
 
-        Code.fixup(ifStack.pop());
+        Code.fixup(stackFofIf.pop());
     }
 
     @Override
     public void visit(For visitor) {
-        forStack.push(new ForInfo());
+        stackForFor.push(new ForInfo());
         breaks.push(new ArrayList<>());
         continues.push(new ArrayList<>());
-        whereAmI.push(WhereAmI.inFor);
+        lastBlock.push(iAmInside.FOR);
     }
 
     @Override
     public void visit(ForCondStart visitor) {
-        forStack.peek().condition = Code.pc;
+        stackForFor.peek().condition = Code.pc;
     }
 
     @Override
     public void visit(CondFactOptOne visitor) {
         Code.putJump(0);
-        forStack.peek().forBody = Code.pc - 2;
-        forStack.peek().increment = Code.pc;
+        stackForFor.peek().forBody = Code.pc - 2;
+        stackForFor.peek().increment = Code.pc;
     }
 
     @Override
     public void visit(ForCondEnd visitor) {
 
         Code.put(Code.jmp);
-        Code.put2(forStack.peek().condition - Code.pc + 1);
-        Code.fixup(forStack.peek().forBody);
+        Code.put2(stackForFor.peek().condition - Code.pc + 1);
+        Code.fixup(stackForFor.peek().forBody);
 
         // for :
         // StatementFor
@@ -478,21 +481,21 @@ public class CodeGenerator extends VisitorAdaptor {
     public void visit(StatementFor visitor) {
         continues.pop().forEach(Code::fixup);
         Code.put(Code.jmp);
-        Code.put2(forStack.peek().increment - Code.pc + 1);
-        Code.fixup(forStack.peek().forEnd);
-        forStack.pop();
+        Code.put2(stackForFor.peek().increment - Code.pc + 1);
+        Code.fixup(stackForFor.peek().forEnd);
+        stackForFor.pop();
         breaks.pop().forEach(Code::fixup);
-        whereAmI.pop();
+        lastBlock.pop();
     }
 
     @Override
     public void visit(StatementIf visitor) {
-        Code.fixup(ifStack.pop());
+        Code.fixup(stackFofIf.pop());
     }
 
     @Override
     public void visit(StatementIfElse visitor) {
-        Code.fixup(elseStack.pop());
+        Code.fixup(stackForElse.pop());
     }
 
     @Override
@@ -601,12 +604,83 @@ public class CodeGenerator extends VisitorAdaptor {
     public void visit(StatementCondition visitor) {
         Code.put(Code.jmp);
         Code.put2(0);
-        ifStack.push(Code.pc - 2);
-        for (Integer o : orList)
+        stackFofIf.push(Code.pc - 2);
+        for (Integer o : listOfOrs)
             Code.fixup(o);
-        orList.clear();
-        whereAmI.pop();
+        listOfOrs.clear();
+        lastBlock.pop();
     }
+
+    @Override
+    public void visit(FactorMax visitor) {
+        //
+        // loop: while
+
+        Obj arraySize = Tab.insert(Obj.Var, "arraySize", new Struct(Struct.Int));
+        Code.load(visitor.getDesignator().obj);
+        Code.put(Code.arraylength);
+        Code.store(arraySize);
+
+        Obj objMax = Tab.insert(Obj.Var, "max", new Struct(Struct.Int));
+        Code.load(visitor.getDesignator().obj);
+        Code.loadConst(0);
+        Code.put(Code.aload);
+        Code.store(objMax);
+
+        Obj objIndex = Tab.insert(Obj.Var, "index", new Struct(Struct.Int));
+        Code.loadConst(1);
+        Code.store(objIndex);
+
+        // continue: load objIndex
+        // --------- load arraySize
+        // --------- cmp lt
+        // --------- objIndex < arraySize
+        // --------- jmpFalse end
+        // --------- load objMax
+        // --------- load designator
+        // --------- load objIndex
+        // --------- aload
+        // --------- cmp le ->>>>>>>>>>>> objMax > [1]
+        // --------- jmpFalse incObjMax
+        // --------- load designator
+        // --------- load objIndex
+        // --------- aload
+        // --------- store objMax
+        // incObjMax:load objIndex
+        // --------- loadConst 1
+        // --------- add
+        // --------- store objIndex
+        // --------- jmp continue
+        // end: ---- load objMax
+
+        int continuePc = Code.pc;
+        Code.load(objIndex);
+        Code.load(arraySize);
+        Code.putFalseJump(Code.lt, 0);
+        int endPc = Code.pc - 2;
+
+        Code.load(objMax);
+        Code.load(visitor.getDesignator().obj);
+        Code.load(objIndex);
+        Code.put(Code.aload);
+        Code.putFalseJump(Code.le, 0);
+        int incObjMax = Code.pc - 2;
+        Code.load(visitor.getDesignator().obj);
+        Code.load(objIndex);
+        Code.put(Code.aload);
+        Code.store(objMax);
+        Code.fixup(incObjMax);
+        Code.load(objIndex);
+        Code.loadConst(1);
+        Code.put(Code.add);
+        Code.store(objIndex);
+        Code.put(Code.jmp);
+        Code.put2(continuePc - Code.pc + 1);
+        Code.fixup(endPc);
+        Code.load(objMax);
+
+    }
+
 
 }
 

@@ -23,6 +23,7 @@ public class SemanticPass extends VisitorAdaptor {
     private int controlStructure = 0;
     private Collection<Obj> actPartsRequired;
     ArrayList<Struct> actPartsPassed;
+    ArrayList<Obj> unresolvedLabels = new ArrayList<>();
     int nVars;
 
     public boolean passed() {
@@ -54,6 +55,13 @@ public class SemanticPass extends VisitorAdaptor {
 
     @Override
     public void visit(Program visitor) {
+
+        // if unresolved labels exist report error
+        if (!unresolvedLabels.isEmpty()) {
+            for (Obj label : unresolvedLabels)
+                report_error("Error: " + label.getName() + " is unresolved label", null);
+        }
+
         nVars = Tab.currentScope.getnVars();
 
         Obj mainMeth = Tab.find("main");
@@ -267,7 +275,13 @@ public class SemanticPass extends VisitorAdaptor {
             return getDesignatorName((Designator) parent);
         } else
             return visitor.getMatrixOpt().obj;
+    }
 
+    @Override
+    public void visit(FactorMax visitor) {
+        if (visitor.getDesignator().obj.getType().getKind() != Struct.Array)
+            report_error("Error: Designator must be array", visitor);
+        visitor.struct = Tab.intType;
     }
 
     private Obj getDesignatorName(Designator designator) {
@@ -329,7 +343,6 @@ public class SemanticPass extends VisitorAdaptor {
 
         if (!checkTypes(tempL, tempR))
             report_error("Error: Types must be same", visitor);
-
 
     }
 
@@ -548,6 +561,7 @@ public class SemanticPass extends VisitorAdaptor {
     public void visit(FactorParenExpr visitor) {
         visitor.struct = visitor.getExpr().struct;
     }
+
 
 }
 

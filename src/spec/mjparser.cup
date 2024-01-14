@@ -62,6 +62,9 @@ terminal String CHAR;
 terminal Integer NUMBER;
 terminal String IDENT;
 
+// modificatiion
+terminal MAX;
+
 nonterminal ConstDeclOpt;
 nonterminal MethodDeclOpt;
 nonterminal ConstDecl;
@@ -94,6 +97,8 @@ nonterminal ForCondStart;
 nonterminal ForCondEnd;
 nonterminal DesignStmManyStart;
 
+nonterminal LabelStart;
+
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Type;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Term;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct Factor;
@@ -119,6 +124,7 @@ nonterminal rs.etf.pp1.symboltable.concepts.Obj ConstDef;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj VarDeclPart;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj Scope;
 
+// modificatiion
 nonterminal If;
 nonterminal Else;
 
@@ -194,7 +200,12 @@ Statement           ::= (StatementDesignator) DesignatorStm SEMI
                     |   (StatementRead) READ LPAREN Designator RPAREN SEMI
                     |   (StatementPrint) PRINT LPAREN Expr PrintOpt RPAREN SEMI
                     |   (StatementFor) For LPAREN DesignStmOpt ForCondStart CondFactOpt SEMI DesignStmOpt ForCondEnd Statement
-                    |   (StatementMany) LBRACE StatementOpt RBRACE;
+                    |   (StatementMany) LBRACE StatementOpt RBRACE
+                    // modificatiion
+                    |   (StatementGoto) GOTO IDENT:name SEMI
+                    |   (StatementLabel) LabelStart IDENT:name DOUBLEDOT Statement
+                    ;
+
 
 StatementCondition  ::= (StatementCondition) LPAREN Condition RPAREN;
 
@@ -259,7 +270,8 @@ ConstVal 			::= (ConstNum) NUMBER
 Factor              ::= (FactorParenPars) Designator FactorParenParsOpt
                     |   (FactorConstVal) ConstVal
                     |   (FactorNewArray) NEW Type LSQBRACE Expr RSQBRACE
-                    |   (FactorParenExpr) LPAREN Expr RPAREN;
+                    |   (FactorParenExpr) LPAREN Expr RPAREN
+                    |   (FactorMax) MAX Designator;
 
 FactorParenParsOpt  ::= (ParenPars) LPAREN ActParsOpt RPAREN
                     |   (ParenParsZero) /* epsilon */;

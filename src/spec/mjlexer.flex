@@ -48,7 +48,10 @@ import java_cup.runtime.Symbol;
 "void" 		{ return new_symbol(sym.VOID, yytext()); }
 "continue"	{ return new_symbol(sym.CONTINUE, yytext());}
 "for"	    { return new_symbol(sym.FOR, yytext());}
-"namespace"	    { return new_symbol(sym.NAMESPACE, yytext());}
+"namespace"	{ return new_symbol(sym.NAMESPACE, yytext());}
+
+// modifition
+"max"	    { return new_symbol(sym.MAX, yytext());}
 
 "+" 		{ return new_symbol(sym.PLUS, yytext()); }
 "-"			{ return new_symbol(sym.MINUS, yytext());}
