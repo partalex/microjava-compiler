@@ -52,6 +52,7 @@ import java_cup.runtime.Symbol;
 
 // modifition
 "max"	    { return new_symbol(sym.MAX, yytext());}
+"goto"	    { return new_symbol(sym.GOTO, yytext());}
 
 "+" 		{ return new_symbol(sym.PLUS, yytext()); }
 "-"			{ return new_symbol(sym.MINUS, yytext());}
