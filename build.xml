@@ -8,10 +8,10 @@
                 <exclude name="RuleVisitor.java"/>
                 <exclude name="_SemanticPass.java"/>
                 <exclude name="SemanticPass.java"/>
-                <exclude name="MyTab.java"/>
+                <exclude name="AlexTab.java"/>
                 <exclude name="CodeGenerator.java"/>
                 <exclude name="CounterVisitor.java"/>
-                <exclude name="MyDumpSymbolTableVisitor.java"/>
+                <exclude name="AlexDumpSymbolTableVisitor.java"/>
                 <exclude name="Compiler.java"/>
                 <exclude name="TestSyntax.java"/>
             </fileset>
