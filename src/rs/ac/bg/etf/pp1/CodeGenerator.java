@@ -17,10 +17,7 @@ public class CodeGenerator extends VisitorAdaptor {
 
     private enum iAmInside {NOWHERE, FOR, IF}
 
-    // make hash map of string and list<int
-    private final Map<String, List<Integer>> labelsToFixUp = new HashMap<>();
-
-    private int counterOfUnpacking = 0;
+    private int counterOfUnpack = 0;
 
     {
         lastBlock.push(iAmInside.NOWHERE);
@@ -28,7 +25,7 @@ public class CodeGenerator extends VisitorAdaptor {
 
     private final Stack<List<Integer>> breaks = new Stack<>();
     private final Stack<List<Integer>> continues = new Stack<>();
-    private String currentNamespace;
+    private String currNamespace;
     private final Stack<Integer> stackFofIf = new Stack<>();
 
     static class ForInfo {
@@ -48,12 +45,12 @@ public class CodeGenerator extends VisitorAdaptor {
 
     @Override
     public void visit(DesignStmManyStart visitor) {
-        counterOfUnpacking = 0;
+        counterOfUnpack = 0;
     }
 
     @Override
     public void visit(DesignStmPartOne visitor) {
-        ++counterOfUnpacking;
+        ++counterOfUnpack;
     }
 
     @Override
@@ -64,7 +61,7 @@ public class CodeGenerator extends VisitorAdaptor {
             designStmMany = designStmMany.getParent();
         Designator designator = ((DesignStmMany) designStmMany).getDesignator1();
         Code.load(designator.obj);
-        Code.loadConst(counterOfUnpacking++);
+        Code.loadConst(counterOfUnpack++);
         Code.put(Code.aload);
 
         if (visitor.getDesignator().obj.getKind() == Obj.Elem)
@@ -81,7 +78,7 @@ public class CodeGenerator extends VisitorAdaptor {
         Code.store(objIndexStore);
 
         Obj objUnpackingCnt = Tab.insert(Obj.Var, "unpackingCnt", new Struct(Struct.Int));
-        Code.loadConst(counterOfUnpacking);
+        Code.loadConst(counterOfUnpack);
         Code.store(objUnpackingCnt);
 
         Obj objLeftDesignSize = Tab.insert(Obj.Var, "leftDesignSize", new Struct(Struct.Int));
@@ -188,12 +185,12 @@ public class CodeGenerator extends VisitorAdaptor {
 
     @Override
     public void visit(NamespaceName visitor) {
-        currentNamespace = visitor.getName();
+        currNamespace = visitor.getName();
     }
 
     @Override
     public void visit(Namespace visitor) {
-        currentNamespace = "";
+        currNamespace = "";
     }
 
     @Override
@@ -309,7 +306,7 @@ public class CodeGenerator extends VisitorAdaptor {
 
     @Override
     public void visit(ConstDef visitor) {
-        visitor.obj = MyTab.myFind(SemanticPass.prepareSymbol(visitor.getName(), currentNamespace));
+        visitor.obj = MyTab.myFind(SemanticPass.prepareSymbol(visitor.getName(), currNamespace));
         visitor.obj.setAdr(constValue(visitor.getConstVal()));
         Code.load(visitor.obj);
     }

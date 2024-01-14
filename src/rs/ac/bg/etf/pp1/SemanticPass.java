@@ -18,12 +18,12 @@ public class SemanticPass extends VisitorAdaptor {
     private boolean errorDetected;
     private Struct lastVarConstType = Tab.noType;
     private Struct lastMethodType = null;
-    private String currentNamespace = "";
-    private int formalParamCount;
+    private String currNamespace = "";
+    private int counterFormalParams;
     private int controlStructure = 0;
-    private Collection<Obj> actPartsRequired;
-    ArrayList<Struct> actPartsPassed;
-    ArrayList<Obj> unresolvedLabels = new ArrayList<>();
+    private Collection<Obj> requiredParams;
+    private ArrayList<Struct> passedParams;
+    private final ArrayList<Obj> unresolvedLabels = new ArrayList<>();
     int nVars;
 
     public boolean passed() {
@@ -57,18 +57,17 @@ public class SemanticPass extends VisitorAdaptor {
     public void visit(Program visitor) {
 
         // if unresolved labels exist report error
-        if (!unresolvedLabels.isEmpty()) {
+        if (!unresolvedLabels.isEmpty())
             for (Obj label : unresolvedLabels)
                 report_error("Error: " + label.getName() + " is unresolved label", null);
-        }
 
         nVars = Tab.currentScope.getnVars();
 
         Obj mainMeth = Tab.find("main");
-        if (mainMeth != Tab.noObj
-                && mainMeth.getKind() == Obj.Meth
-                && mainMeth.getType() == Tab.noType
-                && mainMeth.getLevel() == 0)
+        if (mainMeth.getKind() == Obj.Meth
+                && mainMeth != Tab.noObj
+                && mainMeth.getLevel() == 0
+                && mainMeth.getType() == Tab.noType)
             report_info("main already exist", visitor);
         else
             report_error("global void main() does not exist", visitor);
@@ -80,7 +79,7 @@ public class SemanticPass extends VisitorAdaptor {
 
     @Override
     public void visit(Namespace visitor) {
-        currentNamespace = "";
+        currNamespace = "";
     }
 
     @Override
@@ -93,7 +92,7 @@ public class SemanticPass extends VisitorAdaptor {
         else
             visitor.obj = Tab.insert(Obj.Type, visitor.getName(), Tab.noType);
 
-        currentNamespace = visitor.getName();
+        currNamespace = visitor.getName();
     }
 
     private void setLastVarConstType(Struct type) {
@@ -137,12 +136,12 @@ public class SemanticPass extends VisitorAdaptor {
 
     @Override
     public void visit(ConstDef visitor) {
-        Obj typeNode = Tab.currentScope.findSymbol(prepareSymbol(visitor.getName(), currentNamespace));
+        Obj typeNode = Tab.currentScope.findSymbol(prepareSymbol(visitor.getName(), currNamespace));
 
         if (typeNode != null)
             report_error("Const " + visitor.getName() + " already exist", visitor);
         else
-            Tab.insert(Obj.Con, prepareSymbol(visitor.getName(), currentNamespace), getLastVarConstType());
+            Tab.insert(Obj.Con, prepareSymbol(visitor.getName(), currNamespace), getLastVarConstType());
     }
 
     @Override
@@ -150,7 +149,7 @@ public class SemanticPass extends VisitorAdaptor {
         String varName;
 
         if (getLastMethodType() == null)
-            varName = prepareSymbol(visitor.getName(), currentNamespace);
+            varName = prepareSymbol(visitor.getName(), currNamespace);
         else
             varName = visitor.getName();
 
@@ -177,21 +176,21 @@ public class SemanticPass extends VisitorAdaptor {
 
     @Override
     public void visit(MethodName visitor) {
-        Obj typeNode = Tab.currentScope.findSymbol(prepareSymbol(visitor.getName(), currentNamespace));
+        Obj typeNode = Tab.currentScope.findSymbol(prepareSymbol(visitor.getName(), currNamespace));
         if (typeNode != null)
             report_error("Method " + visitor.getName() + " already exist", visitor);
         else
-            visitor.obj = Tab.insert(Obj.Meth, prepareSymbol(visitor.getName(), currentNamespace), getLastMethodType());
+            visitor.obj = Tab.insert(Obj.Meth, prepareSymbol(visitor.getName(), currNamespace), getLastMethodType());
         Tab.openScope();
     }
 
     @Override
     public void visit(MethodDecl visitor) {
         visitor.obj = visitor.getMethodName().obj;
-        visitor.obj.setLevel(formalParamCount);
+        visitor.obj.setLevel(counterFormalParams);
         Tab.chainLocalSymbols(visitor.obj);
         Tab.closeScope();
-        formalParamCount = 0;
+        counterFormalParams = 0;
         setLastMethodType(null);
     }
 
@@ -203,7 +202,7 @@ public class SemanticPass extends VisitorAdaptor {
             type = new Struct(Struct.Array, type);
 
         Tab.insert(Obj.Var, visitor.getName(), type);
-        formalParamCount++;
+        counterFormalParams++;
     }
 
     @Override
@@ -323,9 +322,9 @@ public class SemanticPass extends VisitorAdaptor {
     public void visit(ScopeLocal visitor) {
         String varName = visitor.getName();
 
-        if (currentNamespace != null)
+        if (currNamespace != null)
             if (Tab.currentScope().findSymbol(varName) == null)
-                varName = prepareSymbol(visitor.getName(), currentNamespace);
+                varName = prepareSymbol(visitor.getName(), currNamespace);
 
         Obj idFind = Tab.find(varName);
         if (idFind == Tab.noObj)
@@ -346,13 +345,13 @@ public class SemanticPass extends VisitorAdaptor {
 
     }
 
-    private boolean checkParams() {
-        if (actPartsPassed != null && !actPartsRequired.isEmpty())
-            if (actPartsPassed.size() == actPartsRequired.size()) {
+    private boolean isParamsCorrect() {
+        if (passedParams != null && !requiredParams.isEmpty())
+            if (passedParams.size() == requiredParams.size()) {
                 int i = 0;
-                for (Obj required : actPartsRequired) {
-                    if (required.getType() != actPartsPassed.get(i))
-                        if (required.getType().getKind() != Struct.Array && actPartsPassed.get(i).getKind() != Struct.Array)
+                for (Obj required : requiredParams) {
+                    if (required.getType() != passedParams.get(i))
+                        if (required.getType().getKind() != Struct.Array && passedParams.get(i).getKind() != Struct.Array)
                             return false;
                     i++;
                 }
@@ -360,20 +359,21 @@ public class SemanticPass extends VisitorAdaptor {
         return true;
     }
 
+
     @Override
     public void visit(DesignStmParen visitor) {
 
         if (visitor.getDesignator().obj.getKind() != Obj.Meth) {
             report_error("ne postoji metoda " + visitor.getDesignator().obj.getName(), visitor);
         } else {
-            actPartsRequired = visitor.getDesignator().obj.getLocalSymbols();
-            if (!checkParams())
+            requiredParams = visitor.getDesignator().obj.getLocalSymbols();
+            if (isParamsCorrect())
                 report_error("Error: bad parameters in method call " + visitor.getDesignator().obj.getName(), visitor);
             else
                 report_info("Function call" + visitor.getDesignator().obj.getName(), visitor);
         }
-        actPartsPassed = null;
-        actPartsRequired = null;
+        passedParams = null;
+        requiredParams = null;
     }
 
     @Override
@@ -382,7 +382,7 @@ public class SemanticPass extends VisitorAdaptor {
         Obj idFind = getDesignatorName(visitor);
 
         if (idFind == null)
-            report_error("Ident " + idFind.getName() + " does not exist", visitor);
+            report_error("Identificator does not exist", visitor);
         else
             visitor.obj = idFind;
 
@@ -503,16 +503,16 @@ public class SemanticPass extends VisitorAdaptor {
 
     @Override
     public void visit(ActParsMany visitor) {
-        if (actPartsPassed == null)
-            actPartsPassed = new ArrayList<>();
-        actPartsPassed.add(visitor.getExpr().struct);
+        if (passedParams == null)
+            passedParams = new ArrayList<>();
+        passedParams.add(visitor.getExpr().struct);
     }
 
     @Override
     public void visit(ActParsOne visitor) {
-        if (actPartsPassed == null)
-            actPartsPassed = new ArrayList<>();
-        actPartsPassed.add(visitor.getExpr().struct);
+        if (passedParams == null)
+            passedParams = new ArrayList<>();
+        passedParams.add(visitor.getExpr().struct);
     }
 
     @Override
@@ -533,15 +533,15 @@ public class SemanticPass extends VisitorAdaptor {
             report_error("Error: " + getDesignatorName(visitor.getDesignator()).getName() + " not a method", visitor);
             return;
         }
-        actPartsRequired = visitor.getDesignator().obj.getLocalSymbols();
+        requiredParams = visitor.getDesignator().obj.getLocalSymbols();
 
-        if (!checkParams())
+        if (isParamsCorrect())
             report_error("Error: bad parameters in method call " + visitor.getDesignator().obj.getName(), visitor);
 
         visitor.struct = visitor.getDesignator().obj.getType();
 
-        actPartsRequired = null;
-        actPartsPassed = null;
+        requiredParams = null;
+        passedParams = null;
     }
 
     @Override
