@@ -6,11 +6,11 @@ import rs.etf.pp1.symboltable.structure.SymbolDataStructure;
 
 import java.util.Collection;
 
-public class MyTab extends Tab {
+public class AlexTab extends Tab {
     public static final Struct boolType = new Struct(Struct.Bool);
-    public static Obj tempHelp;
+//    public static Obj tempHelp;
 
-    public static void myInit() {
+    public static void alexInit() {
         init();
         currentScope.addToLocals(new Obj(Obj.Type, "bool", boolType));
     }
@@ -18,7 +18,7 @@ public class MyTab extends Tab {
     public static void dump() {
         System.out.println("=====================SYMBOL TABLE DUMP=========================");
         //if (stv == null)
-        MyDumpSymbolTableVisitor stv = new MyDumpSymbolTableVisitor();
+        AlexDumpSymbolTableVisitor stv = new AlexDumpSymbolTableVisitor();
         for (Scope s = currentScope; s != null; s = s.getOuter()) {
             s.accept(stv);
         }

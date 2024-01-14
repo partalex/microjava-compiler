@@ -41,12 +41,12 @@ public class MJParserTest {
             Symbol s = p.parse();  //pocetak parsiranja
             SyntaxNode prog = (SyntaxNode) (s.value);
 
-            MyTab.myInit(); // Universe scope
+            AlexTab.alexInit(); // Universe scope
             SemanticPass semanticCheck = new SemanticPass();
             prog.traverseBottomUp(semanticCheck);
 
 //            log.info("Print calls = " + semanticCheck.printCallCount);
-            Tab.dump();
+            AlexTab.dump();
 
             if (!p.errorDetected && semanticCheck.passed()) {
                 File objFile = new File(args[1]);

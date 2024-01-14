@@ -1,19 +1,15 @@
 package rs.ac.bg.etf.pp1;
 
-import java.util.HashMap;
-
 import rs.etf.pp1.symboltable.concepts.Obj;
 import rs.etf.pp1.symboltable.concepts.Scope;
 import rs.etf.pp1.symboltable.concepts.Struct;
-import rs.etf.pp1.symboltable.visitors.SymbolTableVisitor;
+import rs.etf.pp1.symboltable.visitors.DumpSymbolTableVisitor;
 
-public class MyDumpSymbolTableVisitor extends SymbolTableVisitor {
+public class AlexDumpSymbolTableVisitor extends DumpSymbolTableVisitor {
 
     protected StringBuilder output = new StringBuilder();
     protected final String indent = "   ";
     protected StringBuilder currentIndent = new StringBuilder();
-
-    private HashMap<Struct, String> typeNameMap = new HashMap<Struct, String>();
 
     protected void nextIndentationLevel() {
         currentIndent.append(indent);
@@ -25,6 +21,9 @@ public class MyDumpSymbolTableVisitor extends SymbolTableVisitor {
     }
 
 
+    /* (non-Javadoc)
+     * @see rs.etf.pp1.symboltable.test.SymbolTableVisitor#visitObjNode(symboltable.Obj)
+     */
     @Override
     public void visitObjNode(Obj objToVisit) {
         //output.append("[");
@@ -52,28 +51,17 @@ public class MyDumpSymbolTableVisitor extends SymbolTableVisitor {
         output.append(objToVisit.getName());
         output.append(": ");
 
-        if (Obj.Type == objToVisit.getKind())
-            typeNameMap.put(objToVisit.getType(), objToVisit.getName());
-
-//		if ((Obj.Var == objToVisit.getKind()) && "this".equalsIgnoreCase(objToVisit.getName()) 
-//		|| (Obj.Fld == objToVisit.getKind()) && "TVF".equals(objToVisit.getName()))
-//			output.append("");
-//		else
-//			objToVisit.getType().accept(this);
-
-        if (Obj.Var == objToVisit.getKind() || Obj.Fld == objToVisit.getKind() || Obj.Con == objToVisit.getKind() || Obj.Meth == objToVisit.getKind())
-            getStructName(objToVisit.getType());
-
-        if (Obj.Type == objToVisit.getKind())
-            output.append("newType");
-
+        if ((Obj.Var == objToVisit.getKind()) && "this".equalsIgnoreCase(objToVisit.getName()))
+            output.append("");
+        else
+            objToVisit.getType().accept(this);
 
         output.append(", ");
         output.append(objToVisit.getAdr());
         output.append(", ");
-        output.append(objToVisit.getLevel()).append(" ");
+        output.append(objToVisit.getLevel() + " ");
 
-        if (objToVisit.getKind() == Obj.Prog || objToVisit.getKind() == Obj.Meth || objToVisit.getKind() == Obj.Type && objToVisit.getType().getKind() == Struct.Class) {
+        if (objToVisit.getKind() == Obj.Prog || objToVisit.getKind() == Obj.Meth) {
             output.append("\n");
             nextIndentationLevel();
         }
@@ -85,22 +73,16 @@ public class MyDumpSymbolTableVisitor extends SymbolTableVisitor {
             output.append("\n");
         }
 
-        if (objToVisit.getKind() == Obj.Type && objToVisit.getType().getKind() == Struct.Class)
-            for (Obj o : objToVisit.getType().getMembers()) {
-                output.append(currentIndent.toString());
-                o.accept(this);
-                if (o.getKind() == Obj.Fld)
-                    output.append("\n");
-            }
-
-        if (objToVisit.getKind() == Obj.Prog || objToVisit.getKind() == Obj.Meth || objToVisit.getKind() == Obj.Type && objToVisit.getType().getKind() == Struct.Class)
+        if (objToVisit.getKind() == Obj.Prog || objToVisit.getKind() == Obj.Meth)
             previousIndentationLevel();
 
         //output.append("]");
 
-
     }
 
+    /* (non-Javadoc)
+     * @see rs.etf.pp1.symboltable.test.SymbolTableVisitor#visitScopeNode(symboltable.Scope)
+     */
     @Override
     public void visitScopeNode(Scope scope) {
         for (Obj o : scope.values()) {
@@ -109,29 +91,54 @@ public class MyDumpSymbolTableVisitor extends SymbolTableVisitor {
         }
     }
 
-    private void getStructName(Struct structToVisit) {
+    /* (non-Javadoc)
+     * @see rs.etf.pp1.symboltable.test.SymbolTableVisitor#visitStructNode(symboltable.Struct)
+     */
+    @Override
+    public void visitStructNode(Struct structToVisit) {
         switch (structToVisit.getKind()) {
             case Struct.None:
-                output.append("void");
+                output.append("notype");
+                break;
+            case Struct.Int:
+                output.append("int");
+                break;
+            case Struct.Char:
+                output.append("char");
                 break;
             case Struct.Array:
-                getStructName(structToVisit.getElemType());
-                output.append("[]");
+                output.append("Arr of ");
+                switch (structToVisit.getElemType().getKind()) {
+                    case Struct.None:
+                        output.append("notype");
+                        break;
+                    case Struct.Int:
+                        output.append("int");
+                        break;
+                    case Struct.Char:
+                        output.append("char");
+                        break;
+                    case Struct.Class:
+                        output.append("Class");
+                        break;
+                }
+                break;
+            case Struct.Bool:
+                output.append("bool");
+                break;
+            case Struct.Class:
+                output.append("Class [");
+                for (Obj obj : structToVisit.getMembers()) {
+                    obj.accept(this);
+                }
+                output.append("]");
                 break;
             default:
-                output.append(typeNameMap.get(structToVisit));
-                break;
+                output.append("Unknown struct kind");
         }
     }
 
-    @Override
-    public void visitStructNode(Struct structToVisit) {
-        getStructName(structToVisit);
-    }
-
-    @Override
     public String getOutput() {
         return output.toString();
     }
-
 }

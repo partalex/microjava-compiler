@@ -1,22 +1,22 @@
 package rs.ac.bg.etf.pp1;
 
-import rs.ac.bg.etf.pp1.ast.*;
-import rs.etf.pp1.mj.runtime.Code;
-import rs.etf.pp1.symboltable.Tab;
-import rs.etf.pp1.symboltable.concepts.Obj;
 import rs.etf.pp1.symboltable.concepts.Struct;
+import rs.etf.pp1.symboltable.Tab;
+import rs.ac.bg.etf.pp1.ast.*;
+import rs.etf.pp1.symboltable.concepts.Obj;
+import rs.etf.pp1.mj.runtime.Code;
 
 import java.util.*;
 
 public class CodeGenerator extends VisitorAdaptor {
 
-    private int mainPc;
     private final List<Integer> listOfAnds = new ArrayList<>();
+    private int mainPc;
     private final List<Integer> listOfOrs = new ArrayList<>();
-    private final Stack<iAmInside> lastBlock = new Stack<>();
 
     private enum iAmInside {NOWHERE, FOR, IF}
 
+    private final Stack<iAmInside> lastBlock = new Stack<>();
     private int counterOfUnpack = 0;
 
     {
@@ -199,9 +199,9 @@ public class CodeGenerator extends VisitorAdaptor {
 
         if (type instanceof MulOpMul)
             Code.put(Code.mul);
-        if (type instanceof MulOpDiv)
+        else if (type instanceof MulOpDiv)
             Code.put(Code.div);
-        if (type instanceof MulOpMod)
+        else if (type instanceof MulOpMod)
             Code.put(Code.rem);
     }
 
@@ -306,7 +306,7 @@ public class CodeGenerator extends VisitorAdaptor {
 
     @Override
     public void visit(ConstDef visitor) {
-        visitor.obj = MyTab.myFind(SemanticPass.prepareSymbol(visitor.getName(), currNamespace));
+        visitor.obj = AlexTab.myFind(SemanticPass.prepareSymbol(visitor.getName(), currNamespace));
         visitor.obj.setAdr(constValue(visitor.getConstVal()));
         Code.load(visitor.obj);
     }
@@ -399,7 +399,7 @@ public class CodeGenerator extends VisitorAdaptor {
 
     @Override
     public void visit(StatementPrint stmPrint) {
-        if (stmPrint.getExpr().struct == Tab.intType || stmPrint.getExpr().struct == MyTab.boolType) {
+        if (stmPrint.getExpr().struct == Tab.intType || stmPrint.getExpr().struct == AlexTab.boolType) {
             Code.loadConst(1);
             Code.put(Code.print);
         } else {
@@ -561,10 +561,10 @@ public class CodeGenerator extends VisitorAdaptor {
             Code.put2(designator.obj.getAdr() - Code.pc + 1);
         } else {
             Obj secondToLast = oneBeforeLast(designator);
-            if (secondToLast.getKind() == Obj.Elem)
-                Code.load(MyTab.tempHelp);
-            else
-                Code.load(secondToLast);
+//            if (secondToLast.getKind() == Obj.Elem)
+//                Code.load(MyTab.tempHelp);
+//            else
+            Code.load(secondToLast);
         }
     }
 

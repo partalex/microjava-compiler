@@ -235,7 +235,7 @@ public class SemanticPass extends VisitorAdaptor {
     public void visit(StatementRead visitor) {
         Designator design = visitor.getDesignator();
         if (checkDesignatorType(design))
-            if (design.obj.getType() == MyTab.intType || design.obj.getType() == MyTab.charType || design.obj.getType() == MyTab.boolType) {
+            if (design.obj.getType() == AlexTab.intType || design.obj.getType() == AlexTab.charType || design.obj.getType() == AlexTab.boolType) {
                 report_info("read()", visitor);
                 return;
             }
@@ -245,7 +245,7 @@ public class SemanticPass extends VisitorAdaptor {
     @Override
     public void visit(StatementPrint visitor) {
         Struct kind = visitor.getExpr().struct;
-        if (kind != Tab.intType && kind != Tab.charType && kind != MyTab.boolType)
+        if (kind != Tab.intType && kind != Tab.charType && kind != AlexTab.boolType)
             report_error("Error: Expression must be int, char or bool", visitor);
     }
 
@@ -312,7 +312,7 @@ public class SemanticPass extends VisitorAdaptor {
         else {
             Obj idFind = Tab.find(prepareSymbol(visitor.getName(), visitor.getNamespace()));
             if (idFind == null)
-                report_error("Ident " + visitor.getName() + " does not exist", visitor);
+                report_error("Symbol " + visitor.getName() + " does not exist", visitor);
             else
                 visitor.obj = idFind;
         }
@@ -328,7 +328,7 @@ public class SemanticPass extends VisitorAdaptor {
 
         Obj idFind = Tab.find(varName);
         if (idFind == Tab.noObj)
-            report_error("Ident " + visitor.getName() + " does not exist", visitor);
+            report_error("Symbol " + visitor.getName() + " does not exist", visitor);
         else
             visitor.obj = idFind;
     }
@@ -415,7 +415,7 @@ public class SemanticPass extends VisitorAdaptor {
 
     @Override
     public void visit(ConstBool visitor) {
-        visitor.struct = MyTab.boolType;
+        visitor.struct = AlexTab.boolType;
     }
 
     @Override
@@ -457,8 +457,8 @@ public class SemanticPass extends VisitorAdaptor {
     @Override
     public void visit(CondFactOne visitor) {
         visitor.struct = visitor.getExpr().struct;
-        if (visitor.struct != MyTab.boolType)
-            report_error("Еrror: expression must be a bool type", visitor);
+        if (visitor.struct != AlexTab.boolType)
+            report_error("Error: expression must be a bool type", visitor);
     }
 
     @Override
@@ -469,7 +469,7 @@ public class SemanticPass extends VisitorAdaptor {
                 report_error("Error: can not compare array", visitor);
                 visitor.struct = Tab.noType;
             } else
-                visitor.struct = MyTab.boolType;
+                visitor.struct = AlexTab.boolType;
         else {
             report_error("Error: can not compare different types", visitor);
             visitor.struct = Tab.noType;
@@ -478,8 +478,8 @@ public class SemanticPass extends VisitorAdaptor {
 
     @Override
     public void visit(CondTermMany visitor) {
-        if (visitor.getCondFact().struct == MyTab.boolType && visitor.getCondTerm().struct == MyTab.boolType)
-            visitor.struct = MyTab.boolType;
+        if (visitor.getCondFact().struct == AlexTab.boolType && visitor.getCondTerm().struct == AlexTab.boolType)
+            visitor.struct = AlexTab.boolType;
     }
 
     @Override
@@ -489,8 +489,8 @@ public class SemanticPass extends VisitorAdaptor {
 
     @Override
     public void visit(ConditionMany visitor) {
-        if (visitor.getCondition().struct == MyTab.boolType && visitor.getCondTerm().struct == MyTab.boolType)
-            visitor.struct = MyTab.boolType;
+        if (visitor.getCondition().struct == AlexTab.boolType && visitor.getCondTerm().struct == AlexTab.boolType)
+            visitor.struct = AlexTab.boolType;
         else
             report_error("LOS TIP USLOVA", visitor);
     }
@@ -563,5 +563,3 @@ public class SemanticPass extends VisitorAdaptor {
 
 
 }
-
-

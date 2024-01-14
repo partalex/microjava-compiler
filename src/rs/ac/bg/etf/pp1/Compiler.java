@@ -38,7 +38,7 @@ public class Compiler {
             else {
                 Program prog = (Program) (symbol.value);
                 //Tab.init();
-                MyTab.myInit();
+                AlexTab.alexInit();
                 // ispis sintaksnog stabla
                 log.info(prog.toString(""));
                 log.info("===================================");
@@ -70,7 +70,7 @@ public class Compiler {
                 } else {
                     log.error("Parsiranje NIJE uspesno zavrseno!");
                 }
-                MyTab.dump();
+                AlexTab.dump();
             }
         } finally {
             if (bufferedReader != null) try {
