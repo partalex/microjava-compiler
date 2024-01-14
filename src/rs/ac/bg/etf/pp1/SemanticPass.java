@@ -359,7 +359,6 @@ public class SemanticPass extends VisitorAdaptor {
         return true;
     }
 
-
     @Override
     public void visit(DesignStmParen visitor) {
 
@@ -367,7 +366,7 @@ public class SemanticPass extends VisitorAdaptor {
             report_error("ne postoji metoda " + visitor.getDesignator().obj.getName(), visitor);
         } else {
             requiredParams = visitor.getDesignator().obj.getLocalSymbols();
-            if (isParamsCorrect())
+            if (!isParamsCorrect())
                 report_error("Error: bad parameters in method call " + visitor.getDesignator().obj.getName(), visitor);
             else
                 report_info("Function call" + visitor.getDesignator().obj.getName(), visitor);
@@ -535,7 +534,7 @@ public class SemanticPass extends VisitorAdaptor {
         }
         requiredParams = visitor.getDesignator().obj.getLocalSymbols();
 
-        if (isParamsCorrect())
+        if (!isParamsCorrect())
             report_error("Error: bad parameters in method call " + visitor.getDesignator().obj.getName(), visitor);
 
         visitor.struct = visitor.getDesignator().obj.getType();

@@ -5,10 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="37548433-4df9-4744-8550-e2d30ad3cbd3" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/test/2023/scratch.cc" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/spec/mjlexer.flex" beforeDir="false" afterPath="$PROJECT_DIR$/src/spec/mjlexer.flex" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/spec/mjparser.cup" beforeDir="false" afterPath="$PROJECT_DIR$/src/spec/mjparser.cup" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.xml" beforeDir="false" afterPath="$PROJECT_DIR$/build.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/mj-runtime.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/rs/ac/bg/etf/pp1/SemanticPass.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/rs/ac/bg/etf/pp1/SemanticPass.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/2023/output.txt" beforeDir="false" afterPath="$PROJECT_DIR$/test/2023/output.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/2023/test.mj" beforeDir="false" afterPath="$PROJECT_DIR$/test/2023/test.mj" afterDir="false" />
     </list>
     <list id="6e014b95-72f5-45c6-874c-e490c04c3833" name="Changes by Milena" comment="" />
     <option name="SHOW_DIALOG" value="false" />
@@ -80,6 +82,7 @@
       <recent name="C:\Users\kaoko\Documents\PP1\MJCompiler\test" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\kaoko\Documents\PP1\MJCompiler\lib" />
       <recent name="C:\Users\kaoko\Documents\PP1\MJCompiler\test\2023" />
     </key>
   </component>
@@ -88,7 +91,7 @@
       <command value="7. runObj" />
     </option>
   </component>
-  <component name="RunManager" selected="Ant Target.1. delete">
+  <component name="RunManager" selected="Application.MJParserTest">
     <configuration name="1. delete" type="AntRunConfiguration">
       <antsettings antfile="file://$PROJECT_DIR$/build.xml" target="delete" />
       <method v="2" />
